@@ -15,11 +15,52 @@ import Wblogo from "@/assets/wb.svg";
 import { Linking } from "react-native";
 
 import rstruther from "@/infraestructure/http/nodeApi";
+import { AccordionItem } from "@/components/faq";
 
 export default function supportScren() {
   const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
+
+  const faqData = [
+    {
+      question: "Como usar o WhatsApp Colossus?",
+      answer: "Basta clicar no botão 'Help Me' para abrir o suporte via WhatsApp.",
+    },
+    {
+      question: "O suporte está disponível 24/7?",
+      answer: "Nosso suporte funciona das 8h às 20h, de segunda a sábado.",
+    },
+    {
+      question: "Preciso de cadastro para usar?",
+      answer: "Não, o acesso ao suporte é imediato e sem necessidade de cadastro.",
+    },
+    {
+      question: "Como usar o WhatsApp Colossus?",
+      answer: "Basta clicar no botão 'Help Me' para abrir o suporte via WhatsApp.",
+    },
+    {
+      question: "O suporte está disponível 24/7?",
+      answer: "Nosso suporte funciona das 8h às 20h, de segunda a sábado.",
+    },
+    {
+      question: "Preciso de cadastro para usar?",
+      answer: "Não, o acesso ao suporte é imediato e sem necessidade de cadastro.",
+    },
+    {
+      question: "Como usar o WhatsApp Colossus?",
+      answer: "Basta clicar no botão 'Help Me' para abrir o suporte via WhatsApp.",
+    },
+    {
+      question: "O suporte está disponível 24/7?",
+      answer: "Nosso suporte funciona das 8h às 20h, de segunda a sábado.",
+    },
+    {
+      question: "Preciso de cadastro para usar?",
+      answer: "Não, o acesso ao suporte é imediato e sem necessidade de cadastro.",
+    },
+  ];
+  
 
   useEffect(() => {}, []);
 
@@ -71,6 +112,13 @@ export default function supportScren() {
                 <S.ButtonText>Help Me</S.ButtonText>
               </S.LoginButton>
             </S.InfoBox>
+            {faqData.map((item, index) => (
+            <AccordionItem
+              key={index}
+              question={item.question}
+              answer={item.answer}
+              />
+            ))}
           </ScrollView>
         </S.SafeArea>
       </S.Background>
