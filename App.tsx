@@ -4,7 +4,6 @@ import { ThemeProvider } from "styled-components";
 import theme from "./src/theme";
 import { AuthProvider } from "@/hook/AuthContext";
 import { ToastProvider } from "@/hook/Toast";
-import { NavigationContainer } from "@react-navigation/native";
 
 export default function App() {
   return (

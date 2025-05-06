@@ -10,7 +10,7 @@ import { Platform } from "react-native";
 // import { useAuth } from "@/hook/AuthContext"; // Remova esta importação, pois não é usada aqui
 
 const rstruther: AxiosInstance = axios.create({
-  baseURL: "https://apicolossus.iliketechnology.com.br/v1/",
+  baseURL: "https://api.colossuscrypto.com.br/v1/",
   timeout: 300000,
   maxBodyLength: Number.POSITIVE_INFINITY,
   headers: {

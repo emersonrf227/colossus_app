@@ -31,6 +31,7 @@ export default function Dashboard() {
         reference: new Date(),
         token: "usdt",
         memo: "pay ",
+        split: [],
       };
       const response = await rstruther.post(`saller/invoice`, obj);
       console.log("Data Invoice ===>", response.status);

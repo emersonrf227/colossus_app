@@ -5,10 +5,12 @@ import styled from "styled-components/native";
 
 const AccordionContainer = styled.View`
   width: 90%;
+  max-width: 90%;
   margin-bottom: 10px;
   background-color: #1c1c1c;
   border-radius: 10px;
   padding: 10px;
+  align-self: center;
 `;
 
 const QuestionText = styled.Text`

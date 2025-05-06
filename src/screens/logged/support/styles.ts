@@ -22,6 +22,12 @@ export const Container = styled.View`
   background-color: "#000";
 `;
 
+export const Card = styled.View`
+  flex: 1;
+  width: ${wp("90%")};
+  height: ${hp("90%")};
+`;
+
 export const SafeArea = styled(SafeAreaView)`
   flex: 1;
   width: ${wp("100%")};
@@ -51,13 +57,19 @@ export const BackButton = styled.TouchableOpacity`
 `;
 
 export const InfoBox = styled.View`
-  margin-top: ${hp("3%")}px;
-  border-radius: 15px;
-  padding: 20px;
-  flex: 1;
+  margin-top: ${wp("15%")}px;
+  height: ${hp("20%")}px;
+  width: "100%";
   flex-direction: column;
   justify-content: center;
   align-items: center;
+`;
+
+export const FaqBox = styled.View`
+  margin-top: ${wp("2%")}px;
+  width: "20%";
+
+  margin-bottom: ${wp("13%")}px;
 `;
 
 export const FieldWrapper = styled.View`

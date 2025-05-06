@@ -13,6 +13,7 @@ import {
   Plus,
   LogOut,
   ReceiptText,
+  Printer,
 } from "lucide-react-native"; // Importe os ícones
 import styled from "styled-components/native";
 import * as S from "./styles";
@@ -27,7 +28,26 @@ export default function MenuScreen() {
   const { navigate } = useNavigation();
 
   const navigation = useNavigation();
-  const menuFunction = [
+  const menuFunction = [];
+  const menuItems = [
+    { label: "Info", icon: Info, route: "getInfo", type: "route" },
+    {
+      label: "Wallet Forward",
+      icon: Wallet,
+      route: "CadWallet",
+      type: "route",
+    },
+    { label: "Invoices", icon: FileText, route: "Extract", type: "route" },
+
+    { label: "Support", icon: LifeBuoy, route: "supportScren", type: "route" },
+    { label: "About", icon: HelpCircle, route: "getAbout", type: "route" },
+    { label: "Terms", icon: ReceiptText, route: "TermsOfUse", type: "route" },
+    {
+      label: "Print",
+      icon: Printer,
+      route: "SelectPrinterScreen",
+      type: "route",
+    },
     {
       label: "Logout",
       icon: LogOut,
@@ -48,20 +68,6 @@ export default function MenuScreen() {
       },
       type: "function",
     },
-  ];
-  const menuItems = [
-    { label: "Info", icon: Info, route: "getInfo", type: "route" },
-    {
-      label: "Wallet Forward",
-      icon: Wallet,
-      route: "CadWallet",
-      type: "route",
-    },
-    { label: "Invoices", icon: FileText, route: "Extract", type: "route" },
-
-    { label: "Support", icon: LifeBuoy, route: "supportScren", type: "route" },
-    { label: "About", icon: HelpCircle, route: "getAbout", type: "route" },
-    { label: "Terms", icon: ReceiptText, route: "TermsOfUse", type: "route" },
   ];
   const handleNavigation = (item: (typeof menuItems)[0]) => {
     console.log("Handling navigation for:", item.label, "Type:", item.type);

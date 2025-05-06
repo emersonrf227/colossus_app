@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   Text,
   ImageBackground,
+  Linking,
 } from "react-native";
 import styled from "styled-components/native";
 import LogoSvg from "@/assets/logov2.svg";
@@ -21,6 +22,25 @@ export default function SingIn() {
   const [identifier, setIdentifier] = useState("");
   const { navigate } = useNavigation();
   const [loading, setLoading] = useState(false);
+
+  const openWhatsApp = () => {
+    const phoneNumber = "+5511973223571"; // Substitua com o número desejado
+    const message = "Olá, preciso de ajuda!";
+    const url = `https://wa.me/${phoneNumber.replace(
+      "+",
+      ""
+    )}?text=${encodeURIComponent(message)}`;
+
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(url);
+        } else {
+          alert("Não foi possível abrir o WhatsApp");
+        }
+      })
+      .catch((err) => console.error("Erro ao abrir o WhatsApp:", err));
+  };
 
   const handleLogin = async () => {
     setLoading(true);
@@ -78,9 +98,14 @@ export default function SingIn() {
         <S.LoginButton onPress={() => handleLogin()}>
           <S.LoginText>Enter</S.LoginText>
         </S.LoginButton>
+
         <S.ResetButton onPress={() => navigate("ForgetPwd")}>
           <S.ForgotPassword>Forget my password</S.ForgotPassword>
         </S.ResetButton>
+
+        <S.RegisterButton onPress={() => openWhatsApp()}>
+          <S.ForgotPassword>Register</S.ForgotPassword>
+        </S.RegisterButton>
       </S.Container>
     </S.Background>
   );

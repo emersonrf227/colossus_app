@@ -10,11 +10,8 @@ import {
 } from "react-native-responsive-screen";
 import Loader from "@/components/loader";
 import LogoSvg from "@/assets/logov2.svg";
-import LogoAbount from "@/assets/logoAbout.svg";
 import Wblogo from "@/assets/wb.svg";
 import { Linking } from "react-native";
-
-import rstruther from "@/infraestructure/http/nodeApi";
 import { AccordionItem } from "@/components/faq";
 
 export default function supportScren() {
@@ -24,43 +21,53 @@ export default function supportScren() {
 
   const faqData = [
     {
-      question: "Como usar o WhatsApp Colossus?",
-      answer: "Basta clicar no botão 'Help Me' para abrir o suporte via WhatsApp.",
+      question: "1. O que é a Colossus Crypto?",
+      answer:
+        "A Colossus Crypto é uma solução de pagamentos digitais desenvolvida pela I Like Technology, que permite que comércios de todos os portes aceitem pagamentos em USDT (Tether) – uma das criptomoedas mais estáveis e utilizadas do mundo – por meio de aplicativo, sistema web e maquininha de cartão.",
     },
     {
-      question: "O suporte está disponível 24/7?",
-      answer: "Nosso suporte funciona das 8h às 20h, de segunda a sábado.",
+      question: "2. Quem pode utilizar a Colossus Crypto?",
+      answer:
+        "A plataforma é voltada para comerciantes (pessoas físicas ou jurídicas) que desejam oferecer uma alternativa moderna e segura de pagamento aos seus clientes, além de contar com taxas mais atrativas e liquidez imediata.",
     },
     {
-      question: "Preciso de cadastro para usar?",
-      answer: "Não, o acesso ao suporte é imediato e sem necessidade de cadastro.",
+      question: "3. Como funciona o recebimento em USDT?",
+      answer:
+        "Ao realizar uma venda, o comerciante gera um QR Code ou link de pagamento via aplicativo, sistema ou maquininha. O cliente faz o pagamento em USDT, e o valor é recebido instantaneamente na carteira digital do comerciante vinculada à Colossus Crypto.",
     },
     {
-      question: "Como usar o WhatsApp Colossus?",
-      answer: "Basta clicar no botão 'Help Me' para abrir o suporte via WhatsApp.",
+      question: "4. Quais são as taxas cobradas pela Colossus Crypto?",
+      answer:
+        "A Colossus Crypto cobra uma taxa fixa de 1.95% por transação, inferior à média praticada por operadoras tradicionais de cartão de crédito.",
     },
     {
-      question: "O suporte está disponível 24/7?",
-      answer: "Nosso suporte funciona das 8h às 20h, de segunda a sábado.",
+      question: "5. Preciso entender de criptomoedas para usar a plataforma?",
+      answer:
+        "Não. A plataforma foi projetada para ser intuitiva e simples, com interface amigável e suporte dedicado, mesmo para quem nunca utilizou criptomoedas antes.",
     },
     {
-      question: "Preciso de cadastro para usar?",
-      answer: "Não, o acesso ao suporte é imediato e sem necessidade de cadastro.",
+      question: "6. Onde posso usar a Colossus Crypto?",
+      answer:
+        "A solução pode ser utilizada em lojas físicas, e-commerces, serviços delivery ou autônomos, através de: \n• Aplicativo mobile; \n• Sistema web; \n• Maquininha de pagamento compatível.",
     },
     {
-      question: "Como usar o WhatsApp Colossus?",
-      answer: "Basta clicar no botão 'Help Me' para abrir o suporte via WhatsApp.",
+      question: "7. É seguro receber pagamentos em USDT?",
+      answer:
+        "Sim. O USDT é uma stablecoin lastreada em dólar, com estabilidade e liquidez elevadas. Além disso, a Colossus Crypto adota tecnologias de segurança, criptografia e autenticação para garantir total proteção nas transações.",
     },
     {
-      question: "O suporte está disponível 24/7?",
-      answer: "Nosso suporte funciona das 8h às 20h, de segunda a sábado.",
+      question:
+        "8. Quais os benefícios de aceitar criptomoedas no meu negócio?",
+      answer:
+        "Além da visibilidade como empresa moderna, os comerciantes se beneficiam com: \n • Taxas menores; \n• Liquidação instantânea; \n• Acesso a um novo perfil de consumidores; \n• Isenção de burocracias bancárias tradicionais.",
     },
+
     {
-      question: "Preciso de cadastro para usar?",
-      answer: "Não, o acesso ao suporte é imediato e sem necessidade de cadastro.",
+      question: "9. Preciso de cadastro para usar?",
+      answer:
+        "Baixe o app, realize seu cadastro junto a um consultor da Colossus Crypto e, após verificação, sua empresa já estará pronta para aceitar pagamentos em USDT.",
     },
   ];
-  
 
   useEffect(() => {}, []);
 
@@ -104,22 +111,26 @@ export default function supportScren() {
             <LogoSvg width={wp(45)} height={hp(15)} />
           </S.cardLogo>
 
-          <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+          <S.Card>
             <S.InfoBox>
-              <Wblogo width={wp(20)} height={hp(10)} />
+              <Wblogo width={wp(15)} height={hp(10)} />
               <S.Label>WHATSAPP COLOSSUS</S.Label>
               <S.LoginButton onPress={() => openWhatsApp()}>
                 <S.ButtonText>Help Me</S.ButtonText>
               </S.LoginButton>
             </S.InfoBox>
-            {faqData.map((item, index) => (
-            <AccordionItem
-              key={index}
-              question={item.question}
-              answer={item.answer}
-              />
-            ))}
-          </ScrollView>
+            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+              <S.FaqBox>
+                {faqData.map((item, index) => (
+                  <AccordionItem
+                    key={index}
+                    question={item.question}
+                    answer={item.answer}
+                  />
+                ))}
+              </S.FaqBox>
+            </ScrollView>
+          </S.Card>
         </S.SafeArea>
       </S.Background>
     </S.Container>

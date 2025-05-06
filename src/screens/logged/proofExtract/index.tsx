@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import {
   useFocusEffect,
@@ -14,6 +14,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface invoiceData {
   data: {
@@ -27,10 +28,18 @@ interface invoiceData {
 
 export default function proofExtract() {
   const route = useRoute();
-
   const navigation = useNavigation();
   const obj: invoiceData = route.params;
   const invoice = obj.data;
+  const [selected, setSelected] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const printerModel = await AsyncStorage.getItem("printerModel");
+      console.log("Modelo salvo:", printerModel);
+      setSelected(printerModel);
+    })();
+  }, []);
 
   const print = async () => {
     ThermalPrinterModule.defaultConfig = {
@@ -90,7 +99,7 @@ export default function proofExtract() {
           `[C]--------------------------------\n` +
           `[L]support@iliketechnology.com.br\n` +
           `[L]support@colossuscrypto.com.br\n`,
-        printerNbrCharactersPerLine: 32,
+        printerNbrCharactersPerLine: selected === "50" ? 32 : 80,
       });
     } catch (err) {
       //error handling

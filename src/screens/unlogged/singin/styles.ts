@@ -56,6 +56,11 @@ export const LoginButton = styled.TouchableOpacity`
 
 export const ResetButton = styled.TouchableOpacity``;
 
+export const RegisterButton = styled.TouchableOpacity`
+  margin-top: 20px;
+  margin-bottom: 20px;
+`;
+
 export const LoginText = styled.Text`
   color: #000;
   font-size: 18px;
