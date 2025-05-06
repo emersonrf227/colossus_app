@@ -118,8 +118,8 @@ export const MenuButtonfunction = styled(TouchableOpacity)`
 `;
 
 export const MenuButton = styled(TouchableOpacity)`
-  width: ${wp(28)}px; /* Ajustado para 3 colunas com espaçamento */
-  height: ${wp(28)}px; /* Botões quadrados */
+  width: ${wp(24)}px; /* Ajustado para 3 colunas com espaçamento */
+  height: ${wp(24)}px; /* Botões quadrados */
   background-color: #00ffcc;
   border-radius: 10px;
   align-items: center;

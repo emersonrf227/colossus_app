@@ -24,7 +24,7 @@ export default function SingIn() {
   const [loading, setLoading] = useState(false);
 
   const openWhatsApp = () => {
-    const phoneNumber = "+5511973223571"; // Substitua com o número desejado
+    const phoneNumber = "+551129089826"; // Substitua com o número desejado
     const message = "Olá, preciso de ajuda!";
     const url = `https://wa.me/${phoneNumber.replace(
       "+",

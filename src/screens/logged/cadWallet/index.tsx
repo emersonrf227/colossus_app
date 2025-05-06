@@ -218,7 +218,7 @@ export default function CadWallet() {
             <>
               <S.walletItsNOk>
                 <S.CardSelectNetwork>
-                  <S.TextNetwork>Select an Network </S.TextNetwork>
+                  <S.TextNetwork>+551129089826an Network </S.TextNetwork>
                   <S.CardNetwork>
                     <S.NetworkButton
                       onPress={() => handleNetworkSelection("polygon")}

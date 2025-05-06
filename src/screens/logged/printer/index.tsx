@@ -11,16 +11,21 @@ import LogoSvg from "@/assets/logov2.svg";
 import * as S from "./styles";
 import { Printer } from "lucide-react-native"; // Importe os ícones
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useToast } from "@/hook/Toast";
 
 export default function SelectPrinterScreen() {
   const navigation = useNavigation();
   const [selected, setSelected] = useState<string | null>(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     (async () => {
       const savedOption = await AsyncStorage.getItem("printerModel");
+
       if (savedOption) {
         setSelected(savedOption);
+      } else {
+        setSelected("50mm");
       }
     })();
   }, []);
@@ -29,9 +34,15 @@ export default function SelectPrinterScreen() {
     try {
       await AsyncStorage.setItem("printerModel", model);
       setSelected(model);
-      Alert.alert("Sucesso", `Modelo ${model} salvo!`);
+      showToast({
+        message: `Model ${model} save!`,
+        type: "success",
+      });
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível salvar a seleção.");
+      showToast({
+        message: `Failed in save model label`,
+        type: "error",
+      });
     }
   };
 
@@ -54,7 +65,7 @@ export default function SelectPrinterScreen() {
           </S.cardLogo>
 
           <S.CardPad>
-            <TitleText>Escolha o modelo da impressora</TitleText>
+            <TitleText>+551129089826Type Label Print</TitleText>
             <S.ButtonGrid>
               <S.MenuButton
                 onPress={() => saveSelection("50mm")}

@@ -33,15 +33,9 @@ export default function proofExtract() {
   const invoice = obj.data;
   const [selected, setSelected] = useState<string | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      const printerModel = await AsyncStorage.getItem("printerModel");
-      console.log("Modelo salvo:", printerModel);
-      setSelected(printerModel);
-    })();
-  }, []);
-
   const print = async () => {
+    const printerModel = await AsyncStorage.getItem("printerModel");
+    setSelected(printerModel);
     ThermalPrinterModule.defaultConfig = {
       ...ThermalPrinterModule.defaultConfig,
       ip: "192.168.100.246",
@@ -50,39 +44,40 @@ export default function proofExtract() {
       timeout: 30000, // in milliseconds (version >= 2.2.0)
     };
 
-    const text =
-      "[C]<img>https://via.placeholder.com/300.jpg</img>\n" +
-      "[L]\n" +
-      "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
-      "[L]\n" +
-      "[C]================================\n" +
-      "[L]\n" +
-      "[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n" +
-      "[L]  + Size : S\n" +
-      "[L]\n" +
-      "[L]<b>AWESOME HAT</b>[R]24.99e\n" +
-      "[L]  + Size : 57/58\n" +
-      "[L]\n" +
-      "[C]--------------------------------\n" +
-      "[R]TOTAL PRICE :[R]34.98e\n" +
-      "[R]TAX :[R]4.23e\n" +
-      "[L]\n" +
-      "[C]================================\n" +
-      "[L]\n" +
-      "[L]<font size='tall'>Customer :</font>\n" +
-      "[L]Raymond DUPONT\n" +
-      "[L]5 rue des girafes\n" +
-      "[L]31547 PERPETES\n" +
-      "[L]Tel : +33801201456\n" +
-      "[L]\n" +
-      "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
-      "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
-      "[L]\n" +
-      "[L]\n" +
-      "[L]\n" +
-      "[L]\n" +
-      "[L]\n";
+    // const text =
+    //   "[C]<img>https://via.placeholder.com/300.jpg</img>\n" +
+    //   "[L]\n" +
+    //   "[C]<u><font size='big'>ORDER N°045</font></u>\n" +
+    //   "[L]\n" +
+    //   "[C]================================\n" +
+    //   "[L]\n" +
+    //   "[L]<b>BEAUTIFUL SHIRT</b>[R]9.99e\n" +
+    //   "[L]  + Size : S\n" +
+    //   "[L]\n" +
+    //   "[L]<b>AWESOME HAT</b>[R]24.99e\n" +
+    //   "[L]  + Size : 57/58\n" +
+    //   "[L]\n" +
+    //   "[C]--------------------------------\n" +
+    //   "[R]TOTAL PRICE :[R]34.98e\n" +
+    //   "[R]TAX :[R]4.23e\n" +
+    //   "[L]\n" +
+    //   "[C]================================\n" +
+    //   "[L]\n" +
+    //   "[L]<font size='tall'>Customer :</font>\n" +
+    //   "[L]Raymond DUPONT\n" +
+    //   "[L]5 rue des girafes\n" +
+    //   "[L]31547 PERPETES\n" +
+    //   "[L]Tel : +33801201456\n" +
+    //   "[L]\n" +
+    //   "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+    //   "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+    //   "[L]\n" +
+    //   "[L]\n" +
+    //   "[L]\n" +
+    //   "[L]\n" +
+    //   "[L]\n";
     try {
+      console.log(printerModel === "50mm" ? 32 : 80);
       await ThermalPrinterModule.printBluetooth({
         payload:
           `[C]Proof Colossus Crypto\n` +
@@ -99,7 +94,7 @@ export default function proofExtract() {
           `[C]--------------------------------\n` +
           `[L]support@iliketechnology.com.br\n` +
           `[L]support@colossuscrypto.com.br\n`,
-        printerNbrCharactersPerLine: selected === "50" ? 32 : 80,
+        printerNbrCharactersPerLine: printerModel === "80mm" ? 47 : 32,
       });
     } catch (err) {
       //error handling
@@ -117,7 +112,12 @@ export default function proofExtract() {
 
   useFocusEffect(
     React.useCallback(() => {
-      print();
+      (async () => {
+        const printerModel = await AsyncStorage.getItem("printerModel");
+        console.log("Modelo salvo:", printerModel);
+        setSelected(printerModel);
+        print();
+      })();
     }, [])
   );
 

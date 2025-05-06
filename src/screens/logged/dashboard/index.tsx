@@ -119,7 +119,7 @@ export default function Dashboard() {
           </S.cardLogo>
 
           <S.CardSelectNetwork>
-            <S.TextNetwork>Select an Network </S.TextNetwork>
+            {/* <S.TextNetwork>Select an Network </S.TextNetwork> */}
             <S.CardNetwork>
               <S.NetworkButton
                 onPress={() => handleNetworkSelection("polygon")}
@@ -129,12 +129,12 @@ export default function Dashboard() {
                   height={selectedNetwork === "polygon" ? wp("14%") : wp(4)}
                 />
               </S.NetworkButton>
-              <S.NetworkButton onPress={() => handleNetworkSelection("bsc")}>
+              {/* <S.NetworkButton onPress={() => handleNetworkSelection("bsc")}>
                 <BscLogo
                   width={selectedNetwork === "bsc" ? wp("14%") : wp(4)}
                   height={selectedNetwork === "bsc" ? wp("14%") : wp(4)}
                 />
-              </S.NetworkButton>
+              </S.NetworkButton> */}
             </S.CardNetwork>
           </S.CardSelectNetwork>
 
