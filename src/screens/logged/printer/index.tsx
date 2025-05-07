@@ -65,7 +65,7 @@ export default function SelectPrinterScreen() {
           </S.cardLogo>
 
           <S.CardPad>
-            <TitleText>+551129089826Type Label Print</TitleText>
+            <TitleText>Type Label Print</TitleText>
             <S.ButtonGrid>
               <S.MenuButton
                 onPress={() => saveSelection("50mm")}
