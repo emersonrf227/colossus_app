@@ -223,7 +223,10 @@ export const walletItsOk = styled.Text`
   width: "100%";
 `;
 
-export const walletItsNOk = styled.Text``;
+export const walletItsNOk = styled.Text`
+  align-items: center;
+  justify-content: center;
+`;
 
 export const ButtonText = styled.Text`
   color: #412659;

@@ -27,7 +27,7 @@ export default function CadWallet() {
   const [selectedNetwork, setSelectedNetwork] = useState("polygon");
   const [wallet, setWallet] = useState("");
   const [loading, setLoading] = useState(false);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(null);
   const [balance, setBalance] = useState(0);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function CadWallet() {
     setLoading(true);
     try {
       const response = await rstruther.get(`saller/wallet`);
-      console.log();
+      console.log("data===>", response.data);
       if (response.status === 200 || response.status || 201) {
         setAddress(response.data.address);
         const balanceRequest = await rstruther.get(
@@ -50,25 +50,14 @@ export default function CadWallet() {
         }
       }
     } catch (error: any) {
-      console.log(error);
-      if (error.response) {
-        showToast({
-          message:
-            error.response.data.message ||
-            "Undefined Error an create forward wallet.",
-          type: "error",
-        });
-      } else if (error.message) {
-        showToast({
-          message: error.message,
-          type: "error",
-        });
-      } else {
-        showToast({
-          message: `Bad Request.`,
-          type: "error",
-        });
-      }
+      // if (error.response) {
+      //   showToast({
+      //     message:
+      //       error.response.data.message ||
+      //       "Undefined Error an create forward wallet.",
+      //     type: "error",
+      //   });
+      // }
     } finally {
       setLoading(false);
     }
@@ -218,7 +207,7 @@ export default function CadWallet() {
             <>
               <S.walletItsNOk>
                 <S.CardSelectNetwork>
-                  <S.TextNetwork>+551129089826an Network </S.TextNetwork>
+                  {/* <S.TextNetwork>Network</S.TextNetwork> */}
                   <S.CardNetwork>
                     <S.NetworkButton
                       onPress={() => handleNetworkSelection("polygon")}
@@ -232,14 +221,14 @@ export default function CadWallet() {
                         }
                       />
                     </S.NetworkButton>
-                    <S.NetworkButton
+                    {/* <S.NetworkButton
                       onPress={() => handleNetworkSelection("bsc")}
                     >
                       <BscLogo
                         width={selectedNetwork === "bsc" ? wp("14%") : wp(4)}
                         height={selectedNetwork === "bsc" ? wp("14%") : wp(4)}
                       />
-                    </S.NetworkButton>
+                    </S.NetworkButton> */}
                   </S.CardNetwork>
                 </S.CardSelectNetwork>
                 <S.CardInput>
@@ -255,11 +244,10 @@ export default function CadWallet() {
                     style={{ flex: 1 }} // Garante que o input ocupa o espaço restante
                   />
                 </S.CardInput>
-
-                <S.FooterButton onPress={() => PutCadWallet()}>
-                  <S.ButtonText>Enter</S.ButtonText>
-                </S.FooterButton>
               </S.walletItsNOk>
+              <S.FooterButton onPress={() => PutCadWallet()}>
+                <S.ButtonText>Enter</S.ButtonText>
+              </S.FooterButton>
             </>
           )}
         </S.SafeArea>

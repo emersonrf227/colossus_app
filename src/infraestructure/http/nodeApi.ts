@@ -7,7 +7,6 @@ import axios, {
 } from "axios";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
-// import { useAuth } from "@/hook/AuthContext"; // Remova esta importação, pois não é usada aqui
 
 const rstruther: AxiosInstance = axios.create({
   baseURL: "https://api.colossuscrypto.com.br/v1/",
@@ -24,50 +23,11 @@ async function getAuthToken(): Promise<string | null> {
 }
 
 async function getAuthRefreshToken(): Promise<string | null> {
+  console.log("refeshtoken");
   const beartoken = await AsyncStorage.getItem("refreshToken");
   return beartoken;
 }
 
-/**
- * Função para fazer refresh do token em caso de 401
- * Tenta obter um novo token de acesso usando o refresh token.
- * Em caso de sucesso, atualiza o AsyncStorage e retorna o novo token.
- * Em caso de falha, limpa os dados de autenticação e lança o erro original.
- */
-async function refreshToken(): Promise<string> {
-  const refresh = await getAuthRefreshToken();
-  if (!refresh) {
-    throw new Error("Refresh token não encontrado."); // Força o tratamento do erro
-  }
-  try {
-    const response: AxiosResponse<{
-      access_token: string;
-      refresh_token: string;
-    }> = await rstruther.post("auth/refresh-token", {
-      refreshToken: refresh,
-    });
-    console.log("refreshToken - Response Status:", response.status);
-    console.log("refreshToken - Response Data:", response.data);
-    if (response.status === 200 || response.status === 201) {
-      await AsyncStorage.setItem("token", response.data.access_token);
-      await AsyncStorage.setItem("refreshToken", response.data.refresh_token);
-      return response.data.access_token;
-    } else {
-      await clearAuthData();
-      throw new Error(
-        `Falha ao atualizar o token: Resposta inesperada - ${response.status}`
-      );
-    }
-  } catch (error: any) {
-    await clearAuthData();
-    console.error("refreshToken - Erro ao atualizar o token:", error);
-    throw error; // Relança o erro para ser capturado no interceptor
-  }
-}
-
-/**
- * Função para limpar os dados de autenticação do AsyncStorage.
- */
 const clearAuthData = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem("token");
@@ -83,7 +43,46 @@ const clearAuthData = async (): Promise<void> => {
   }
 };
 
-// Interceptor para adicionar o token de acesso ao cabeçalho da requisição
+// ✅ Usar instância separada do Axios para evitar loop de interceptores
+async function refreshToken(): Promise<string> {
+  try {
+    const refresh = await getAuthRefreshToken();
+
+    if (!refresh) {
+      throw new Error("Refresh token não encontrado.");
+    }
+
+    console.log("Iniciando refresh");
+
+    const axiosWithoutInterceptor = axios.create({
+      baseURL: "https://api.colossuscrypto.com.br/v1/",
+      timeout: 300000,
+    });
+
+    const response = await axiosWithoutInterceptor.post("auth/refresh-token", {
+      refreshToken: refresh,
+    });
+
+    console.log("Response recebido", response.status);
+
+    if (response?.status === 200 || response?.status === 201) {
+      await AsyncStorage.setItem("token", response.data.access_token);
+      await AsyncStorage.setItem("refreshToken", response.data.refresh_token);
+      return response.data.access_token;
+    } else {
+      await clearAuthData();
+      throw new Error(
+        `Falha ao atualizar o token: Resposta inesperada - ${response.status}`
+      );
+    }
+  } catch (error: any) {
+    await clearAuthData();
+    console.error("refreshToken - Erro ao atualizar o token:", error);
+    throw error;
+  }
+}
+
+// Interceptor para adicionar token às requisições
 rstruther.interceptors.request.use(
   async (config: AxiosRequestConfig): Promise<AxiosRequestConfig> => {
     const token = await getAuthToken();
@@ -98,7 +97,7 @@ rstruther.interceptors.request.use(
   (error: AxiosError): Promise<AxiosError> => Promise.reject(error)
 );
 
-// Interceptor para tratar erros de resposta, especialmente 401 (Não autorizado)
+// Interceptor de resposta (refresh token em caso de 401)
 rstruther.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => response,
   async (error: AxiosError): Promise<any> => {
@@ -108,50 +107,42 @@ rstruther.interceptors.response.use(
     } = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Marca a requisição para evitar repetições infinitas
+      originalRequest._retry = true;
+
       if (!originalRequest._isRefreshing) {
-        // Garante que o refresh token seja chamado apenas uma vez
         originalRequest._isRefreshing = true;
         try {
-          const newToken: string = await refreshToken(); // Aguarda a conclusão da atualização do token
+          const newToken: string = await refreshToken();
           if (newToken) {
-            // Tenta novamente a requisição original com o novo token
             originalRequest.headers = {
               ...originalRequest.headers,
               Authorization: `Bearer ${newToken}`,
             };
-            return rstruther(originalRequest); // Retorna a Promise da nova requisição
+            return rstruther(originalRequest);
           }
         } catch (refreshError: any) {
-          // Trata o erro de refresh token (já limpou o AsyncStorage)
           console.error("Erro ao tentar reautenticar:", refreshError);
-          // Redirecione o usuário para a tela de login ou exiba uma mensagem de erro
-          // **Importante:** Este é o ponto onde você deve lidar com a navegação
-          // Por exemplo, usando navigation.navigate do React Navigation (se estiver em um componente React)
-          // Ou chamando uma função do seu contexto de autenticação, se tiver um.
-          return Promise.reject(refreshError); // Propaga o erro para o código que chamou a requisição original
+          return Promise.reject(refreshError);
         } finally {
           originalRequest._isRefreshing = false;
         }
       } else {
-        // Se outra requisição já estiver tentando o refresh, espera o resultado
         return new Promise((resolve, reject) => {
           const interval = setInterval(() => {
             if (!originalRequest._isRefreshing) {
               clearInterval(interval);
               if (originalRequest.headers.Authorization) {
-                // Se o token foi atualizado, repete a requisição
                 resolve(rstruther(originalRequest));
               } else {
-                // Se o refresh falhou, rejeita com o erro original
                 reject(error);
               }
             }
-          }, 100); // Checa a cada 100ms
+          }, 100);
         });
       }
     }
-    return Promise.reject(error); // Propaga o erro para o código que chamou a requisição original
+
+    return Promise.reject(error);
   }
 );
 
