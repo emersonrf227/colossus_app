@@ -16,6 +16,9 @@ import getAbout from "@/screens/logged/getAbout";
 import supportScren from "@/screens/logged/support";
 import TermsOfUse from "@/screens/logged/termsOfUse";
 import SelectPrinterScreen from "@/screens/logged/printer";
+import SelectNetworks from "@/screens/logged/selectNetwork";
+import SettingsLanguage from "@/screens/logged/settingsLanguage";
+
 const { Navigator, Screen } = createNativeStackNavigator();
 
 export function AppRoutes() {
@@ -37,6 +40,8 @@ export function AppRoutes() {
       <Screen name="ForgetPwd" component={ForgetPwd} />
       <Screen name="TermsOfUse" component={TermsOfUse} />
       <Screen name="SelectPrinterScreen" component={SelectPrinterScreen} />
+      <Screen name="SelectNetworks" component={SelectNetworks} />
+      <Screen name="SettingsLanguage" component={SettingsLanguage} />
     </Navigator>
   );
 }

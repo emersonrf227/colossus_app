@@ -1,140 +1,183 @@
 import styled from "styled-components/native";
-import { Dimensions, TouchableOpacity } from "react-native";
-import { TextInputMask } from "react-native-masked-text";
+import { Platform, StatusBar as RNStatusBar } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { colors } from "../dashboard/styles";
 
-const { width } = Dimensions.get("window");
-
-export const Background = styled.ImageBackground`
-  flex: 1;
-`;
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
 
 export const Container = styled.View`
   flex: 1;
-  /* width: ${wp("100%")};
-  height: ${hp("100%")}; */
-  align-items: center;
-  justify-content: center;
-  background-color: "#000";
+  background-color: ${colors.bgDark};
 `;
 
-export const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  width: ${wp("100%")};
-  height: ${hp("100%")};
-  align-items: center;
+export const Background = styled.ImageBackground`
   flex: 1;
   width: 100%;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 20px;
+  height: 100%;
+`;
+
+export const BackgroundOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(5, 4, 10, 0.65);
+`;
+
+export const SafeArea = styled.SafeAreaView`
+  flex: 1;
+  padding-horizontal: ${wp(5)}px;
+  padding-top: ${STATUSBAR_HEIGHT}px;
 `;
 
 export const Header = styled.View`
-  width: ${wp("100%")};
-  top: 0;
-`;
-//10
-
-export const cardLogo = styled.View`
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("10%")};
+  margin-top: ${hp(1)}px;
 `;
 
 export const BackButton = styled.TouchableOpacity`
-  position: fixed;
-  top: 0;
-  padding: 10px;
-  border-radius: 10px;
-`;
-
-export const BackButtonText = styled.Text`
-  color: #fff;
-  font-size: 35px;
-  font-weight: bold;
-`;
-
-export const CardPad = styled.View`
-  flex-direction: column;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
   align-items: center;
   justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("50%")};
-  top: ${hp("15%")};
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
 `;
 
-export const ButtonContainer = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  width: ${wp("50%")};
+export const HeaderTitle = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 18px;
+  font-weight: 700;
+  margin-left: 14px;
 `;
 
-export const Button = styled(TouchableOpacity)`
-  width: ${wp("19%")};
-  aspect-ratio: 1.1;
-  justify-content: center;
+export const cardLogo = styled.View`
   align-items: center;
-  background-color: #e0e0e0;
-  margin: 4px;
-  border-radius: 10px;
-  border: 2px solid ${({ theme }) => theme.colors.secondary};
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
 `;
 
+export const ScrollContent = styled.ScrollView`
+  flex: 1;
+`;
+
+export const SectionLabel = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: ${hp(1.5)}px;
+  margin-top: ${hp(1)}px;
+`;
+
+// Grid de cards do menu principal
 export const ButtonGrid = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-  width: 100%;
-  padding-horizontal: ${wp(10)}px;
+  justify-content: space-between;
 `;
 
-export const ButtonShutdown = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  width: 100%;
-`;
+interface MenuCardProps {
+  accentColor?: string;
+}
 
-export const MenuButtonfunction = styled(TouchableOpacity)`
-  width: ${wp(60)}px; /* Ajustado para 3 colunas com espaçamento */
-  height: ${wp(18)}px; /* Botões quadrados */
-  background-color: #00ffcc;
-  border-radius: 10px;
+export const MenuCard = styled.TouchableOpacity<MenuCardProps>`
+  width: 31%;
+  aspect-ratio: 1;
+  border-radius: 18px;
   align-items: center;
   justify-content: center;
-  margin: ${wp(2)}px; /* Espaçamento entre os botões */
-  shadow-color: #000;
-  shadow-offset: 0px 2px;
-  shadow-opacity: 0.25;
-  shadow-radius: 3.84px;
-  elevation: 5;
+  margin-bottom: ${hp(1.6)}px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
 `;
 
-export const MenuButton = styled(TouchableOpacity)`
-  width: ${wp(24)}px; /* Ajustado para 3 colunas com espaçamento */
-  height: ${wp(24)}px; /* Botões quadrados */
-  background-color: #00ffcc;
-  border-radius: 10px;
+export const MenuCardIconWrapper = styled.View<MenuCardProps>`
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
   align-items: center;
   justify-content: center;
-  margin: ${wp(2)}px; /* Espaçamento entre os botões */
-  shadow-color: #000;
-  shadow-offset: 0px 2px;
-  shadow-opacity: 0.25;
-  shadow-radius: 3.84px;
-  elevation: 5;
+  margin-bottom: 8px;
+  background-color: ${({ accentColor }) =>
+    accentColor ? `${accentColor}22` : "rgba(108,92,231,0.18)"};
 `;
 
-export const ButtonText = styled.Text`
-  color: #412659; /* Cor do texto dos botões */
-  font-size: ${wp(3)}px;
-  margin-top: ${hp(1)}px;
+export const MenuCardText = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 11.5px;
+  font-weight: 600;
   text-align: center;
+  padding-horizontal: 4px;
+`;
+
+// Card "destaque" (ex: Idioma e Moeda) — ocupa a largura toda, em formato
+// de linha, para se diferenciar dos cards quadrados do grid comum
+export const HighlightCard = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  padding: 16px;
+  border-radius: 18px;
+  margin-bottom: ${hp(1.5)}px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+export const HighlightIconWrapper = styled.View`
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+  background-color: rgba(108, 92, 231, 0.18);
+`;
+
+export const HighlightTextWrapper = styled.View`
+  flex: 1;
+`;
+
+export const HighlightTitle = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 15px;
+  font-weight: 700;
+`;
+
+export const HighlightSubtitle = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 12.5px;
+  margin-top: 2px;
+`;
+
+// Botão de logout — visualmente separado, estilo "destrutivo"
+export const LogoutButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: ${hp(6.5)}px;
+  border-radius: 16px;
+  margin-top: ${hp(1)}px;
+  margin-bottom: ${hp(3)}px;
+  background-color: transparent;
+  border-width: 1.5px;
+  border-color: rgba(255, 107, 107, 0.35);
+`;
+
+export const LogoutButtonText = styled.Text`
+  color: ${colors.danger};
+  font-size: 15px;
+  font-weight: 700;
 `;

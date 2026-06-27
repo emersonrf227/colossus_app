@@ -1,154 +1,186 @@
 import styled from "styled-components/native";
-import { Dimensions, TouchableOpacity } from "react-native";
-import { TextInputMask } from "react-native-masked-text";
+import { LinearGradient } from "expo-linear-gradient";
+import { Platform, StatusBar as RNStatusBar } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get("window");
+// Altura da status bar no Android (no iOS o SafeAreaView já trata sozinho)
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
 
-export const Background = styled.ImageBackground`
-  flex: 1;
-`;
+// Paleta — ajuste para sua marca se quiser
+export const colors = {
+  bgDark: "#0B0E14",
+  primary: "#6C5CE7", // roxo principal
+  primaryDark: "#4834D4",
+  accent: "#00D2D3", // ciano de destaque
+  surface: "rgba(255,255,255,0.06)",
+  surfaceBorder: "rgba(255,255,255,0.10)",
+  danger: "#FF6B6B",
+  textPrimary: "#FFFFFF",
+  textMuted: "rgba(255,255,255,0.55)",
+};
 
 export const Container = styled.View`
   flex: 1;
-  /* width: ${wp("100%")};
-  height: ${hp("100%")}; */
-  align-items: center;
-  justify-content: center;
-  background-color: "#000";
+  background-color: ${colors.bgDark};
 `;
 
-export const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  width: ${wp("100%")};
-  height: ${hp("100%")};
-  align-items: center;
+export const Background = styled.ImageBackground`
   flex: 1;
   width: 100%;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 20px;
+  height: 100%;
+`;
+
+// Overlay escuro por cima do background, para dar contraste com os cards/textos
+export const BackgroundOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(5, 4, 10, 0.65);
+`;
+
+export const SafeArea = styled.SafeAreaView`
+  flex: 1;
+  padding-horizontal: ${wp(5)}px;
+  padding-top: ${STATUSBAR_HEIGHT}px;
 `;
 
 export const Header = styled.View`
-  width: ${wp("100%")};
-  top: 0;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: ${hp(1)}px;
 `;
-//10
+
+export const MenuButton = styled.TouchableOpacity`
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
 
 export const cardLogo = styled.View`
   align-items: center;
-  justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("10%")};
+  margin-top: ${hp(1)}px;
 `;
 
 export const CardSelectNetwork = styled.View`
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("15%")};
-  margin-top: 10px;
+  margin-top: ${hp(2)}px;
 `;
 
 export const CardNetwork = styled.View`
   flex-direction: row;
+  gap: 16px;
+`;
+
+interface NetworkButtonProps {
+  selected?: boolean;
+  disabled?: boolean;
+}
+
+export const NetworkButton = styled.TouchableOpacity<NetworkButtonProps>`
+  width: ${wp(18)}px;
+  height: ${wp(18)}px;
+  border-radius: ${wp(9)}px;
   align-items: center;
   justify-content: center;
-  width: ${wp("100%")};
-  bottom: 10px;
-  margin-top: 20px;
-`;
-
-export const TextNetwork = styled.Text`
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: 12px;
-  margin-top: ${wp("3%")};
-`;
-
-export const NetworkButton = styled(TouchableOpacity)`
-  margin: 0 15px;
-`;
-
-export const MenuButton = styled(TouchableOpacity)`
-  width: 50px;
-  margin-left: 5px;
-  height: 50px;
-  justify-content: center;
-`;
-
-export const MenuIcon = styled.Text`
-  top: 0;
-  margin-left: 10px;
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: 40px;
+  background-color: ${({ selected }) =>
+    selected ? "rgba(108,92,231,0.18)" : "transparent"};
+  border-width: 2px;
+  border-color: ${({ selected }) =>
+    selected ? colors.primary : "transparent"};
+  shadow-color: ${colors.primary};
+  shadow-opacity: ${({ selected }) => (selected ? 0.5 : 0)};
+  shadow-radius: 10px;
+  shadow-offset: 0px 0px;
+  elevation: ${({ selected }) => (selected ? 6 : 0)};
 `;
 
 export const CardPad = styled.View`
-  flex-direction: column;
+  flex: 1;
+  margin-top: ${hp(3)}px;
+  justify-content: flex-end;
+  padding-bottom: ${hp(3)}px;
+`;
+
+export const DisplayWrapper = styled.View`
   align-items: center;
-  justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("60%")};
-  margin: 10px;
+  margin-bottom: ${hp(3)}px;
+`;
+
+export const DisplayCurrencyLabel = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
 `;
 
 export const Display = styled.Text`
-  flex-direction: row;
-  width: 80%;
-  height: 40px;
-  background-color: transparent;
-  border: 2px solid #00ffcc;
-  text-align: center;
-  font-size: 24px;
-  color: #fff;
-
-  justify-content: center;
-
-  margin: 10px 10px;
-  border-radius: 10px;
+  color: ${colors.textPrimary};
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 `;
 
 export const ButtonContainer = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
-  width: ${wp("70%")};
+  justify-content: space-between;
 `;
 
-export const Button = styled(TouchableOpacity)`
-  width: ${wp("19%")};
-  aspect-ratio: 1.1;
-  justify-content: center;
+interface KeyButtonProps {
+  variant?: "default" | "action";
+}
+
+export const Button = styled.TouchableOpacity<KeyButtonProps>`
+  width: 30%;
+  height: ${hp(8)}px;
+  border-radius: 18px;
   align-items: center;
-  background-color: #e0e0e0;
-  margin: 4px;
-  border-radius: 10px;
-  border: 2px solid ${({ theme }) => theme.colors.secondary};
-`;
-
-export const ButtonSend = styled.TouchableOpacity`
-  width: 80%;
-  height: 50px;
-  background-color: #00ffcc;
   justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 255, 204, 0.5);
-  bottom: 40px;
-`;
-
-export const ButtonTextSend = styled.Text`
-  color: #412659;
-  font-size: 18px;
-  font-weight: bold;
+  margin-bottom: ${hp(1.5)}px;
+  background-color: ${({ variant }) =>
+    variant === "action" ? "rgba(255,107,107,0.10)" : colors.surface};
+  border-width: 1px;
+  border-color: ${({ variant }) =>
+    variant === "action" ? "rgba(255,107,107,0.25)" : colors.surfaceBorder};
 `;
 
 export const ButtonText = styled.Text`
+  color: ${colors.textPrimary};
   font-size: 24px;
+  font-weight: 600;
+`;
+
+export const ButtonSend = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: ${hp(7)}px;
+  border-radius: 18px;
+  margin-top: ${hp(1)}px;
+  background-color: ${colors.primary};
+  shadow-color: ${colors.primary};
+  shadow-opacity: 0.4;
+  shadow-radius: 12px;
+  shadow-offset: 0px 6px;
+  elevation: 8;
+`;
+
+export const ButtonTextSend = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 `;

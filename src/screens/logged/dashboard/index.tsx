@@ -1,154 +1,163 @@
 import { StatusBar } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import React, { useState, useCallback, useMemo } from "react";
 import * as S from "./styles";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import LogoSvg from "@/assets/logov2.svg";
-import PolygonLogo from "@/assets/networks/polygon.svg";
-import BscLogo from "@/assets/networks/bsclogo.svg";
-import rstruther from "@/infraestructure/http/nodeApi";
 
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { useToast } from "@/hook/Toast";
-import Loader from "@/components/loader";
+
+// Ícones modernos via lucide-react-native
+// npm install lucide-react-native react-native-svg
+import { Menu, Delete, ArrowRight } from "lucide-react-native";
+import {
+  formatAmount,
+  emptyAmount,
+  resolveCurrency,
+  loadSavedCurrency,
+  CurrencyConfig,
+} from "../../../components/currency";
+
+const KEYPAD_BUTTONS = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "C",
+  "0",
+  "⌫",
+];
 
 export default function Dashboard() {
   const { navigate } = useNavigation();
-  const [displayValue, setDisplayValue] = useState("");
-  const [selectedNetwork, setSelectedNetwork] = useState("polygon");
-  const { showToast } = useToast();
-  const [loading, setLoading] = useState(false);
 
-  const createInvoice = async () => {
-    setLoading(true);
-    try {
-      const obj = {
-        amount: displayValue,
-        network: selectedNetwork,
-        reference: new Date(),
-        token: "usdt",
-        memo: "pay ",
-        split: [],
+  // Moeda configurada pelo usuário (lida do AsyncStorage). Começa com o
+  // default síncrono para já renderizar algo, e é atualizada assim que a
+  // leitura assíncrona termina — e também sempre que a tela ganha foco
+  // (ex: usuário voltou da tela de Idioma e Moeda tendo trocado a moeda).
+  const [currency, setCurrency] = useState<CurrencyConfig>(() =>
+    resolveCurrency(),
+  );
+  const [displayValue, setDisplayValue] = useState(() => emptyAmount(currency));
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      loadSavedCurrency().then((saved) => {
+        if (!isActive) return;
+        setCurrency((prev) => {
+          if (prev.code === saved.code) return prev;
+          // Moeda mudou: reseta o valor digitado para o "vazio" da nova moeda,
+          // já que os decimais/formatação podem ser diferentes.
+          setDisplayValue(emptyAmount(saved));
+          return saved;
+        });
+      });
+
+      return () => {
+        isActive = false;
       };
-      const response = await rstruther.post(`saller/invoice`, obj);
-      console.log("Data Invoice ===>", response.status);
-      if (response.status === 200 || response.status === 201) {
-        await navigate("Invoice", { data: response.data });
+    }, []),
+  );
+
+  const handleKeyPress = useCallback(
+    (value: string) => {
+      if (value === "C") {
+        setDisplayValue(emptyAmount(currency));
+      } else if (value === "⌫") {
+        setDisplayValue((prev) => formatAmount(prev.slice(0, -1), currency));
+      } else {
+        setDisplayValue((prev) => formatAmount(prev + value, currency));
       }
-    } catch (error: any) {
-      if (error?.response?.data?.message) {
-        if (
-          error?.response?.data?.message ===
-          "Forward Wallet not found put an forward wallet in POST v1/saller/wallet."
-        ) {
-          showToast({
-            message: `${error?.response?.data?.message}`,
-            type: "error",
-          });
-          navigate(`CadWallet`);
-          return;
-        }
-      }
-      console.log(error.response.data.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [currency],
+  );
 
-  const handleNetworkSelection = (network: string) => {
-    if (network === "bsc") {
-      alert("Comming song!");
-      return;
-    }
-    setSelectedNetwork(network);
-    alert(network);
-  };
+  const toggleMenu = useCallback(() => {
+    navigate("MenuScreen" as never);
+  }, [navigate]);
 
-  const toggleMenu = () => {
-    navigate("MenuScreen");
-  };
+  const isAmountValid = useMemo(
+    () => displayValue !== emptyAmount(currency),
+    [displayValue, currency],
+  );
 
-  const handleKeyPress = (value: string) => {
-    if (value === "C") {
-      setDisplayValue("");
-    } else if (value === "⌫") {
-      setDisplayValue(formatCurrency(displayValue.slice(0, -1)));
-    } else {
-      setDisplayValue(formatCurrency(displayValue + value));
-    }
-  };
+  // Avança para a tela de seleção de rede, levando o valor digitado e a
+  // moeda escolhida. A tela seguinte guarda isso em memória (via params/state)
+  // até o usuário escolher a rede e confirmar.
+  const goToSelectNetwork = useCallback(() => {
+    if (!isAmountValid) return;
 
-  const formatCurrency = (value: string) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-
-    if (numericValue.length === 0) {
-      return "0.00";
-    }
-    let formattedValue = numericValue;
-    while (formattedValue.length < 3) {
-      formattedValue = "0" + formattedValue;
-    }
-    const integerPart = formattedValue.slice(0, -2);
-    const decimalPart = formattedValue.slice(-2);
-    const formattedIntegerPart = parseInt(integerPart, 10).toString();
-    return `${formattedIntegerPart}.${decimalPart}`;
-  };
-
-  const buttons = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "⌫"];
+    navigate(
+      "SelectNetworks" as never,
+      {
+        amount: displayValue,
+        currencyCode: currency.code,
+      } as never,
+    );
+  }, [isAmountValid, displayValue, currency, navigate]);
 
   return (
     <S.Container>
-      {loading && <Loader />}
       <S.Background source={require("@/assets/background.png")}>
+        <S.BackgroundOverlay />
         <StatusBar
-          barStyle="default"
+          barStyle="light-content"
           backgroundColor="transparent"
           translucent
         />
         <S.SafeArea>
           <S.Header>
-            <S.MenuButton onPress={toggleMenu}>
-              <S.MenuIcon>☰</S.MenuIcon>
+            <S.MenuButton onPress={toggleMenu} activeOpacity={0.7}>
+              <Menu size={24} color="#FFFFFF" strokeWidth={2.2} />
             </S.MenuButton>
           </S.Header>
+
           <S.cardLogo>
             <LogoSvg width={wp(45)} height={hp(15)} />
           </S.cardLogo>
 
-          <S.CardSelectNetwork>
-            {/* <S.TextNetwork>Select an Network </S.TextNetwork> */}
-            <S.CardNetwork>
-              <S.NetworkButton
-                onPress={() => handleNetworkSelection("polygon")}
-              >
-                <PolygonLogo
-                  width={selectedNetwork === "polygon" ? wp("14%") : wp(4)}
-                  height={selectedNetwork === "polygon" ? wp("14%") : wp(4)}
-                />
-              </S.NetworkButton>
-              {/* <S.NetworkButton onPress={() => handleNetworkSelection("bsc")}>
-                <BscLogo
-                  width={selectedNetwork === "bsc" ? wp("14%") : wp(4)}
-                  height={selectedNetwork === "bsc" ? wp("14%") : wp(4)}
-                />
-              </S.NetworkButton> */}
-            </S.CardNetwork>
-          </S.CardSelectNetwork>
-
           <S.CardPad>
-            <S.Display>{displayValue}</S.Display>
+            <S.DisplayWrapper>
+              <S.DisplayCurrencyLabel>{currency.label}</S.DisplayCurrencyLabel>
+              <S.Display>{displayValue}</S.Display>
+            </S.DisplayWrapper>
+
             <S.ButtonContainer>
-              {buttons.map((button) => (
-                <S.Button key={button} onPress={() => handleKeyPress(button)}>
-                  <S.ButtonText>{button}</S.ButtonText>
+              {KEYPAD_BUTTONS.map((button) => (
+                <S.Button
+                  key={button}
+                  variant={
+                    button === "C" || button === "⌫" ? "action" : "default"
+                  }
+                  activeOpacity={0.6}
+                  onPress={() => handleKeyPress(button)}
+                >
+                  {button === "⌫" ? (
+                    <Delete size={22} color="#FFFFFF" strokeWidth={2} />
+                  ) : (
+                    <S.ButtonText>{button}</S.ButtonText>
+                  )}
                 </S.Button>
               ))}
             </S.ButtonContainer>
-            <S.ButtonSend onPress={() => createInvoice()}>
-              <S.ButtonTextSend>Create Invoice</S.ButtonTextSend>
+
+            <S.ButtonSend
+              onPress={goToSelectNetwork}
+              disabled={!isAmountValid}
+              activeOpacity={0.85}
+              style={{ opacity: isAmountValid ? 1 : 0.5 }}
+            >
+              <S.ButtonTextSend>Gerar cobrança</S.ButtonTextSend>
+              <ArrowRight size={18} color="#FFFFFF" strokeWidth={2.2} />
             </S.ButtonSend>
           </S.CardPad>
         </S.SafeArea>
