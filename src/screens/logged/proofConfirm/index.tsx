@@ -65,24 +65,53 @@ export default function ProofConfirm() {
         timeout: 30000,
       };
 
+      const lineWidth = printerModel === "80mm" ? 47 : 32;
+      const divider = "-".repeat(lineWidth);
+      const doubleDivider = "=".repeat(lineWidth);
+
+      const formattedDate = new Date(invoice.updatedAt).toLocaleString(
+        "pt-BR",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        },
+      );
+
       await ThermalPrinterModule.printBluetooth({
         payload:
-          `[C]Proof Colossus Crypto\n` +
-          `[C]--------------------------------\n` +
-          `[L]AMOUNT:[R] ${invoice.amount}USDT\n` +
-          `[L]DATE CONFIRMATION:[R]${invoice.updatedAt}\n` +
-          `[L]RECEIVER: ${invoice.paymentAddress}\n` +
+          // `[C]<img>https://seusite.com.br/logo-recibo.png</img>\n` +
           `[L]\n` +
-          `[C]--------------------------------\n` +
+          `[C]<font size='big'><b>Proof Colossus Crypto</b></font>\n` +
+          `[C]${doubleDivider}\n` +
           `[L]\n` +
-          `[L]REFERENCE: ${invoice.reference}\n` +
-          `[L]TXID : ${invoice.txid}\n` +
+          `[C]<b>PAGAMENTO CONFIRMADO</b>\n` +
+          `[L]\n` +
+          `[C]${divider}\n` +
+          `[L]<b>Valor</b>[R]<b>${invoice.amount} USDT</b>\n` +
+          `[L]Data/Hora[R]${formattedDate}\n` +
+          `[C]${divider}\n` +
+          `[L]\n` +
+          `[L]<b>Destinatário:</b>\n` +
+          `[L]${invoice.paymentAddress}\n` +
+          `[L]\n` +
+          `[L]<b>Referência:</b> ${invoice.reference}\n` +
+          `[L]<b>TXID:</b> ${invoice.txid}\n` +
+          `[L]\n` +
+          `[C]${divider}\n` +
           `[C]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
-          `[L]support@iliketechnology.com.br\n` +
-          `[L]support@colossuscrypto.com.br`,
-        printerNbrCharactersPerLine: printerModel === "80mm" ? 47 : 32,
+          `[L]\n` +
+          `[C]<font size='normal'>Escaneie para ver no Polygonscan</font>\n` +
+          `[C]${doubleDivider}\n` +
+          `[L]\n` +
+          `[C]support@iliketechnology.com.br\n` +
+          `[C]support@colossuscrypto.com.br\n` +
+          `[L]\n` +
+          `[L]\n`,
+        printerNbrCharactersPerLine: lineWidth,
       });
-
       showToast({ message: "Comprovante impresso!", type: "success" });
     } catch (err) {
       console.log(err);

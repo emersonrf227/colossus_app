@@ -19,8 +19,9 @@ export const colors = {
   surface: "rgba(255,255,255,0.06)",
   surfaceBorder: "rgba(255,255,255,0.10)",
   danger: "#FF6B6B",
-  textPrimary: "#FFFFFF",
+  textPrimary: "#ffffff",
   textMuted: "rgba(255,255,255,0.55)",
+  success: "#019057",
 };
 
 export const Container = styled.View`

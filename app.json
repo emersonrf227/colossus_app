@@ -25,6 +25,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000"
       },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAxUkK4ZGIZwZJiQ7kJBXU7iYNMTo7VD2I"
+        }
+      },
+
       "package": "com.emersonrf227.colossuscrypto",
       "versionCode": 1
     },
@@ -37,6 +43,7 @@
         "projectId": "7c563bba-71e1-4d58-aa66-43ddd675fec0"
       }
     },
+
     "plugins": []
   }
 }

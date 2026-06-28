@@ -1,115 +1,310 @@
-import React, { useRef, useState } from "react";
-import { TextInput, Alert } from "react-native";
-import * as S from "./styles";
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+} from "react";
+import { TextInput, StatusBar } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { ArrowLeft, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react-native";
+import * as S from "./styles";
 import LogoSvg from "@/assets/logov2.svg";
 import rstruther from "@/infraestructure/http/nodeApi";
 import { useToast } from "@/hook/Toast";
 import Loader from "@/components/loader";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
+interface RouteParams {
+  email?: string;
+}
+
+const PIN_LENGTH = 6;
 
 export default function PinForget() {
-  const [pin, setPin] = useState(["", "", "", "", "", ""]);
-  const inputs = useRef<TextInput[]>([]);
-  const { navigate } = useNavigation();
+  const [pin, setPin] = useState<string[]>(Array(PIN_LENGTH).fill(""));
+  const inputs = useRef<(TextInput | null)[]>([]);
+
   const [password, setPassword] = useState("");
-  const [cpassword, setcPassword] = useState("");
-  const { showToast } = useToast();
-  const route = useRoute();
-  const navigation = useNavigation();
+  const [cpassword, setCPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showCPassword, setShowCPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  console.log(route);
+  const { navigate, goBack } = useNavigation();
+  const route = useRoute();
+  const { showToast } = useToast();
 
-  const handleChange = (text: string, index: number) => {
-    let newPin = [...pin];
-    if (text.length > 1) {
-      // Se colar, distribui os números nos campos
-      const pastedNumbers = text.slice(0, 6).split("");
-      setPin([...pastedNumbers, ...Array(6 - pastedNumbers.length).fill("")]);
-    } else {
-      newPin[index] = text;
-      setPin(newPin);
+  const email = (route.params as RouteParams | undefined)?.email;
 
-      // Avançar para o próximo campo automaticamente
-      if (text !== "" && index < 5) {
-        inputs.current[index + 1].focus();
-      }
-    }
-  };
-
-  const handleSubmit = async () => {
-    setLoading(true);
-    const routeObj = route.params;
-
-    try {
-      const obj = {
-        email: routeObj.email,
-        passoword: password,
-        cpassword: cpassword,
-        pin: pin.join(""),
-      };
-      console.log(obj);
-      const response = await rstruther.post(`auth/reset-password`, obj);
-      console.log("Data Invoice ===>", response.status);
-      if (response.status === 200 || response.status === 201) {
-        navigate("SingIn");
-      }
-    } catch (error: any) {
+  // Se o usuário cair nessa tela sem ter vindo do fluxo de "Esqueci
+  // senha" (deep link, navegação manual, etc), não há e-mail para
+  // associar o reset — melhor avisar e voltar do que deixar a tela
+  // quebrar tentando usar um valor que não existe.
+  useEffect(() => {
+    if (!email) {
       showToast({
-        message: `${error?.response?.data?.message}`,
+        message: "Sessão de recuperação inválida. Solicite novamente.",
         type: "error",
       });
+      goBack();
+    }
+  }, [email, showToast, goBack]);
+
+  const handlePinChange = useCallback((text: string, index: number) => {
+    if (text.length > 1) {
+      // Colou um valor (ex: PIN inteiro copiado) — distribui nos campos.
+      const pastedDigits = text
+        .replace(/\D/g, "")
+        .slice(0, PIN_LENGTH)
+        .split("");
+      const nextPin = [
+        ...pastedDigits,
+        ...Array(PIN_LENGTH - pastedDigits.length).fill(""),
+      ];
+      setPin(nextPin);
+      const lastFilledIndex = Math.min(pastedDigits.length, PIN_LENGTH - 1);
+      inputs.current[lastFilledIndex]?.focus();
+      return;
+    }
+
+    setPin((prev) => {
+      const next = [...prev];
+      next[index] = text;
+      return next;
+    });
+
+    if (text !== "" && index < PIN_LENGTH - 1) {
+      inputs.current[index + 1]?.focus();
+    }
+  }, []);
+
+  const handlePinKeyPress = useCallback(
+    (event: { nativeEvent: { key: string } }, index: number) => {
+      // Backspace em campo vazio volta o foco para o campo anterior,
+      // permitindo apagar o PIN inteiro navegando para trás.
+      if (
+        event.nativeEvent.key === "Backspace" &&
+        pin[index] === "" &&
+        index > 0
+      ) {
+        inputs.current[index - 1]?.focus();
+      }
+    },
+    [pin],
+  );
+
+  const pinComplete = useMemo(() => pin.every((digit) => digit !== ""), [pin]);
+  const passwordsMatch = password.length > 0 && password === cpassword;
+  const showMismatchWarning = cpassword.length > 0 && !passwordsMatch;
+
+  const canSubmit =
+    pinComplete && password.length >= 6 && passwordsMatch && !loading;
+
+  const handleSubmit = useCallback(async () => {
+    if (!email) return;
+
+    if (!pinComplete) {
+      showToast({ message: "Informe o código de 6 dígitos.", type: "error" });
+      return;
+    }
+    if (password.length < 6) {
+      showToast({
+        message: "A senha deve ter ao menos 6 caracteres.",
+        type: "error",
+      });
+      return;
+    }
+    if (!passwordsMatch) {
+      showToast({ message: "As senhas não coincidem.", type: "error" });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await rstruther.post("auth/reset-password", {
+        email,
+        password,
+        cpassword,
+        pin: pin.join(""),
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        showToast({
+          message: "Senha redefinida com sucesso!",
+          type: "success",
+        });
+        navigate("SingIn" as never);
+      }
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ?? "Não foi possível redefinir a senha.";
+      showToast({ message, type: "error" });
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    email,
+    pin,
+    pinComplete,
+    password,
+    cpassword,
+    passwordsMatch,
+    showToast,
+    navigate,
+  ]);
 
   return (
-    <S.Background source={require("@/assets/background.png")}>
+    <S.Container>
       {loading && <Loader />}
+      <S.Background source={require("@/assets/background.png")}>
+        <S.BackgroundOverlay />
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent
+        />
 
-      <S.Container>
-        <LogoSvg width={200} />
+        <S.SafeArea>
+          <S.Header>
+            <S.BackButton onPress={() => goBack()} activeOpacity={0.7}>
+              <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
+            </S.BackButton>
+          </S.Header>
 
-        <S.Title>Enter with PIN</S.Title>
-        <S.InputContainer>
-          {pin.map((digit, index) => (
-            <S.PinInput
-              key={index}
-              ref={(ref) => (inputs.current[index] = ref!)}
-              keyboardType="numeric"
-              maxLength={1}
-              value={digit}
-              onChangeText={(text) => handleChange(text, index)}
-            />
-          ))}
-        </S.InputContainer>
+          <S.ScrollContent
+            contentContainerStyle={{ flexGrow: 1 }}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            <S.LogoWrapper>
+              <LogoSvg width={wp(36)} height={hp(11)} />
+              <S.Title>Digite o código recebido</S.Title>
+              <S.Subtitle>
+                Enviamos um código de 6 dígitos para{" "}
+                <S.EmailHighlight>{email ?? "seu e-mail"}</S.EmailHighlight>
+              </S.Subtitle>
+            </S.LogoWrapper>
 
-        <S.viewBoxInput>
-          <S.Input
-            placeholder="Enter new password"
-            placeholderTextColor="#ccc"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+            <S.PinRow>
+              {pin.map((digit, index) => (
+                <S.PinBox
+                  key={index}
+                  ref={(ref) => {
+                    inputs.current[index] = ref;
+                  }}
+                  filled={digit !== ""}
+                  keyboardType="numeric"
+                  maxLength={PIN_LENGTH}
+                  value={digit}
+                  onChangeText={(text) => handlePinChange(text, index)}
+                  onKeyPress={(event) => handlePinKeyPress(event, index)}
+                />
+              ))}
+            </S.PinRow>
 
-          <S.Input
-            placeholder="Confirm new password"
-            placeholderTextColor="#ccc"
-            secureTextEntry
-            value={cpassword}
-            onChangeText={setcPassword}
-          />
-        </S.viewBoxInput>
+            <S.SectionLabel>NOVA SENHA</S.SectionLabel>
+            <S.InputGroup>
+              <S.InputWrapper>
+                <S.InputIconWrapper>
+                  <Lock
+                    size={18}
+                    color="#FFFFFF"
+                    strokeWidth={2}
+                    opacity={0.6}
+                  />
+                </S.InputIconWrapper>
+                <S.StyledInput
+                  placeholder="Nova senha"
+                  placeholderTextColor="rgba(255,255,255,0.4)"
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                />
+                <S.PasswordToggle
+                  onPress={() => setShowPassword((p) => !p)}
+                  activeOpacity={0.7}
+                >
+                  {showPassword ? (
+                    <EyeOff
+                      size={18}
+                      color="#FFFFFF"
+                      strokeWidth={2}
+                      opacity={0.6}
+                    />
+                  ) : (
+                    <Eye
+                      size={18}
+                      color="#FFFFFF"
+                      strokeWidth={2}
+                      opacity={0.6}
+                    />
+                  )}
+                </S.PasswordToggle>
+              </S.InputWrapper>
 
-        <S.ConfirmButton onPress={handleSubmit}>
-          <S.ConfirmText>Confirm</S.ConfirmText>
-        </S.ConfirmButton>
-        <S.ResetButton onPress={() => navigation.goBack()}>
-          <S.ForgotPassword>Back</S.ForgotPassword>
-        </S.ResetButton>
-      </S.Container>
-    </S.Background>
+              <S.InputWrapper>
+                <S.InputIconWrapper>
+                  <ShieldCheck
+                    size={18}
+                    color="#FFFFFF"
+                    strokeWidth={2}
+                    opacity={0.6}
+                  />
+                </S.InputIconWrapper>
+                <S.StyledInput
+                  placeholder="Confirme a nova senha"
+                  placeholderTextColor="rgba(255,255,255,0.4)"
+                  secureTextEntry={!showCPassword}
+                  value={cpassword}
+                  onChangeText={setCPassword}
+                />
+                <S.PasswordToggle
+                  onPress={() => setShowCPassword((p) => !p)}
+                  activeOpacity={0.7}
+                >
+                  {showCPassword ? (
+                    <EyeOff
+                      size={18}
+                      color="#FFFFFF"
+                      strokeWidth={2}
+                      opacity={0.6}
+                    />
+                  ) : (
+                    <Eye
+                      size={18}
+                      color="#FFFFFF"
+                      strokeWidth={2}
+                      opacity={0.6}
+                    />
+                  )}
+                </S.PasswordToggle>
+              </S.InputWrapper>
+            </S.InputGroup>
+
+            {showMismatchWarning && (
+              <S.PasswordMismatchText>
+                As senhas não coincidem.
+              </S.PasswordMismatchText>
+            )}
+
+            <S.SubmitButton
+              onPress={handleSubmit}
+              disabled={!canSubmit}
+              activeOpacity={0.85}
+            >
+              <S.SubmitButtonText>Confirmar</S.SubmitButtonText>
+            </S.SubmitButton>
+
+            <S.BackToLoginButton onPress={() => goBack()} activeOpacity={0.7}>
+              <S.BackToLoginText>Voltar</S.BackToLoginText>
+            </S.BackToLoginButton>
+          </S.ScrollContent>
+        </S.SafeArea>
+      </S.Background>
+    </S.Container>
   );
 }

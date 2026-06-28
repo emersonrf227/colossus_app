@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { FlatList, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import {
-  ArrowLeft,
-  Receipt,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  CalendarRange,
-} from "lucide-react-native";
+import { ArrowLeft, Receipt, CalendarRange } from "lucide-react-native";
 import moment from "moment";
 
 import * as S from "./styles";
@@ -98,29 +97,65 @@ export default function Extract() {
   const [loadingPage, setLoadingPage] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
+  // --- Fix do crash "cannot remove child at index N from parent ViewGroup" ---
+  //
+  // Esse erro nativo do Android acontece quando a árvore de views da
+  // FlatList ainda está sendo atualizada (ex: uma resposta de API
+  // chegou e está prestes a chamar setInvoices) no exato momento em que
+  // a navegação começa a desmontar a tela. O React tenta remover/inserir
+  // views nativas numa árvore que o Android já está desmontando por
+  // outro lado, e o ViewGroup nativo quebra.
+  //
+  // Resolvido em duas camadas:
+  // 1. isMountedRef: nenhum setState de uma resposta assíncrona roda
+  //    depois que a tela começou a sair.
+  // 2. isLeavingRef + esconder a FlatList antes do goBack(): garante que
+  //    nenhum re-render da lista aconteça durante a transição de saída.
+  const isMountedRef = useRef(true);
+  const isLeavingRef = useRef(false);
+  const [isLeaving, setIsLeaving] = useState(false);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  const handleGoBack = useCallback(() => {
+    if (isLeavingRef.current) return;
+    isLeavingRef.current = true;
+    // Desmonta a FlatList primeiro (vira null no próximo render) e só
+    // navega para trás depois que esse render terminou de fato — isso
+    // evita que a navegação comece a desmontar a árvore nativa enquanto
+    // a FlatList ainda está presente.
+    setIsLeaving(true);
+    requestAnimationFrame(() => {
+      navigation.goBack();
+    });
+  }, [navigation]);
+
   const buscarFaturas = useCallback(
     async (targetPage: number, resetting = false) => {
+      if (isLeavingRef.current) return;
       if (loadingPage) return;
       if (!resetting && !hasMore) return;
 
       setLoadingPage(true);
       try {
-        console.log({
-          dateFrom: dataInicial,
-          dateTo: dataFinal,
-          ...(statusFilter !== "ALL" && { status: statusFilter }),
-          page: targetPage,
-          limitPerPage: PAGE_SIZE,
-        });
         const response = await rstruther.get("saller/invoice/list", {
           params: {
             dateFrom: dataInicial,
             dateTo: dataFinal,
-            ...(statusFilter !== "ALL" && { status: statusFilter }),
+            status: statusFilter,
             page: targetPage,
             limitPerPage: PAGE_SIZE,
           },
         });
+
+        // A tela pode ter sido desmontada (ou estar saindo) enquanto a
+        // requisição estava em voo — não toca em nenhum state nesse caso.
+        if (!isMountedRef.current || isLeavingRef.current) return;
 
         const newInvoices: Invoice[] = response.data?.invoice ?? [];
         const pagination = response.data?.pagination;
@@ -142,8 +177,10 @@ export default function Extract() {
       } catch (err) {
         console.error("Erro ao buscar invoices:", err);
       } finally {
-        setLoadingPage(false);
-        setInitialLoading(false);
+        if (isMountedRef.current && !isLeavingRef.current) {
+          setLoadingPage(false);
+          setInitialLoading(false);
+        }
       }
     },
     [dataInicial, dataFinal, statusFilter, loadingPage, hasMore],
@@ -152,6 +189,7 @@ export default function Extract() {
   // Sempre que o filtro (período ou status) muda, reseta a paginação e
   // busca a página 1 do zero — em vez de concatenar com a lista anterior.
   useEffect(() => {
+    if (isLeavingRef.current) return;
     setInvoices([]);
     setHasMore(true);
     setInitialLoading(true);
@@ -178,7 +216,7 @@ export default function Extract() {
   }, []);
 
   const handleLoadMore = useCallback(() => {
-    if (!loadingPage && hasMore) {
+    if (!loadingPage && hasMore && !isLeavingRef.current) {
       buscarFaturas(page);
     }
   }, [buscarFaturas, loadingPage, hasMore, page]);
@@ -230,10 +268,7 @@ export default function Extract() {
 
         <S.SafeArea>
           <S.Header>
-            <S.BackButton
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-            >
+            <S.BackButton onPress={handleGoBack} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
             <S.HeaderTitle>Cobranças</S.HeaderTitle>
@@ -307,7 +342,7 @@ export default function Extract() {
             })}
           </S.ChipsRow>
 
-          {initialLoading ? (
+          {isLeaving ? null : initialLoading ? (
             <S.CenteredState>
               <ActivityIndicator color={colors.primary} size="large" />
               <S.StateText>Carregando cobranças...</S.StateText>
@@ -329,6 +364,7 @@ export default function Extract() {
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 24 }}
+              removeClippedSubviews={false}
               ListFooterComponent={
                 loadingPage ? (
                   <S.FooterLoader>

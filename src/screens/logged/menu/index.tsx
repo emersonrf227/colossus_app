@@ -15,6 +15,7 @@ import {
   LogOut,
   ArrowLeft,
   Languages,
+  MapIcon,
 } from "lucide-react-native";
 import * as S from "./styles";
 import { StatusBar } from "react-native";
@@ -85,6 +86,12 @@ const MENU_ITEMS: MenuItem[] = [
     icon: Printer,
     accentColor: "#FD9644",
     route: "SelectPrinterScreen",
+  },
+  {
+    label: "Comunnity",
+    icon: MapIcon,
+    accentColor: "#c3f883",
+    route: "Maps",
   },
 ];
 
