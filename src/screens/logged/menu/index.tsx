@@ -100,7 +100,7 @@ export default function MenuScreen() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  const { navigate, goBack } = navigation;
+  const { navigate, goBack, reset } = navigation;
   const { showToast } = useToast();
 
   // Idioma e moeda salvos pelo usuário — começam com o default síncrono
@@ -145,7 +145,7 @@ export default function MenuScreen() {
         "uuid",
         "typeAuth",
       ]);
-      navigation.navigate("SingIn" as never);
+      reset("SingIn" as never);
     } catch {
       showToast({
         message: t("menu.logoutError"),
