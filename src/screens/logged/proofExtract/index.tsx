@@ -76,49 +76,34 @@ export default function proofExtract() {
 
       await ThermalPrinterModule.printBluetooth({
         payload:
-          `[C]Proof Colossus Crypto\n` +
-          `[C]--------------------------------\n` +
-          `[L]AMOUNT:[R] ${invoice?.amount}USDT\n` +
-          `[L]DATE CONFIRMATION:[R]${invoice?.updatedAt}\n` +
-          `[L]RECEIVER: ${invoice?.paymentAddress}\n` +
           `[L]\n` +
-          `[C]--------------------------------\n` +
           `[L]\n` +
-          `[L]REFERENCE: ${invoice?.reference}\n` +
-          `[L]TXID : ${invoice?.txid}\n` +
-          `[C]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
-          `[C]--------------------------------\n` +
-          `[L]support@iliketechnology.com.br\n` +
-          `[L]support@colossuscrypto.com.br\n`,
-        // `[L]<img>https://iliketechnology.com.br/img/logo.png</img>\n` +
-        // `[L]\n` +
-        // `[L]\n` +
-        // `[C]<b>${t("receipt.print.headerTitle")}</b>\n` +
-        // `[C]${doubleDivider}\n` +
-        // `[L]\n` +
-        // `[C]<b>${t("receipt.print.statusConfirmed")}</b>\n` +
-        // `[L]\n` +
-        // `[C]${divider}\n` +
-        // `[L]<b>${t("receipt.print.amountLabel")}</b>[R]<b>${invoice.amount} USDT</b>\n` +
-        // `[L]${t("receipt.print.dateTimeLabel")}[R]${formattedDate}\n` +
-        // `[C]${divider}\n` +
-        // `[L]\n` +
-        // `[L]<b>${t("receipt.print.recipientLabel")}</b>\n` +
-        // `[L]${invoice.paymentAddress}\n` +
-        // `[L]\n` +
-        // `[L]<b>${t("receipt.print.referenceLabel")}</b> ${invoice.reference}\n` +
-        // `[L]<b>${t("receipt.print.txidLabel")}</b> ${invoice.txid}\n` +
-        // `[L]\n` +
-        // `[C]${divider}\n` +
-        // `[L]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
-        // `[L]\n` +
-        // `[C]<font size='normal'>${t("receipt.print.scanHint")}</font>\n` +
-        // `[C]${doubleDivider}\n` +
-        // `[L]\n` +
-        // `[C]support@iliketechnology.com.br\n` +
-        // `[C]support@colossuscrypto.com.br\n` +
-        // `[L]\n` +
-        // `[L]\n`,
+          `[C]<b>Proof Colossus Crypto</b>\n` +
+          `[C]${doubleDivider}\n` +
+          `[L]\n` +
+          `[C]<b>PAGAMENTO CONFIRMADO</b>\n` +
+          `[L]\n` +
+          `[C]${divider}\n` +
+          `[L]<b>Valor</b>[R]<b>${invoice.amount} USDT</b>\n` +
+          `[L]Data/Hora[R]${formattedDate}\n` +
+          `[C]${divider}\n` +
+          `[L]\n` +
+          `[L]<b>Destinatário:</b>\n` +
+          `[L]${invoice.paymentAddress}\n` +
+          `[L]\n` +
+          `[L]<b>Referência:</b> ${invoice.reference}\n` +
+          `[L]<b>TXID:</b> ${invoice.txid}\n` +
+          `[L]\n` +
+          `[C]${divider}\n` +
+          `[L]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
+          `[L]\n` +
+          `[C]<font size='normal'>Escaneie para ver no Polygonscan</font>\n` +
+          `[C]${doubleDivider}\n` +
+          `[L]\n` +
+          `[C]support@iliketechnology.com.br\n` +
+          `[C]support@colossuscrypto.com.br\n` +
+          `[L]\n` +
+          `[L]\n`,
         printerNbrCharactersPerLine: lineWidth,
       });
     } catch (err) {
