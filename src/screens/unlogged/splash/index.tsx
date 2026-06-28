@@ -1,51 +1,98 @@
+import React, { useEffect, useRef, useState } from "react";
 import { StatusBar } from "react-native";
-import React, { useEffect } from "react";
-import * as S from "./styles";
 import { useNavigation } from "@react-navigation/native";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import LogoSvg from "@/assets/logov2.svg";
-import Loader from "@/components/loader";
+import * as S from "./styles";
+import { useAuth } from "@/hook/AuthContext";
+import rstruther from "@/infraestructure/http/nodeApi";
+
+// Pequeno atraso mínimo só para a animação de loading não "piscar"
+// caso a validação termine quase instantaneamente.
+const MIN_SPLASH_DURATION_MS = 1200;
 
 export default function Splash() {
-  const logoIlike = require("../../../assets/ilikel.png");
-
-  const { navigate } = useNavigation();
   const navigation = useNavigation();
+  const { isRestoringSession } = useAuth();
+  const [statusText, setStatusText] = useState("Iniciando...");
+  const hasNavigatedRef = useRef(false);
 
-  async function viewRoute() {
-    const token = await AsyncStorage.getItem("token");
-    const refreshToken = await AsyncStorage.getItem("refreshToken");
+  useEffect(() => {
+    // Espera o AuthContext terminar de ler o token salvo no AsyncStorage
+    // antes de tentar qualquer validação — sem isso, token ainda seria
+    // null mesmo que exista uma sessão salva.
+    if (isRestoringSession || hasNavigatedRef.current) return;
 
-    console.log("token==>", token);
-    console.log("refreshToken==>", refreshToken);
+    const startedAt = Date.now();
 
-    if (token) {
+    const decideRoute = async () => {
+      const token = await AsyncStorage.getItem("token");
+
+      if (!token) {
+        goToLogin();
+        return;
+      }
+
+      setStatusText("Verificando sua sessão...");
+
+      try {
+        // Chamada leve e real à API. Se o token estiver expirado, o
+        // interceptor de 401 do AuthContext já tenta renovar via refresh
+        // token automaticamente (e, em último caso, o fallback de
+        // re-login salvo) antes desta Promise rejeitar de fato. Se
+        // chegar aqui com sucesso, a sessão está genuinamente válida.
+        await rstruther.get("saller/account/information");
+        goToDashboard();
+      } catch {
+        // Token inválido e o refresh/fallback também não recuperaram a
+        // sessão — não há sessão válida, vai para o login.
+        goToLogin();
+      }
+    };
+
+    const goToDashboard = () =>
+      navigateAfterMinDuration("Dashboard", startedAt);
+    const goToLogin = () => navigateAfterMinDuration("SingIn", startedAt);
+
+    decideRoute();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRestoringSession]);
+
+  const navigateAfterMinDuration = (
+    routeName: "Dashboard" | "SingIn",
+    startedAt: number,
+  ) => {
+    if (hasNavigatedRef.current) return;
+    hasNavigatedRef.current = true;
+
+    const elapsed = Date.now() - startedAt;
+    const remaining = Math.max(0, MIN_SPLASH_DURATION_MS - elapsed);
+
+    setTimeout(() => {
       navigation.reset({
         index: 0,
-        routes: [{ name: "Dashboard" }],
+        routes: [{ name: routeName as never }],
       });
-      return;
-    }
+    }, remaining);
+  };
 
-    console.log("entrando no login");
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "SingIn" }],
-    });
-  }
-  useEffect(() => {
-    setTimeout(function () {
-      viewRoute();
-    }, 2000);
-  }, []);
   return (
     <S.Container>
-      <Loader></Loader>
-      <S.Background source={require("@/assets/background.png")}></S.Background>
+      <S.Background source={require("@/assets/background.png")}>
+        <S.BackgroundOverlay />
+      </S.Background>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
+
+      <S.LoaderWrapper>
+        <S.LoaderAnimation
+          source={require("@/assets/loadcolossus.gif")}
+          resizeMode="contain"
+        />
+        <S.StatusText>{statusText}</S.StatusText>
+      </S.LoaderWrapper>
     </S.Container>
   );
 }
