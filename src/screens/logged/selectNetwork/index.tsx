@@ -33,7 +33,7 @@ export default function SelectNetwork() {
   const currency = resolveCurrency(currencyCode);
   const { showToast } = useToast();
 
-  // Lista de redes vinda da API (mock por enquanto)
+  // Lista de redes vinda da API
   const [networks, setNetworks] = useState<NetworkOption[]>([]);
   const [networksLoading, setNetworksLoading] = useState(true);
   const [networksError, setNetworksError] = useState(false);

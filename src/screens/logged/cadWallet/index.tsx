@@ -1,255 +1,298 @@
-import React, { useEffect, useState } from "react";
-import { Alert, Clipboard, View } from "react-native";
-import * as S from "./styles";
+import React, { useEffect, useState, useCallback } from "react";
+import { Clipboard, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import {
+  ArrowLeft,
+  ClipboardPaste,
+  Copy,
+  ShieldCheck,
+} from "lucide-react-native";
+import { isAddress } from "ethers";
+import QRCode from "react-native-qrcode-svg";
+
+import * as S from "./styles";
 import LogoSvg from "@/assets/logov2.svg";
 import PolygonLogo from "@/assets/networks/polygon.svg";
-import BscLogo from "@/assets/networks/bsclogo.svg";
-import { ClipboardPaste as IClipboardPaste } from "lucide-react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { useToast } from "@/hook/Toast";
-import { isAddress } from "ethers";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import rstruther from "@/infraestructure/http/nodeApi";
-import { StatusBar } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import Loader from "@/components/loader";
-import QRCode from "react-native-qrcode-svg";
+import rstruther from "@/infraestructure/http/nodeApi";
+
+const NETWORK_OPTIONS = [{ key: "polygon", Logo: PolygonLogo, enabled: true }];
 
 export default function CadWallet() {
   const navigation = useNavigation();
   const { navigate } = useNavigation();
-  const [displayValue, setDisplayValue] = useState("");
   const { showToast } = useToast();
+
   const [selectedNetwork, setSelectedNetwork] = useState("polygon");
   const [wallet, setWallet] = useState("");
   const [loading, setLoading] = useState(false);
-  const [address, setAddress] = useState(null);
+
+  // null = ainda não sabemos / carregando.
+  // "" (string vazia) ou null explícito após a busca = sem wallet configurada.
+  // string não-vazia = wallet configurada.
+  const [address, setAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState(0);
+  const [checkingWallet, setCheckingWallet] = useState(true);
 
-  useEffect(() => {
-    getWalletForward();
-  }, []);
-
-  const getWalletForward = async () => {
-    setLoading(true);
+  const getWalletForward = useCallback(async () => {
+    setCheckingWallet(true);
     try {
-      const response = await rstruther.get(`saller/wallet`);
-      console.log("data===>", response.data);
-      if (response.status === 200 || response.status || 201) {
-        setAddress(response.data.address);
-        const balanceRequest = await rstruther.get(
-          `saller/wallet/balance?address=${response.data.address}&currency=usdt&network=polygon`
-        );
+      const response = await rstruther.get("saller/wallet");
 
-        if (balanceRequest.status === 200 || balanceRequest.status === 201) {
-          setBalance(balanceRequest.data.res.amount);
+      if (response.status === 200 || response.status === 201) {
+        const fetchedAddress = response.data?.address;
+        setAddress(fetchedAddress || null);
+
+        if (fetchedAddress) {
+          try {
+            const balanceRequest = await rstruther.get(
+              `saller/wallet/balance?address=${fetchedAddress}&currency=usdt&network=polygon`,
+            );
+            if (
+              balanceRequest.status === 200 ||
+              balanceRequest.status === 201
+            ) {
+              setBalance(balanceRequest.data?.res?.amount ?? 0);
+            }
+          } catch {
+            // Falha ao buscar saldo não deve impedir a exibição do QR/endereço,
+            // só deixa o saldo em 0.
+          }
         }
       }
     } catch (error: any) {
-      // if (error.response) {
-      //   showToast({
-      //     message:
-      //       error.response.data.message ||
-      //       "Undefined Error an create forward wallet.",
-      //     type: "error",
-      //   });
-      // }
-    } finally {
-      setLoading(false);
-    }
-  };
+      const status = error?.response?.status;
 
-  const validateWalletEthAddress = async () => {
-    try {
-      const validationResult = isAddress(wallet);
-      if (validationResult) {
-        return true;
+      // 404 é esperado quando o usuário ainda não configurou uma wallet
+      // forward — nesse caso o formulário deve aparecer normalmente,
+      // sem nenhum toast de erro assustando o usuário.
+      if (status === 404) {
+        setAddress(null);
       } else {
-        return false;
-      }
-    } catch (error) {
-      return false;
-    }
-  };
-
-  const PutCadWallet = async () => {
-    setLoading(true);
-    let valid = false;
-    if (selectedNetwork === "polygon") {
-      valid = await validateWalletEthAddress();
-    }
-
-    if (!valid) {
-      showToast({
-        message: `Address ${selectedNetwork} is invalid.`,
-        type: "error",
-      });
-      setLoading(false);
-
-      return;
-    }
-    try {
-      const data = {
-        network: selectedNetwork,
-        address: wallet,
-      };
-      const response = await rstruther.post(`saller/wallet`, data);
-      if (response.status === 200 || response.status || 201) {
-        showToast({
-          message: `Forward wallet create.`,
-          type: "success",
-        });
-        navigate("Dashboard");
-      }
-    } catch (error: any) {
-      console.log(error);
-      if (error.response) {
         showToast({
           message:
-            error.response.data.message ||
-            "Undefined Error an create forward wallet.",
-          type: "error",
-        });
-      } else if (error.message) {
-        showToast({
-          message: error.message,
-          type: "error",
-        });
-      } else {
-        showToast({
-          message: `Bad Request.`,
+            error?.response?.data?.message ??
+            "Não foi possível verificar sua carteira. Tente novamente.",
           type: "error",
         });
       }
     } finally {
-      setLoading(false);
+      setCheckingWallet(false);
     }
-  };
-
-  const handleNetworkSelection = (network: string) => {
-    if (network === "bsc") {
-      alert("Comming song!");
-      return;
-    }
-    setSelectedNetwork(network);
-    alert(network);
-  };
-
-  const handlePaste = () => {
-    Clipboard.getString()
-      .then((text) => {
-        setWallet(text);
-      })
-      .catch((err) => {
-        console.error("Failed to get clipboard text", err);
-        showToast({ message: "Failed to access clipboard", type: "error" });
-      });
-  };
+  }, [showToast]);
 
   useEffect(() => {
-    console.log("effect");
-  }, []);
+    getWalletForward();
+  }, [getWalletForward]);
+
+  const validateWalletEthAddress = useCallback(async () => {
+    try {
+      return isAddress(wallet);
+    } catch {
+      return false;
+    }
+  }, [wallet]);
+
+  const handleSubmit = useCallback(async () => {
+    setLoading(true);
+    try {
+      let valid = false;
+      if (selectedNetwork === "polygon") {
+        valid = await validateWalletEthAddress();
+      }
+
+      if (!valid) {
+        showToast({
+          message: `Endereço inválido para a rede ${selectedNetwork}.`,
+          type: "error",
+        });
+        return;
+      }
+
+      const response = await rstruther.post("saller/wallet", {
+        network: selectedNetwork,
+        address: wallet,
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        showToast({
+          message: "Carteira de recebimento cadastrada!",
+          type: "success",
+        });
+        navigate("Dashboard" as never);
+      }
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ?? error?.message ?? "Bad Request.";
+      showToast({ message, type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedNetwork, wallet, validateWalletEthAddress, showToast, navigate]);
+
+  const handleNetworkSelection = useCallback(
+    (network: string, enabled: boolean) => {
+      if (!enabled) {
+        showToast({ message: "Em breve!", type: "info" });
+        return;
+      }
+      setSelectedNetwork(network);
+    },
+    [showToast],
+  );
+
+  const handlePaste = useCallback(async () => {
+    try {
+      const text = await Clipboard.getString();
+      setWallet(text);
+    } catch {
+      showToast({
+        message: "Não foi possível acessar a área de transferência",
+        type: "error",
+      });
+    }
+  }, [showToast]);
+
+  const copyAddressToClipboard = useCallback(async () => {
+    if (!address) return;
+    await Clipboard.setString(address);
+    showToast({ message: "Endereço copiado!", type: "success" });
+  }, [address, showToast]);
+
+  const hasWallet = !checkingWallet && !!address;
 
   return (
     <S.Container>
-      {loading && <Loader />}
+      {(loading || checkingWallet) && <Loader />}
 
       <S.Background source={require("@/assets/background.png")}>
+        <S.BackgroundOverlay />
         <StatusBar
-          barStyle="default"
+          barStyle="light-content"
           backgroundColor="transparent"
           translucent
         />
+
         <S.SafeArea>
           <S.Header>
-            <S.BackButton onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={32} color="white" />
+            <S.BackButton
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.7}
+            >
+              <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
+            <S.HeaderTitle>Carteira de Recebimento</S.HeaderTitle>
           </S.Header>
+
           <S.cardLogo>
-            <LogoSvg width={wp(45)} height={hp(15)} />
+            <LogoSvg width={wp(36)} height={hp(10)} />
           </S.cardLogo>
 
-          {address && (
-            <>
-              <S.walletItsOk>
-                <S.QRCodeContainer>
-                  <S.CardQrCode>
-                    <QRCode
-                      value={`${address}`}
-                      size={200}
-                      logoSize={30}
-                      logoBackgroundColor="white"
-                      logoMargin={2}
-                      color="black"
-                      backgroundColor="white"
-                    />
-                  </S.CardQrCode>
+          <S.ScrollContent
+            contentContainerStyle={{ paddingBottom: 32 }}
+            showsVerticalScrollIndicator={false}
+          >
+            {hasWallet ? (
+              <S.WalletConfiguredCard>
+                <S.StatusBadge>
+                  <ShieldCheck size={14} color="#2ECC71" strokeWidth={2.2} />
+                  <S.StatusBadgeText>Carteira configurada</S.StatusBadgeText>
+                </S.StatusBadge>
 
-                  <S.TextWallet> {address}</S.TextWallet>
-                  <S.cardBalance>
-                    <S.TextBalance> {balance} </S.TextBalance>
-                    <S.imageToken
-                      source={require("@/assets/networks/tether.png")}
-                      resizeMode="contain"
-                    />
-                  </S.cardBalance>
-                </S.QRCodeContainer>
-              </S.walletItsOk>
-            </>
-          )}
+                <S.QrCard>
+                  <QRCode
+                    value={String(address)}
+                    size={wp(46)}
+                    logoSize={30}
+                    logoBackgroundColor="white"
+                    logoMargin={2}
+                    color="black"
+                    backgroundColor="white"
+                  />
+                </S.QrCard>
 
-          {address ?? (
-            <>
-              <S.walletItsNOk>
+                <S.AddressCard
+                  onPress={copyAddressToClipboard}
+                  activeOpacity={0.7}
+                >
+                  <S.AddressText numberOfLines={1}>{address}</S.AddressText>
+                  <S.CopyIconWrapper>
+                    <Copy size={16} color="#6C5CE7" strokeWidth={2.2} />
+                  </S.CopyIconWrapper>
+                </S.AddressCard>
+
+                <S.BalanceCard>
+                  <S.TokenIcon
+                    source={require("@/assets/networks/tether.png")}
+                    resizeMode="contain"
+                  />
+                  <S.BalanceValue>{balance}</S.BalanceValue>
+                  <S.BalanceLabel>USDT</S.BalanceLabel>
+                </S.BalanceCard>
+              </S.WalletConfiguredCard>
+            ) : !checkingWallet ? (
+              <>
+                <S.FormSectionLabel>REDE</S.FormSectionLabel>
                 <S.CardSelectNetwork>
-                  {/* <S.TextNetwork>Network</S.TextNetwork> */}
                   <S.CardNetwork>
-                    <S.NetworkButton
-                      onPress={() => handleNetworkSelection("polygon")}
-                    >
-                      <PolygonLogo
-                        width={
-                          selectedNetwork === "polygon" ? wp("14%") : wp(4)
-                        }
-                        height={
-                          selectedNetwork === "polygon" ? wp("14%") : wp(4)
-                        }
-                      />
-                    </S.NetworkButton>
-                    {/* <S.NetworkButton
-                      onPress={() => handleNetworkSelection("bsc")}
-                    >
-                      <BscLogo
-                        width={selectedNetwork === "bsc" ? wp("14%") : wp(4)}
-                        height={selectedNetwork === "bsc" ? wp("14%") : wp(4)}
-                      />
-                    </S.NetworkButton> */}
+                    {NETWORK_OPTIONS.map(({ key, Logo, enabled }) => {
+                      const isSelected = selectedNetwork === key;
+                      return (
+                        <S.NetworkButton
+                          key={key}
+                          selected={isSelected}
+                          activeOpacity={0.75}
+                          onPress={() => handleNetworkSelection(key, enabled)}
+                        >
+                          <Logo
+                            width={isSelected ? wp("10%") : wp(6)}
+                            height={isSelected ? wp("10%") : wp(6)}
+                          />
+                        </S.NetworkButton>
+                      );
+                    })}
                   </S.CardNetwork>
                 </S.CardSelectNetwork>
-                <S.CardInput>
-                  <S.CopyButton
-                    onPress={handlePaste}
-                    style={{ marginRight: 8 }}
-                  >
-                    <IClipboardPaste color="white" size={20} />
-                  </S.CopyButton>
-                  <S.Input
+
+                <S.FormSectionLabel>ENDEREÇO DA CARTEIRA</S.FormSectionLabel>
+                <S.FormIntro>
+                  Os pagamentos recebidos serão automaticamente encaminhados
+                  para este endereço na rede selecionada.
+                </S.FormIntro>
+
+                <S.InputCard>
+                  <S.PasteButton onPress={handlePaste} activeOpacity={0.7}>
+                    <ClipboardPaste
+                      size={18}
+                      color="#6C5CE7"
+                      strokeWidth={2.2}
+                    />
+                  </S.PasteButton>
+                  <S.StyledInput
+                    placeholder="0x..."
+                    placeholderTextColor="rgba(255,255,255,0.35)"
                     value={wallet}
                     onChangeText={setWallet}
-                    style={{ flex: 1 }} // Garante que o input ocupa o espaço restante
+                    autoCapitalize="none"
+                    autoCorrect={false}
                   />
-                </S.CardInput>
-              </S.walletItsNOk>
-              <S.FooterButton onPress={() => PutCadWallet()}>
-                <S.ButtonText>Enter</S.ButtonText>
-              </S.FooterButton>
-            </>
-          )}
+                </S.InputCard>
+
+                <S.SubmitButton
+                  onPress={handleSubmit}
+                  disabled={loading}
+                  activeOpacity={0.85}
+                >
+                  <S.SubmitButtonText>Cadastrar carteira</S.SubmitButtonText>
+                </S.SubmitButton>
+              </>
+            ) : null}
+          </S.ScrollContent>
         </S.SafeArea>
       </S.Background>
     </S.Container>

@@ -1,79 +1,201 @@
 import styled from "styled-components/native";
-import { Dimensions, TouchableOpacity } from "react-native";
-import { TextInputMask } from "react-native-masked-text";
+import { Platform, StatusBar as RNStatusBar } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { colors } from "../dashboard/styles";
 
-const { width } = Dimensions.get("window");
-
-export const Background = styled.ImageBackground`
-  flex: 1;
-`;
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
 
 export const Container = styled.View`
   flex: 1;
-
-  align-items: center;
-  justify-content: center;
-  background-color: "#000";
+  background-color: ${colors.bgDark};
 `;
 
-export const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  width: ${wp("100%")};
-  height: ${hp("100%")};
-  align-items: center;
+export const Background = styled.ImageBackground`
   flex: 1;
   width: 100%;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 20px;
+  height: 100%;
+`;
+
+export const BackgroundOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(5, 4, 10, 0.65);
+`;
+
+export const SafeArea = styled.SafeAreaView`
+  flex: 1;
+  padding-horizontal: ${wp(5)}px;
+  padding-top: ${STATUSBAR_HEIGHT}px;
 `;
 
 export const Header = styled.View`
-  width: ${wp("100%")};
-  top: 0;
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${hp(1)}px;
+`;
+
+export const BackButton = styled.TouchableOpacity`
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+export const HeaderTitle = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 18px;
+  font-weight: 700;
+  margin-left: 14px;
 `;
 
 export const cardLogo = styled.View`
   align-items: center;
-  justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("10%")};
+  margin-top: ${hp(0.5)}px;
 `;
 
-export const BackButton = styled.TouchableOpacity`
-  padding: 10px;
+export const ScrollContent = styled.ScrollView`
+  flex: 1;
 `;
 
-export const CardCenter = styled.View`
+// --- Cabeçalho do perfil: avatar + nome + tipo --------------------------
+
+export const ProfileHeader = styled.View`
+  align-items: center;
+  margin-top: ${hp(1)}px;
+  margin-bottom: ${hp(3)}px;
+`;
+
+export const AvatarCircle = styled.View`
+  width: 76px;
+  height: 76px;
+  border-radius: 38px;
   align-items: center;
   justify-content: center;
-  width: ${wp("100%")};
-  margin-top: ${hp("5")};
+  margin-bottom: 12px;
+  background-color: rgba(108, 92, 231, 0.18);
+  border-width: 1.5px;
+  border-color: ${colors.surfaceBorder};
 `;
 
-export const InfoBox = styled.View`
-  margin-top: ${wp("3%")}px;
-  background-color: white;
-  border-radius: 15px;
-  padding: 20px;
+export const AvatarInitials = styled.Text`
+  color: ${colors.primary};
+  font-size: 26px;
+  font-weight: 700;
 `;
 
-export const FieldWrapper = styled.View`
-  margin-bottom: 15px;
+export const ProfileName = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
 `;
 
-export const Label = styled.Text`
-  font-weight: bold;
-  color: #412659;
-  font-size: ${wp("4%")}px;
+export const ProfileTypeBadge = styled.View`
+  margin-top: 6px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
 `;
 
-export const Value = styled.Text`
-  color: #000;
-  font-size: ${wp("4%")}px;
+export const ProfileTypeBadgeText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+`;
+
+// --- Seções de informação -------------------------------------------------
+
+export const SectionLabel = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: ${hp(1.2)}px;
+  margin-top: ${hp(2)}px;
+`;
+
+export const SectionCard = styled.View`
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+interface FieldRowProps {
+  isLast?: boolean;
+}
+
+export const FieldRow = styled.View<FieldRowProps>`
+  padding: 13px 16px;
+  border-bottom-width: ${({ isLast }) => (isLast ? 0 : 1)}px;
+  border-bottom-color: ${colors.surfaceBorder};
+`;
+
+export const FieldLabel = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+`;
+
+export const FieldValue = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 14.5px;
+  font-weight: 500;
+`;
+
+// --- Estado de erro --------------------------------------------------------
+
+export const CenteredState = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding-bottom: ${hp(10)}px;
+`;
+
+export const ErrorIconWrapper = styled.View`
+  width: 64px;
+  height: 64px;
+  border-radius: 32px;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 107, 107, 0.12);
+`;
+
+export const ErrorText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 14px;
+  text-align: center;
+  padding-horizontal: 30px;
+`;
+
+export const RetryButton = styled.TouchableOpacity`
+  padding-horizontal: 22px;
+  padding-vertical: 11px;
+  border-radius: 14px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+export const RetryButtonText = styled.Text`
+  color: ${colors.textPrimary};
+  font-weight: 600;
 `;

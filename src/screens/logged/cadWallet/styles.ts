@@ -1,258 +1,272 @@
 import styled from "styled-components/native";
-import { Dimensions, TouchableOpacity } from "react-native";
-import { TextInputMask } from "react-native-masked-text";
+import { Platform, StatusBar as RNStatusBar } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { colors } from "../dashboard/styles";
 
-const { width } = Dimensions.get("window");
-
-export const Background = styled.ImageBackground`
-  flex: 1;
-`;
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
 
 export const Container = styled.View`
   flex: 1;
-  /* width: ${wp("100%")};
-  height: ${hp("100%")}; */
-  align-items: center;
-  justify-content: center;
-  background-color: "#000";
+  background-color: ${colors.bgDark};
 `;
 
-export const SafeArea = styled(SafeAreaView)`
-  flex: 1;
-  width: ${wp("100%")};
-  height: ${hp("100%")};
-  align-items: center;
+export const Background = styled.ImageBackground`
   flex: 1;
   width: 100%;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 20px;
+  height: 100%;
+`;
+
+export const BackgroundOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(5, 4, 10, 0.65);
+`;
+
+export const SafeArea = styled.SafeAreaView`
+  flex: 1;
+  padding-horizontal: ${wp(5)}px;
+  padding-top: ${STATUSBAR_HEIGHT}px;
 `;
 
 export const Header = styled.View`
-  width: ${wp("100%")};
-  top: 0;
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${hp(1)}px;
 `;
-//10
+
+export const BackButton = styled.TouchableOpacity`
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+export const HeaderTitle = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 18px;
+  font-weight: 700;
+  margin-left: 14px;
+`;
 
 export const cardLogo = styled.View`
   align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
+
+export const ScrollContent = styled.ScrollView`
+  flex: 1;
+`;
+
+// --- Estado: wallet já configurada (QR + saldo) -------------------------
+
+export const WalletConfiguredCard = styled.View`
+  align-items: center;
+`;
+
+export const StatusBadge = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 14px;
+  margin-bottom: ${hp(2.5)}px;
+  background-color: rgba(46, 204, 113, 0.15);
+`;
+
+export const StatusBadgeText = styled.Text`
+  color: ${colors.success};
+  font-size: 12.5px;
+  font-weight: 700;
+`;
+
+export const QrCard = styled.View`
+  width: ${wp(54)}px;
+  height: ${wp(54)}px;
+  border-radius: 24px;
+  align-items: center;
   justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("10%")};
+  background-color: #ffffff;
+  shadow-color: ${colors.primary};
+  shadow-opacity: 0.25;
+  shadow-radius: 16px;
+  shadow-offset: 0px 8px;
+  elevation: 10;
+  margin-bottom: ${hp(2.5)}px;
+`;
+
+export const AddressCard = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+  margin-bottom: ${hp(2)}px;
+`;
+
+export const AddressText = styled.Text`
+  flex: 1;
+  color: ${colors.textPrimary};
+  font-size: 13px;
+  margin-right: 10px;
+`;
+
+export const CopyIconWrapper = styled.View`
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(108, 92, 231, 0.18);
+`;
+
+export const BalanceCard = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 18px;
+  border-radius: 18px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+export const BalanceLabel = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+`;
+
+export const BalanceValue = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 26px;
+  font-weight: 700;
+`;
+
+export const TokenIcon = styled.Image`
+  width: 26px;
+  height: 26px;
+`;
+
+// --- Estado: wallet não configurada (formulário) -------------------------
+
+export const FormSectionLabel = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  margin-bottom: ${hp(1.5)}px;
+  margin-top: ${hp(1)}px;
+`;
+
+export const FormIntro = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 13.5px;
+  line-height: 20px;
+  margin-bottom: ${hp(2.5)}px;
 `;
 
 export const CardSelectNetwork = styled.View`
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("15%")};
+  margin-bottom: ${hp(2.5)}px;
 `;
 
 export const CardNetwork = styled.View`
   flex-direction: row;
+  gap: 16px;
+`;
+
+interface NetworkButtonProps {
+  selected?: boolean;
+  disabled?: boolean;
+}
+
+export const NetworkButton = styled.TouchableOpacity<NetworkButtonProps>`
+  width: ${wp(18)}px;
+  height: ${wp(18)}px;
+  border-radius: ${wp(9)}px;
   align-items: center;
   justify-content: center;
-  width: ${wp("100%")};
+  background-color: ${({ selected }) =>
+    selected ? "rgba(108,92,231,0.18)" : "transparent"};
+  border-width: 2px;
+  border-color: ${({ selected }) =>
+    selected ? colors.primary : colors.surfaceBorder};
+  shadow-color: ${colors.primary};
+  shadow-opacity: ${({ selected }) => (selected ? 0.5 : 0)};
+  shadow-radius: 10px;
+  elevation: ${({ selected }) => (selected ? 6 : 0)};
 `;
 
-export const MenuButton = styled(TouchableOpacity)`
-  width: 50px;
-  margin-left: 5px;
-  height: 50px;
-  justify-content: center;
-`;
-
-export const MenuIcon = styled.Text`
-  top: 0;
-  margin-left: 10px;
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: 40px;
-`;
-
-export const TextNetwork = styled.Text`
-  color: ${({ theme }) => theme.colors.secondary};
-  font-size: 12px;
-  margin-top: ${wp("3%")};
-`;
-
-export const NetworkButton = styled(TouchableOpacity)`
-  margin: 0 15px;
-`;
-
-export const CardPad = styled.View`
-  flex-direction: column;
+export const InputCard = styled.View`
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  width: ${wp("100%")};
-  height: ${hp("60%")};
-`;
-
-export const Display = styled.Text`
-  font-size: 27px;
-  width: ${wp("100%")};
-  height: ${hp("8%")};
-  text-align: right;
+  height: ${hp(6.5)}px;
+  border-radius: 16px;
+  padding-horizontal: 10px;
+  background-color: ${colors.surface};
   border-width: 1px;
-  border-color: #ccc;
-  padding: 5px;
-  background-color: white;
-  border: 2px solid ${({ theme }) => theme.colors.secondary};
+  border-color: ${colors.surfaceBorder};
+  margin-bottom: ${hp(3)}px;
 `;
 
-export const ButtonContainer = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  width: ${wp("70%")};
-`;
-
-export const CardInput = styled.View`
-  flex-direction: row;
-  align-items: center;
-  width: "100%";
-  padding: 16px;
-`;
-
-export const Input = styled.TextInput`
-  width: ${wp("90%")};
-  height: ${hp("6%")};
-  background-color: #fff;
-  border: 2px solid ${({ theme }) => theme.colors.secondy};
-  border-radius: 8px;
-  margin-bottom: 15px;
-  padding: 10px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  font-size: 11px;
-`;
-
-export const CopyButton = styled(TouchableOpacity)`
-  /* width: ${wp("19%")};
-  aspect-ratio: 1.1; */
-  width: ${wp("10%")};
-  height: ${hp("5%")};
-
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
-
-  border: 1px solid ${({ theme }) => theme.colors.white};
-`;
-
-export const Button = styled(TouchableOpacity)`
-  width: ${wp("19%")};
-  aspect-ratio: 1.1;
-  justify-content: center;
-  align-items: center;
-  background-color: #e0e0e0;
-  margin: 4px;
-  border-radius: 10px;
-  border: 2px solid ${({ theme }) => theme.colors.secondary};
-`;
-
-export const ButtonSend = styled.TouchableOpacity`
-  background-color: ${({ theme }) => theme.colors.primary};
-
-  border: 2px solid ${({ theme }) => theme.colors.secondary};
-  padding: 15px;
-  width: ${wp("90%")};
-  border-radius: 10px;
-  align-items: center;
-  margin-top: ${hp("-5%")};
-  bottom: ${hp("3%")};
-`;
-export const ButtonTextSend = styled.Text`
-  color: #412659;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-export const CardQrCode = styled.View`
-  width: 220px;
-  height: 220px;
+export const PasteButton = styled.TouchableOpacity`
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
   align-items: center;
   justify-content: center;
-  background-color: white;
+  margin-right: 8px;
+  background-color: rgba(108, 92, 231, 0.18);
 `;
 
-export const TextWallet = styled.Text`
-  color: ${({ theme }) => theme.colors.white};
-  font-size: 12px;
-  margin-top: 20px;
-`;
-
-export const TextBalance = styled.Text`
-  color: ${({ theme }) => theme.colors.white};
-  font-size: 25px;
-  margin-top: 20px;
-`;
-
-export const cardBalance = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-export const imageToken = styled.Image`
-  height: 20px;
-  width: 20px;
-  margin-top: 18px;
-  margin-left: 10px;
-`;
-
-export const QRCodeContainer = styled.View`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: ${wp("100%")};
-  margin-top: 50px;
-  height: ${hp("60%")};
-`;
-
-export const walletItsOk = styled.Text`
+export const StyledInput = styled.TextInput`
   flex: 1;
-  justify-content: center;
-  align-items: center;
+  color: ${colors.textPrimary};
+  font-size: 13.5px;
+  height: 100%;
+`;
+
+interface SubmitButtonProps {
+  disabled?: boolean;
+}
+
+export const SubmitButton = styled.TouchableOpacity<SubmitButtonProps>`
   flex-direction: row;
-  width: "100%";
-`;
-
-export const walletItsNOk = styled.Text`
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  height: ${hp(6.8)}px;
+  border-radius: 16px;
+  background-color: ${colors.primary};
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  shadow-color: ${colors.primary};
+  shadow-opacity: 0.4;
+  shadow-radius: 12px;
+  shadow-offset: 0px 6px;
+  elevation: 8;
 `;
 
-export const ButtonText = styled.Text`
-  color: #412659;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-export const FooterButton = styled.TouchableOpacity`
-  background-color: ${({ theme }) => theme.colors.secondary};
-  padding: 15px;
-  border-radius: 10px;
-  align-items: center;
-  border: 2px solid ${({ theme }) => theme.colors.secondary};
-  width: ${wp("90%")};
-  margin-top: ${wp("1%")};
-`;
-
-export const BackButton = styled.TouchableOpacity`
-  position: fixed;
-  top: 0;
-  padding: 10px;
-  border-radius: 10px;
-`;
-
-export const BackButtonText = styled.Text`
-  color: #fff;
-  font-size: 35px;
-  font-weight: bold;
+export const SubmitButtonText = styled.Text`
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
 `;

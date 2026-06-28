@@ -1,74 +1,294 @@
 import styled from "styled-components/native";
-import { Dimensions } from "react-native";
-import { TextInputMask } from "react-native-masked-text";
+import { Platform, StatusBar as RNStatusBar } from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { colors } from "../../logged/dashboard/styles";
 
-const { width: screenWidth } = Dimensions.get("window");
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
+
+export const Container = styled.View`
+  flex: 1;
+  background-color: ${colors.bgDark};
+`;
 
 export const Background = styled.ImageBackground`
   flex: 1;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  height: 100%;
 `;
 
-export const Header = styled.View`
-  width: ${wp("100%")};
+export const BackgroundOverlay = styled.View`
+  position: absolute;
   top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(5, 4, 10, 0.7);
 `;
 
-export const Container = styled.View`
-  width: 90%;
-  padding: 20px;
+export const SafeArea = styled.SafeAreaView`
+  flex: 1;
+  padding-horizontal: ${wp(7)}px;
+  padding-top: ${STATUSBAR_HEIGHT}px;
+`;
+
+// --- Seletor de idioma, canto superior --------------------------------
+
+export const TopBar = styled.View`
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: ${hp(1.5)}px;
+`;
+
+export const LanguagePill = styled.TouchableOpacity`
+  flex-direction: row;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.8);
+  gap: 6px;
+  padding: 8px 14px;
   border-radius: 20px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
 `;
 
-export const Logo = styled.Image`
-  width: 120px;
-  height: 120px;
-  margin-bottom: 20px;
+export const LanguagePillFlag = styled.Text`
+  font-size: 15px;
 `;
 
-export const Input = styled.TextInput`
-  width: 100%;
-  height: 50px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  margin-bottom: 15px;
-  padding: 10px;
-  color: #fff;
+export const LanguagePillText = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 12.5px;
+  font-weight: 600;
 `;
 
-export const LoginButton = styled.TouchableOpacity`
-  width: 100%;
-  height: 50px;
-  background-color: #00ffcc;
-  justify-content: center;
+// --- Conteúdo central ------------------------------------------------------
+
+export const ScrollContent = styled.ScrollView`
+  flex: 1;
+`;
+
+export const LogoWrapper = styled.View`
   align-items: center;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 255, 204, 0.5);
-  margin-bottom: 40px;
+  margin-top: ${hp(4)}px;
+  margin-bottom: ${hp(1)}px;
 `;
 
-export const ResetButton = styled.TouchableOpacity``;
+export const WelcomeTitle = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: ${hp(2)}px;
+`;
 
-export const RegisterButton = styled.TouchableOpacity`
-  margin-top: 20px;
-  margin-bottom: 20px;
+export const WelcomeSubtitle = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 13.5px;
+  text-align: center;
+  margin-top: 4px;
+  margin-bottom: ${hp(4)}px;
+`;
+
+// --- Inputs ----------------------------------------------------------------
+
+export const InputGroup = styled.View`
+  gap: 14px;
+  margin-bottom: ${hp(1)}px;
+`;
+
+export const InputWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  height: ${hp(6.5)}px;
+  border-radius: 16px;
+  padding-horizontal: 16px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+export const InputIconWrapper = styled.View`
+  margin-right: 10px;
+`;
+
+export const StyledInput = styled.TextInput`
+  flex: 1;
+  color: ${colors.textPrimary};
+  font-size: 15px;
+  height: 100%;
+`;
+
+export const PasswordToggle = styled.TouchableOpacity`
+  padding: 4px;
+  margin-left: 8px;
+`;
+
+// --- Ações -----------------------------------------------------------------
+
+interface LoginButtonProps {
+  disabled?: boolean;
+}
+
+export const LoginButton = styled.TouchableOpacity<LoginButtonProps>`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: ${hp(6.8)}px;
+  border-radius: 16px;
+  margin-top: ${hp(3)}px;
+  background-color: ${colors.primary};
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  shadow-color: ${colors.primary};
+  shadow-opacity: 0.4;
+  shadow-radius: 14px;
+  shadow-offset: 0px 8px;
+  elevation: 10;
 `;
 
 export const LoginText = styled.Text`
-  color: #000;
-  font-size: 18px;
-  font-weight: bold;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
 `;
 
-export const ForgotPassword = styled.Text`
-  margin-top: 50px;
-  color: #fff;
-  margin-top: 10px;
+export const ForgotPasswordButton = styled.TouchableOpacity`
+  align-self: center;
+  margin-top: ${hp(2.5)}px;
+`;
+
+export const ForgotPasswordText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 13.5px;
+`;
+
+export const DividerRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${hp(4)}px;
+  margin-bottom: ${hp(2.5)}px;
+`;
+
+export const DividerLine = styled.View`
+  flex: 1;
+  height: 1px;
+  background-color: ${colors.surfaceBorder};
+`;
+
+export const DividerText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 12px;
+  margin-horizontal: 12px;
+`;
+
+export const RegisterButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: ${hp(6.5)}px;
+  border-radius: 16px;
+  margin-bottom: ${hp(4)}px;
+  background-color: transparent;
+  border-width: 1.5px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+export const RegisterButtonText = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 15px;
+  font-weight: 600;
+`;
+
+// --- Modal de idioma (bottom sheet) ---------------------------------------
+
+export const ModalOverlay = styled.View`
+  flex: 1;
+  justify-content: flex-end;
+  background-color: rgba(0, 0, 0, 0.55);
+`;
+
+export const ModalBackdropTouchable = styled.TouchableOpacity`
+  flex: 1;
+`;
+
+export const ModalSheet = styled.View`
+  background-color: ${colors.bgDark};
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding: 22px 20px;
+  padding-bottom: ${hp(4)}px;
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+export const ModalHandle = styled.View`
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  align-self: center;
+  margin-bottom: 18px;
+  background-color: ${colors.surfaceBorder};
+`;
+
+export const ModalTitle = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 4px;
+`;
+
+export const ModalSubtitle = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 13px;
+  margin-bottom: ${hp(2)}px;
+`;
+
+export const LanguageOptionsGroup = styled.View`
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
+interface LanguageRowProps {
+  isLast?: boolean;
+}
+
+export const LanguageRow = styled.TouchableOpacity<LanguageRowProps>`
+  flex-direction: row;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom-width: ${({ isLast }) => (isLast ? 0 : 1)}px;
+  border-bottom-color: ${colors.surfaceBorder};
+`;
+
+export const LanguageRowFlag = styled.Text`
+  font-size: 20px;
+  margin-right: 12px;
+  width: 26px;
+`;
+
+export const LanguageRowLabel = styled.Text`
+  flex: 1;
+  color: ${colors.textPrimary};
+  font-size: 15px;
+  font-weight: 500;
+`;
+
+export const CheckCircle = styled.View<{ checked?: boolean }>`
+  width: 22px;
+  height: 22px;
+  border-radius: 11px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ checked }) =>
+    checked ? colors.primary : "transparent"};
+  border-width: 1.5px;
+  border-color: ${({ checked }) =>
+    checked ? colors.primary : colors.surfaceBorder};
 `;

@@ -28,11 +28,7 @@
       "package": "com.emersonrf227.colossuscrypto",
       "versionCode": 1
     },
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
     "web": {
       "favicon": "./assets/favicon.png"
     },
@@ -40,6 +36,7 @@
       "eas": {
         "projectId": "7c563bba-71e1-4d58-aa66-43ddd675fec0"
       }
-    }
+    },
+    "plugins": []
   }
 }
