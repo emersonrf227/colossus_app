@@ -44,8 +44,8 @@ export const cardLogo = styled.View`
 `;
 
 export const ImgGig = styled.Image`
-  width: 300px;
-  height: 300px;
+  width: 220px;
+  height: 220px;
 `;
 
 export const LoaderOverlay = styled.View`

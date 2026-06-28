@@ -36,7 +36,7 @@ const STORAGE_KEY_LANGUAGE = "appLanguage";
 export default function SingIn() {
   const { signIn } = useAuth();
   const { showToast } = useToast();
-  const { navigate } = useNavigation();
+  const { navigate, reset } = useNavigation();
   const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [identifier, setIdentifier] = useState("");
@@ -107,7 +107,10 @@ export default function SingIn() {
         return;
       }
 
-      navigate("Dashboard" as never);
+      reset({
+        index: 0,
+        routes: [{ name: "Dashboard" as never }],
+      });
     } catch {
       showToast({
         message: "Erro inesperado. Tente novamente.",
