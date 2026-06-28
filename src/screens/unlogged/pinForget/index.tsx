@@ -17,6 +17,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useTranslation } from "react-i18next";
 
 interface RouteParams {
   email?: string;
@@ -27,6 +28,7 @@ const PIN_LENGTH = 6;
 export default function PinForget() {
   const [pin, setPin] = useState<string[]>(Array(PIN_LENGTH).fill(""));
   const inputs = useRef<(TextInput | null)[]>([]);
+  const { t } = useTranslation();
 
   const [password, setPassword] = useState("");
   const [cpassword, setCPassword] = useState("");
@@ -182,9 +184,9 @@ export default function PinForget() {
           >
             <S.LogoWrapper>
               <LogoSvg width={wp(36)} height={hp(11)} />
-              <S.Title>Digite o código recebido</S.Title>
+              <S.Title>{t("pinforger.title")}</S.Title>
               <S.Subtitle>
-                Enviamos um código de 6 dígitos para{" "}
+                {t("pinforger.subtitle")}{" "}
                 <S.EmailHighlight>{email ?? "seu e-mail"}</S.EmailHighlight>
               </S.Subtitle>
             </S.LogoWrapper>
@@ -206,7 +208,7 @@ export default function PinForget() {
               ))}
             </S.PinRow>
 
-            <S.SectionLabel>NOVA SENHA</S.SectionLabel>
+            <S.SectionLabel>{t("pinforger.label_new_pass")}</S.SectionLabel>
             <S.InputGroup>
               <S.InputWrapper>
                 <S.InputIconWrapper>
@@ -218,7 +220,7 @@ export default function PinForget() {
                   />
                 </S.InputIconWrapper>
                 <S.StyledInput
-                  placeholder="Nova senha"
+                  placeholder={t("pinforger.inew")}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   secureTextEntry={!showPassword}
                   value={password}
@@ -256,7 +258,7 @@ export default function PinForget() {
                   />
                 </S.InputIconWrapper>
                 <S.StyledInput
-                  placeholder="Confirme a nova senha"
+                  placeholder={t("pinforger.cnew")}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   secureTextEntry={!showCPassword}
                   value={cpassword}
@@ -296,11 +298,11 @@ export default function PinForget() {
               disabled={!canSubmit}
               activeOpacity={0.85}
             >
-              <S.SubmitButtonText>Confirmar</S.SubmitButtonText>
+              <S.SubmitButtonText>{t("pinforger.bconfirm")}</S.SubmitButtonText>
             </S.SubmitButton>
 
             <S.BackToLoginButton onPress={() => goBack()} activeOpacity={0.7}>
-              <S.BackToLoginText>Voltar</S.BackToLoginText>
+              <S.BackToLoginText>{t("pinforger.breturn")}</S.BackToLoginText>
             </S.BackToLoginButton>
           </S.ScrollContent>
         </S.SafeArea>

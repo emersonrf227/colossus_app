@@ -26,6 +26,8 @@ import {
   loadSavedLanguage,
 } from "../../../components/language";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from "@/i18n";
+import { useTranslation } from "react-i18next";
 
 const WHATSAPP_NUMBER = "+551129089826";
 const WHATSAPP_MESSAGE = "Olá, preciso de ajuda!";
@@ -35,7 +37,7 @@ export default function SingIn() {
   const { signIn } = useAuth();
   const { showToast } = useToast();
   const { navigate } = useNavigation();
-
+  const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [identifier, setIdentifier] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -50,6 +52,8 @@ export default function SingIn() {
 
   const handleSelectLanguage = useCallback(async (code: LanguageCode) => {
     setLanguage(resolveLanguage(code));
+    await i18n.changeLanguage(code);
+
     setLanguageModalVisible(false);
     try {
       await AsyncStorage.setItem(STORAGE_KEY_LANGUAGE, code);
@@ -143,10 +147,8 @@ export default function SingIn() {
           >
             <S.LogoWrapper>
               <LogoSvg width={wp(42)} height={hp(13)} />
-              <S.WelcomeTitle>Bem-vindo de volta</S.WelcomeTitle>
-              <S.WelcomeSubtitle>
-                Entre com sua conta para continuar
-              </S.WelcomeSubtitle>
+              <S.WelcomeTitle> {t("login.welcome")}</S.WelcomeTitle>
+              <S.WelcomeSubtitle>{t("login.subtitle")}</S.WelcomeSubtitle>
             </S.LogoWrapper>
 
             <S.InputGroup>
@@ -160,7 +162,7 @@ export default function SingIn() {
                   />
                 </S.InputIconWrapper>
                 <S.StyledInput
-                  placeholder="Usuário"
+                  placeholder={t("login.user")}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   value={identifier}
                   onChangeText={setIdentifier}
@@ -179,7 +181,7 @@ export default function SingIn() {
                   />
                 </S.InputIconWrapper>
                 <S.StyledInput
-                  placeholder="Senha"
+                  placeholder={t("login.password")}
                   placeholderTextColor="rgba(255,255,255,0.4)"
                   secureTextEntry={!showPassword}
                   value={password}
@@ -214,25 +216,30 @@ export default function SingIn() {
               activeOpacity={0.85}
             >
               <LogIn size={18} color="#FFFFFF" strokeWidth={2.2} />
-              <S.LoginText>Entrar</S.LoginText>
+              <S.LoginText>{t("login.login")}</S.LoginText>
             </S.LoginButton>
 
             <S.ForgotPasswordButton
               onPress={() => navigate("ForgetPwd" as never)}
               activeOpacity={0.7}
             >
-              <S.ForgotPasswordText>Esqueci minha senha</S.ForgotPasswordText>
+              <S.ForgotPasswordText>
+                {t("login.forgotPassword")}
+              </S.ForgotPasswordText>
             </S.ForgotPasswordButton>
 
             <S.DividerRow>
               <S.DividerLine />
-              <S.DividerText>OU</S.DividerText>
+              <S.DividerText> {t("login.or")}</S.DividerText>
               <S.DividerLine />
             </S.DividerRow>
 
             <S.RegisterButton onPress={openWhatsApp} activeOpacity={0.75}>
               <MessageCircle size={18} color="#FFFFFF" strokeWidth={2.2} />
-              <S.RegisterButtonText>Quero me cadastrar</S.RegisterButtonText>
+              <S.RegisterButtonText>
+                {" "}
+                {t("login.register")}
+              </S.RegisterButtonText>
             </S.RegisterButton>
           </S.ScrollContent>
         </S.SafeArea>

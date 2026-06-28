@@ -11,10 +11,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useTranslation } from "react-i18next";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ForgetPwd() {
+  const { t } = useTranslation();
   const [identifier, setIdentifier] = useState("");
   const [loading, setLoading] = useState(false);
   const { navigate, goBack } = useNavigation();
@@ -81,11 +83,8 @@ export default function ForgetPwd() {
           >
             <S.LogoWrapper>
               <LogoSvg width={wp(40)} height={hp(12)} />
-              <S.Title>Esqueceu sua senha?</S.Title>
-              <S.Subtitle>
-                Informe o e-mail cadastrado e enviaremos um código para
-                redefinir sua senha.
-              </S.Subtitle>
+              <S.Title>{t("forget.title")}</S.Title>
+              <S.Subtitle>{t("forget.subtitle")}</S.Subtitle>
             </S.LogoWrapper>
 
             <S.InputWrapper>
@@ -93,7 +92,7 @@ export default function ForgetPwd() {
                 <Mail size={18} color="#FFFFFF" strokeWidth={2} opacity={0.6} />
               </S.InputIconWrapper>
               <S.StyledInput
-                placeholder="Seu e-mail"
+                placeholder={t("forget.iemail")}
                 placeholderTextColor="rgba(255,255,255,0.4)"
                 value={identifier}
                 onChangeText={(text) =>
@@ -111,7 +110,7 @@ export default function ForgetPwd() {
               activeOpacity={0.85}
             >
               <SendHorizontal size={18} color="#FFFFFF" strokeWidth={2.2} />
-              <S.SubmitButtonText>Enviar</S.SubmitButtonText>
+              <S.SubmitButtonText>{t("forget.send")}</S.SubmitButtonText>
             </S.SubmitButton>
 
             <S.BackToLoginButton
@@ -119,8 +118,10 @@ export default function ForgetPwd() {
               activeOpacity={0.7}
             >
               <S.BackToLoginText>
-                Lembrou a senha?{" "}
-                <S.BackToLoginHighlight>Entrar</S.BackToLoginHighlight>
+                {t("forget.know")}{" "}
+                <S.BackToLoginHighlight>
+                  {t("forget.open")}
+                </S.BackToLoginHighlight>
               </S.BackToLoginText>
             </S.BackToLoginButton>
           </S.ScrollContent>

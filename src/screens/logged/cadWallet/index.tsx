@@ -20,11 +20,14 @@ import {
 import { useToast } from "@/hook/Toast";
 import Loader from "@/components/loader";
 import rstruther from "@/infraestructure/http/nodeApi";
+import { useTranslation } from "react-i18next";
 
 const NETWORK_OPTIONS = [{ key: "polygon", Logo: PolygonLogo, enabled: true }];
 
 export default function CadWallet() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
+
   const { navigate } = useNavigation();
   const { showToast } = useToast();
 
@@ -186,7 +189,7 @@ export default function CadWallet() {
             >
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Carteira de Recebimento</S.HeaderTitle>
+            <S.HeaderTitle> {t("cadwallet.title")}</S.HeaderTitle>
           </S.Header>
 
           <S.cardLogo>
@@ -201,7 +204,10 @@ export default function CadWallet() {
               <S.WalletConfiguredCard>
                 <S.StatusBadge>
                   <ShieldCheck size={14} color="#2ECC71" strokeWidth={2.2} />
-                  <S.StatusBadgeText>Carteira configurada</S.StatusBadgeText>
+                  <S.StatusBadgeText>
+                    {" "}
+                    {t("cadwallet.configured")}
+                  </S.StatusBadgeText>
                 </S.StatusBadge>
 
                 <S.QrCard>
@@ -237,7 +243,10 @@ export default function CadWallet() {
               </S.WalletConfiguredCard>
             ) : !checkingWallet ? (
               <>
-                <S.FormSectionLabel>REDE</S.FormSectionLabel>
+                <S.FormSectionLabel>
+                  {" "}
+                  {t("cadwallet.network")}
+                </S.FormSectionLabel>
                 <S.CardSelectNetwork>
                   <S.CardNetwork>
                     {NETWORK_OPTIONS.map(({ key, Logo, enabled }) => {
@@ -259,11 +268,11 @@ export default function CadWallet() {
                   </S.CardNetwork>
                 </S.CardSelectNetwork>
 
-                <S.FormSectionLabel>ENDEREÇO DA CARTEIRA</S.FormSectionLabel>
-                <S.FormIntro>
-                  Os pagamentos recebidos serão automaticamente encaminhados
-                  para este endereço na rede selecionada.
-                </S.FormIntro>
+                <S.FormSectionLabel>
+                  {" "}
+                  {t("cadwallet.addressLabel")}
+                </S.FormSectionLabel>
+                <S.FormIntro>{t("cadwallet.addressDescription")}</S.FormIntro>
 
                 <S.InputCard>
                   <S.PasteButton onPress={handlePaste} activeOpacity={0.7}>
@@ -288,7 +297,10 @@ export default function CadWallet() {
                   disabled={loading}
                   activeOpacity={0.85}
                 >
-                  <S.SubmitButtonText>Cadastrar carteira</S.SubmitButtonText>
+                  <S.SubmitButtonText>
+                    {" "}
+                    {t("cadwallet.registerWallet")}
+                  </S.SubmitButtonText>
                 </S.SubmitButton>
               </>
             ) : null}

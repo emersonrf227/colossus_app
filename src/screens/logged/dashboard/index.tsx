@@ -3,14 +3,10 @@ import React, { useState, useCallback, useMemo } from "react";
 import * as S from "./styles";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import LogoSvg from "@/assets/logov2.svg";
-
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
-// Ícones modernos via lucide-react-native
-// npm install lucide-react-native react-native-svg
 import { Menu, Delete, ArrowRight } from "lucide-react-native";
 import {
   formatAmount,
@@ -19,6 +15,7 @@ import {
   loadSavedCurrency,
   CurrencyConfig,
 } from "../../../components/currency";
+import { useTranslation } from "react-i18next";
 
 const KEYPAD_BUTTONS = [
   "1",
@@ -36,6 +33,8 @@ const KEYPAD_BUTTONS = [
 ];
 
 export default function Dashboard() {
+  const { t } = useTranslation();
+
   const { navigate } = useNavigation();
 
   // Moeda configurada pelo usuário (lida do AsyncStorage). Começa com o
@@ -156,7 +155,9 @@ export default function Dashboard() {
               activeOpacity={0.85}
               style={{ opacity: isAmountValid ? 1 : 0.5 }}
             >
-              <S.ButtonTextSend>Gerar cobrança</S.ButtonTextSend>
+              <S.ButtonTextSend>
+                {t("dashboard.generateCharge")}
+              </S.ButtonTextSend>
               <ArrowRight size={18} color="#FFFFFF" strokeWidth={2.2} />
             </S.ButtonSend>
           </S.CardPad>

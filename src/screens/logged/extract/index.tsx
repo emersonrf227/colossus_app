@@ -11,7 +11,6 @@ import { ArrowLeft, Receipt, CalendarRange } from "lucide-react-native";
 import moment from "moment";
 
 import * as S from "./styles";
-import Loader from "@/components/loader";
 import rstruther from "@/infraestructure/http/nodeApi";
 import {
   widthPercentageToDP as wp,
@@ -20,6 +19,7 @@ import {
 import LogoSvg from "@/assets/logov2.svg";
 import DatePickerModal from "@/components/datapicker";
 import { colors } from "../dashboard/styles";
+import { useTranslation } from "react-i18next";
 
 interface Invoice {
   id: string | number;
@@ -76,6 +76,7 @@ function statusMeta(status: string) {
 const PAGE_SIZE = 10;
 
 export default function Extract() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { navigate } = useNavigation();
 
@@ -235,7 +236,7 @@ export default function Extract() {
             <S.InvoiceMeta>
               {item.confirmDate
                 ? moment(item.confirmDate).format("DD/MM/YYYY HH:mm")
-                : "Sem data de confirmação"}
+                : t("extract.noConfirmationDate")}
             </S.InvoiceMeta>
             <S.InvoiceStatusBadge dotColor={meta.color}>
               <S.StatusDot dotColor={meta.color} />
@@ -271,14 +272,14 @@ export default function Extract() {
             <S.BackButton onPress={handleGoBack} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Cobranças</S.HeaderTitle>
+            <S.HeaderTitle> {t("extract.title")}</S.HeaderTitle>
           </S.Header>
 
           <S.cardLogo>
             <LogoSvg width={wp(34)} height={hp(9)} />
           </S.cardLogo>
 
-          <S.SectionLabel>PERÍODO</S.SectionLabel>
+          <S.SectionLabel> {t("extract.period")}</S.SectionLabel>
           <S.ChipsRow>
             {PERIOD_PRESETS.map(({ value, label }) => (
               <S.Chip
@@ -321,7 +322,7 @@ export default function Extract() {
             </S.CustomRangeRow>
           )}
 
-          <S.SectionLabel>STATUS</S.SectionLabel>
+          <S.SectionLabel> {t("extract.status")}</S.SectionLabel>
           <S.ChipsRow>
             {STATUS_OPTIONS.map(({ value, label, color }) => {
               const isSelected = statusFilter === value;
@@ -345,14 +346,12 @@ export default function Extract() {
           {isLeaving ? null : initialLoading ? (
             <S.CenteredState>
               <ActivityIndicator color={colors.primary} size="large" />
-              <S.StateText>Carregando cobranças...</S.StateText>
+              <S.StateText>{t("extract.loading")}</S.StateText>
             </S.CenteredState>
           ) : invoices.length === 0 ? (
             <S.CenteredState>
               <Receipt size={28} color={colors.textMuted} strokeWidth={1.8} />
-              <S.StateText>
-                Nenhuma cobrança encontrada para esse período e status.
-              </S.StateText>
+              <S.StateText>{t("extract.empty")}</S.StateText>
             </S.CenteredState>
           ) : (
             <FlatList

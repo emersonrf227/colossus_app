@@ -4,6 +4,7 @@ import { ThemeProvider } from "styled-components";
 import theme from "./src/theme";
 import { AuthProvider } from "@/hook/AuthContext";
 import { ToastProvider } from "@/hook/Toast";
+import i18n from "i18next";
 
 export default function App() {
   return (

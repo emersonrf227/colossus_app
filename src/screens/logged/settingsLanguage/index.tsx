@@ -15,6 +15,7 @@ import {
   LanguageCode,
   resolveLanguage,
 } from "../../../components/language";
+import i18n from "@/i18n";
 
 const STORAGE_KEY_LANGUAGE = "appLanguage";
 const STORAGE_KEY_CURRENCY = "appCurrency";
@@ -54,6 +55,7 @@ export default function SettingsLanguageCurrency() {
       setSelectedLanguage(code);
       try {
         await AsyncStorage.setItem(STORAGE_KEY_LANGUAGE, code);
+        await i18n.changeLanguage(code);
       } catch {
         showToast({
           message: "Não foi possível salvar o idioma.",
