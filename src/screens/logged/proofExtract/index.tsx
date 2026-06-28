@@ -228,7 +228,7 @@ export default function proofExtract() {
 
               <S.ButtonReturn onPress={handleReturn} activeOpacity={0.7}>
                 <S.ButtonReturnText>
-                  {t("proofExtract.backButton")}
+                  {t("receipt.backButton")}
                 </S.ButtonReturnText>
                 <ArrowRight size={16} color="#FFFFFF" strokeWidth={2.2} />
               </S.ButtonReturn>
