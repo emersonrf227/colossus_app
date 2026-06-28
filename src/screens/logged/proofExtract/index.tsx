@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import React, { useCallback, useState } from "react";
 import {
   useFocusEffect,
   useNavigation,
@@ -13,8 +12,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Check, Printer, ArrowRight } from "lucide-react-native";
+import Loader from "@/components/loader";
 
 interface invoiceData {
   data: {
@@ -32,6 +32,18 @@ export default function proofExtract() {
   const obj: invoiceData = route.params;
   const invoice = obj.data;
   const [selected, setSelected] = useState<string | null>(null);
+  const [printing, setPrinting] = useState(false);
+
+  const handleReturn = useCallback(() => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.navigate("Dashboard" as never);
+    }
+  }, [navigation]);
+  const formattedDate = invoice?.updatedAt
+    ? new Date(invoice.updatedAt).toLocaleString("pt-BR")
+    : "—";
 
   const print = async () => {
     const printerModel = await AsyncStorage.getItem("printerModel");
@@ -118,61 +130,108 @@ export default function proofExtract() {
         setSelected(printerModel);
         print();
       })();
-    }, [])
+    }, []),
   );
+
+  const tornNotches = Array.from({ length: 16 });
 
   return (
     <S.Container>
+      {printing && <Loader />}
       <S.Background source={require("@/assets/background.png")}>
+        <S.BackgroundOverlay />
         <StatusBar
-          barStyle="default"
+          barStyle="light-content"
           backgroundColor="transparent"
           translucent
         />
+
         <S.SafeArea>
-          <S.Header>
-            <S.BackButton onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={32} color="white" />
-            </S.BackButton>
-          </S.Header>
           <S.cardLogo>
-            <LogoSvg width={wp(45)} height={hp(15)} />
+            <LogoSvg width={wp(38)} height={hp(11)} />
           </S.cardLogo>
-          <S.ReceiptContainer>
-            <S.Title>Proof</S.Title>
 
-            <S.DetailRow>
-              <S.DetailColumn>
-                <S.DetailLabel>Amount:</S.DetailLabel>
-                <S.DetailValue>{invoice?.amount} USDT</S.DetailValue>
-              </S.DetailColumn>
-              <S.DetailColumn>
-                <S.DetailLabel>Date Confirmation:</S.DetailLabel>
-                <S.DetailValue>{invoice?.updatedAt}</S.DetailValue>
-              </S.DetailColumn>
-            </S.DetailRow>
+          <S.ScrollContent showsVerticalScrollIndicator={false}>
+            <S.SuccessBadge>
+              <S.SuccessIconCircle>
+                <Check size={30} color="#FFFFFF" strokeWidth={3} />
+              </S.SuccessIconCircle>
+              <S.SuccessTitle>Pagamento confirmado</S.SuccessTitle>
+              <S.SuccessSubtitle>
+                A transação foi validada na blockchain
+              </S.SuccessSubtitle>
+            </S.SuccessBadge>
 
-            <S.DetailColumn>
-              <S.DetailLabel>Receive:</S.DetailLabel>
-              <S.DetailValue>{invoice?.paymentAddress}</S.DetailValue>
-            </S.DetailColumn>
+            <S.ReceiptCard>
+              <S.ReceiptHeader>
+                <S.ReceiptBrand>COLOSSUS CRYPTO</S.ReceiptBrand>
+                <S.ReceiptBrandSubtitle>
+                  Comprovante de pagamento
+                </S.ReceiptBrandSubtitle>
+              </S.ReceiptHeader>
 
-            <S.DetailColumn>
-              <S.DetailLabel>Reference:</S.DetailLabel>
-              <S.DetailValue>{invoice?.reference}</S.DetailValue>
-            </S.DetailColumn>
+              <S.AmountHighlight>
+                <S.AmountHighlightLabel>VALOR RECEBIDO</S.AmountHighlightLabel>
+                <S.AmountHighlightValue>
+                  {invoice.amount} USDT
+                </S.AmountHighlightValue>
+              </S.AmountHighlight>
 
-            <S.DetailColumn>
-              <S.DetailLabel>Txid:</S.DetailLabel>
-              <S.DetailValue>{invoice?.txid}</S.DetailValue>
-            </S.DetailColumn>
+              <S.DottedDivider />
 
-            <S.ButtonContainer>
-              <S.ButtonPrint onPress={() => print()}>
-                <S.ButtonText>Print</S.ButtonText>
+              <S.DetailRow>
+                <S.DetailBlock>
+                  <S.DetailLabel>DATA DA CONFIRMAÇÃO</S.DetailLabel>
+                  <S.DetailValue>{formattedDate}</S.DetailValue>
+                </S.DetailBlock>
+              </S.DetailRow>
+
+              <S.DetailRow>
+                <S.DetailBlock>
+                  <S.DetailLabel>DESTINATÁRIO</S.DetailLabel>
+                  <S.DetailValueMono>
+                    {invoice.paymentAddress}
+                  </S.DetailValueMono>
+                </S.DetailBlock>
+              </S.DetailRow>
+
+              <S.DetailRow>
+                <S.DetailBlock>
+                  <S.DetailLabel>REFERÊNCIA</S.DetailLabel>
+                  <S.DetailValueMono>{invoice.reference}</S.DetailValueMono>
+                </S.DetailBlock>
+              </S.DetailRow>
+
+              <S.DetailRow>
+                <S.DetailBlock>
+                  <S.DetailLabel>TXID</S.DetailLabel>
+                  <S.DetailValueMono>{invoice.txid}</S.DetailValueMono>
+                </S.DetailBlock>
+              </S.DetailRow>
+
+              <S.TornEdgeWrapper>
+                {tornNotches.map((_, index) => (
+                  <S.TornEdgeNotch key={index} />
+                ))}
+              </S.TornEdgeWrapper>
+            </S.ReceiptCard>
+
+            <S.ActionsContainer>
+              <S.ButtonPrint
+                onPress={print}
+                disabled={printing}
+                activeOpacity={0.85}
+              >
+                <Printer size={18} color="#FFFFFF" strokeWidth={2.2} />
+                <S.ButtonText>Imprimir comprovante</S.ButtonText>
               </S.ButtonPrint>
-            </S.ButtonContainer>
-          </S.ReceiptContainer>
+
+              <S.ButtonReturn onPress={handleReturn} activeOpacity={0.7}>
+                <S.ButtonReturnText>Voltar</S.ButtonReturnText>
+                <ArrowRight size={16} color="#FFFFFF" strokeWidth={2.2} />
+              </S.ButtonReturn>
+            </S.ActionsContainer>
+          </S.ScrollContent>
         </S.SafeArea>
       </S.Background>
     </S.Container>

@@ -3,6 +3,8 @@
 // mas a estrutura (NetworkOption + fetchAvailableNetworks) já está pronta para
 // trocar por uma chamada real — basta substituir o corpo de fetchAvailableNetworks.
 
+import rstruther from "@/infraestructure/http/nodeApi";
+
 export interface NetworkOption {
   network: string;
   icon: string;
@@ -24,6 +26,17 @@ const MOCK_NETWORKS_RESPONSE: NetworkOption[] = [
   },
 ];
 
+export async function getNetworkLabel(): Promise<NetworkOption[]> {
+  try {
+    const { data } = await rstruther.get<NetworkOption[]>("/seller/networks");
+
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar redes:", error);
+    return [];
+  }
+}
+
 // Labels amigáveis para exibição (a API só manda o slug da rede).
 export const NETWORK_LABELS: Record<string, string> = {
   polygon: "Polygon",
@@ -31,9 +44,9 @@ export const NETWORK_LABELS: Record<string, string> = {
   plasma: "Plasma",
 };
 
-export function getNetworkLabel(network: string): string {
-  return NETWORK_LABELS[network] ?? network;
-}
+// export function getNetworkLabel(network: string): string {
+//   return NETWORK_LABELS[network] ?? network;
+// }
 
 /**
  * Busca as redes disponíveis.

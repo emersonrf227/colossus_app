@@ -17,7 +17,6 @@ import Loader from "@/components/loader";
 export default function SingIn() {
   const { signIn, signOut } = useAuth();
   const { showToast } = useToast();
-  const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
   const [identifier, setIdentifier] = useState("");
   const { navigate } = useNavigation();
@@ -28,7 +27,7 @@ export default function SingIn() {
     const message = "Olá, preciso de ajuda!";
     const url = `https://wa.me/${phoneNumber.replace(
       "+",
-      ""
+      "",
     )}?text=${encodeURIComponent(message)}`;
 
     Linking.canOpenURL(url)
