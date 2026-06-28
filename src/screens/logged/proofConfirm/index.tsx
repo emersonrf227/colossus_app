@@ -86,26 +86,26 @@ export default function ProofConfirm() {
         payload:
           // `[C]<img>https://seusite.com.br/logo-recibo.png</img>\n` +
           `[L]\n` +
-          `[C]<font size='big'><b>${t("receipt.print.headerTitle")}</b></font>\n` +
+          `[C]<font size='big'><b>Proof Colossus Crypto</b></font>\n` +
           `[C]${doubleDivider}\n` +
           `[L]\n` +
-          `[C]<b>${t("receipt.print.statusConfirmed")}</b>\n` +
+          `[C]<b>PAGAMENTO CONFIRMADO</b>\n` +
           `[L]\n` +
           `[C]${divider}\n` +
-          `[L]<b>${t("receipt.print.amountLabel")}</b>[R]<b>${invoice.amount} USDT</b>\n` +
-          `[L]${t("receipt.print.dateTimeLabel")}[R]${formattedDate}\n` +
+          `[L]<b>Valor</b>[R]<b>${invoice.amount} USDT</b>\n` +
+          `[L]Data/Hora[R]${formattedDate}\n` +
           `[C]${divider}\n` +
           `[L]\n` +
-          `[L]<b>${t("receipt.print.recipientLabel")}</b>\n` +
+          `[L]<b>Destinatário:</b>\n` +
           `[L]${invoice.paymentAddress}\n` +
           `[L]\n` +
-          `[L]<b>${t("receipt.print.referenceLabel")}</b> ${invoice.reference}\n` +
-          `[L]<b>${t("receipt.print.txidLabel")}</b> ${invoice.txid}\n` +
+          `[L]<b>Referência:</b> ${invoice.reference}\n` +
+          `[L]<b>TXID:</b> ${invoice.txid}\n` +
           `[L]\n` +
           `[C]${divider}\n` +
           `[C]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
           `[L]\n` +
-          `[C]<font size='normal'>${t("receipt.print.scanHint")}</font>\n` +
+          `[C]<font size='normal'>Escaneie para ver no Polygonscan</font>\n` +
           `[C]${doubleDivider}\n` +
           `[L]\n` +
           `[C]support@iliketechnology.com.br\n` +
