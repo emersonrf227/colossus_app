@@ -4,6 +4,7 @@ import * as S from "./styles";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SvgUri } from "react-native-svg";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 
 import rstruther from "@/infraestructure/http/nodeApi";
 import { useToast } from "@/hook/Toast";
@@ -26,6 +27,7 @@ interface RouteParams {
 }
 
 export default function SelectNetwork() {
+  const { t } = useTranslation();
   const { navigate, goBack } = useNavigation();
   const route = useRoute();
   const { amount, currencyCode } = (route.params ?? {}) as RouteParams;
@@ -114,6 +116,7 @@ export default function SelectNetwork() {
       }
     } catch (error: any) {
       if (error instanceof QuoteFetchError) {
+        // Mensagem vem da própria lib/serviço de cotação — exibida como está.
         showToast({ message: error.message, type: "error" });
         return;
       }
@@ -124,20 +127,25 @@ export default function SelectNetwork() {
         message ===
         "Forward Wallet not found put an forward wallet in POST v1/saller/wallet."
       ) {
-        showToast({ message, type: "error" });
+        showToast({
+          message: t("selectNetwork.noForwardWallet"),
+          type: "error",
+        });
         navigate("CadWallet" as never);
         return;
       }
 
       showToast({
-        message:
-          message ?? "Não foi possível criar a cobrança. Tente novamente.",
+        // Se a API mandar uma mensagem própria, ela é exibida como está
+        // (pode vir em qualquer idioma, dependendo do backend).
+        // Sem mensagem da API, cai no texto traduzido padrão.
+        message: message ?? t("selectNetwork.createInvoiceError"),
         type: "error",
       });
     } finally {
       setSubmitting(false);
     }
-  }, [selectedNetwork, amount, currency, navigate, showToast]);
+  }, [selectedNetwork, amount, currency, navigate, showToast, t]);
 
   const canProceed = useMemo(
     () => !!selectedNetwork && !submitting,
@@ -152,28 +160,30 @@ export default function SelectNetwork() {
           <S.BackButton onPress={handleBack} activeOpacity={0.7}>
             <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
           </S.BackButton>
-          <S.HeaderTitle>Escolha a rede</S.HeaderTitle>
+          <S.HeaderTitle>{t("selectNetwork.title")}</S.HeaderTitle>
         </S.Header>
 
         <S.AmountSummary>
-          <S.AmountSummaryLabel>VALOR DA COBRANÇA</S.AmountSummaryLabel>
+          <S.AmountSummaryLabel>
+            {t("selectNetwork.amountSummaryLabel")}
+          </S.AmountSummaryLabel>
           <S.AmountSummaryValue>
             {currency.label} {amount}
           </S.AmountSummaryValue>
         </S.AmountSummary>
 
-        <S.SectionLabel>REDES DISPONÍVEIS</S.SectionLabel>
+        <S.SectionLabel>{t("selectNetwork.availableNetworks")}</S.SectionLabel>
 
         {networksLoading ? (
           <S.CenteredState>
             <ActivityIndicator color="#6C5CE7" size="large" />
-            <S.StateText>Carregando redes...</S.StateText>
+            <S.StateText>{t("selectNetwork.loadingNetworks")}</S.StateText>
           </S.CenteredState>
         ) : networksError ? (
           <S.CenteredState>
-            <S.StateText>Não foi possível carregar as redes.</S.StateText>
+            <S.StateText>{t("selectNetwork.loadNetworksError")}</S.StateText>
             <S.RetryButton onPress={loadNetworks} activeOpacity={0.7}>
-              <S.RetryButtonText>Tentar novamente</S.RetryButtonText>
+              <S.RetryButtonText>{t("selectNetwork.retry")}</S.RetryButtonText>
             </S.RetryButton>
           </S.CenteredState>
         ) : (
@@ -207,7 +217,7 @@ export default function SelectNetwork() {
         <S.Footer>
           {currency.code !== "USD" && (
             <S.ConversionHint>
-              O valor será convertido para USDT com base na cotação atual
+              {t("selectNetwork.conversionHint")}
             </S.ConversionHint>
           )}
           <S.ProceedButton
@@ -215,7 +225,9 @@ export default function SelectNetwork() {
             onPress={handleProceed}
             activeOpacity={0.85}
           >
-            <S.ProceedButtonText>Prosseguir</S.ProceedButtonText>
+            <S.ProceedButtonText>
+              {t("selectNetwork.proceed")}
+            </S.ProceedButtonText>
             <ArrowRight size={18} color="#FFFFFF" strokeWidth={2.2} />
           </S.ProceedButton>
         </S.Footer>

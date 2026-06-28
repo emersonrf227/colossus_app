@@ -2,10 +2,12 @@ import React from "react";
 import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, MapPin } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import Constants from "expo-constants";
 
 export default function GetAbout() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const appVersion = Constants.expoConfig?.version ?? "—";
 
@@ -27,7 +29,7 @@ export default function GetAbout() {
             >
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Sobre</S.HeaderTitle>
+            <S.HeaderTitle>{t("about.title")}</S.HeaderTitle>
           </S.Header>
 
           <S.ScrollContent
@@ -41,7 +43,9 @@ export default function GetAbout() {
               />
               <S.BrandName>COLOSSUS CRYPTO</S.BrandName>
               <S.VersionBadge>
-                <S.VersionBadgeText>VERSÃO {appVersion}</S.VersionBadgeText>
+                <S.VersionBadgeText>
+                  {t("about.versionLabel", { version: appVersion })}
+                </S.VersionBadgeText>
               </S.VersionBadge>
             </S.BrandImageWrapper>
 
@@ -56,32 +60,31 @@ export default function GetAbout() {
                 <S.BrazilIconWrapper>
                   <MapPin size={20} color="#009C3B" strokeWidth={2.2} />
                 </S.BrazilIconWrapper>
-                <S.BrazilTitle>Tecnologia 100% brasileira</S.BrazilTitle>
+                <S.BrazilTitle>{t("about.brazilTitle")}</S.BrazilTitle>
               </S.BrazilHeaderRow>
 
               <S.BrazilDescription>
-                A Colossus Crypto é desenvolvida e mantida{" "}
+                {t("about.brazilDescriptionBefore")}
                 <S.BrazilHighlight>
-                  no Brasil, por brasileiros
+                  {t("about.brazilDescriptionHighlight")}
                 </S.BrazilHighlight>
-                , unindo tecnologia de ponta em criptomoedas com o suporte e a
-                confiança de uma empresa nacional.
+                {t("about.brazilDescriptionAfter")}
               </S.BrazilDescription>
             </S.BrazilCard>
 
-            <S.SectionLabel>DESENVOLVIDO POR</S.SectionLabel>
+            <S.SectionLabel>{t("about.developedBy")}</S.SectionLabel>
             <S.CompanyCard>
               <S.FieldRow>
-                <S.FieldLabel>EMPRESA</S.FieldLabel>
+                <S.FieldLabel>{t("about.companyLabel")}</S.FieldLabel>
                 <S.FieldValue>I Like Technology LTDA</S.FieldValue>
               </S.FieldRow>
               <S.FieldRow isLast>
-                <S.FieldLabel>CNPJ</S.FieldLabel>
+                <S.FieldLabel>{t("about.cnpjLabel")}</S.FieldLabel>
                 <S.FieldValue>45.123.168/0001-22</S.FieldValue>
               </S.FieldRow>
             </S.CompanyCard>
 
-            <S.FooterNote>Feito com 💜 e no 🇧🇷 para todo o mundo.</S.FooterNote>
+            <S.FooterNote>{t("about.footerNote")}</S.FooterNote>
           </S.ScrollContent>
         </S.SafeArea>
       </S.Background>

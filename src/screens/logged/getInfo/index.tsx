@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, AlertCircle } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import {
   widthPercentageToDP as wp,
@@ -38,24 +39,33 @@ function getInitials(name?: string): string {
   return (first + last).toUpperCase();
 }
 
-function formatAddressLine(address?: AddressData): string {
-  if (!address || !address.address) return "-";
+function formatAddressLine(
+  address: AddressData | undefined,
+  empty: string,
+): string {
+  if (!address || !address.address) return empty;
   const parts = [address.address, address.number, address.neighborhood].filter(
     Boolean,
   );
-  return parts.join(", ") || "-";
+  return parts.join(", ") || empty;
 }
 
-function formatCityLine(address?: AddressData): string {
-  if (!address || (!address.city && !address.state)) return "-";
-  return [address.city, address.state].filter(Boolean).join(" - ") || "-";
+function formatCityLine(
+  address: AddressData | undefined,
+  empty: string,
+): string {
+  if (!address || (!address.city && !address.state)) return empty;
+  return [address.city, address.state].filter(Boolean).join(" - ") || empty;
 }
 
 export default function GetInfo() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [hasError, setHasError] = useState(false);
+
+  const emptyValue = t("info.emptyValue");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -82,10 +92,10 @@ export default function GetInfo() {
   const phone = userData?.ContactPhone?.[0]?.phone;
   const personTypeLabel =
     userData?.typerson === "F"
-      ? "Pessoa Física"
+      ? t("info.personTypeIndividual")
       : userData?.typerson === "J"
-        ? "Pessoa Jurídica"
-        : "-";
+        ? t("info.personTypeCompany")
+        : emptyValue;
 
   return (
     <S.Container>
@@ -107,7 +117,7 @@ export default function GetInfo() {
             >
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Minhas Informações</S.HeaderTitle>
+            <S.HeaderTitle>{t("info.title")}</S.HeaderTitle>
           </S.Header>
 
           <S.cardLogo>
@@ -119,11 +129,9 @@ export default function GetInfo() {
               <S.ErrorIconWrapper>
                 <AlertCircle size={28} color="#FF6B6B" strokeWidth={2.2} />
               </S.ErrorIconWrapper>
-              <S.ErrorText>
-                Não foi possível carregar suas informações.
-              </S.ErrorText>
+              <S.ErrorText>{t("info.errorLoad")}</S.ErrorText>
               <S.RetryButton onPress={fetchData} activeOpacity={0.7}>
-                <S.RetryButtonText>Tentar novamente</S.RetryButtonText>
+                <S.RetryButtonText>{t("info.retry")}</S.RetryButtonText>
               </S.RetryButton>
             </S.CenteredState>
           ) : userData ? (
@@ -137,7 +145,7 @@ export default function GetInfo() {
                     {getInitials(userData.name)}
                   </S.AvatarInitials>
                 </S.AvatarCircle>
-                <S.ProfileName>{userData.name || "-"}</S.ProfileName>
+                <S.ProfileName>{userData.name || emptyValue}</S.ProfileName>
                 <S.ProfileTypeBadge>
                   <S.ProfileTypeBadgeText>
                     {personTypeLabel}
@@ -145,43 +153,49 @@ export default function GetInfo() {
                 </S.ProfileTypeBadge>
               </S.ProfileHeader>
 
-              <S.SectionLabel>DADOS CADASTRAIS</S.SectionLabel>
+              <S.SectionLabel>{t("info.registrationData")}</S.SectionLabel>
               <S.SectionCard>
                 <S.FieldRow>
-                  <S.FieldLabel>NOME SOCIAL</S.FieldLabel>
-                  <S.FieldValue>{userData.socialName || "-"}</S.FieldValue>
+                  <S.FieldLabel>{t("info.socialName")}</S.FieldLabel>
+                  <S.FieldValue>
+                    {userData.socialName || emptyValue}
+                  </S.FieldValue>
                 </S.FieldRow>
                 <S.FieldRow isLast>
-                  <S.FieldLabel>DOCUMENTO</S.FieldLabel>
-                  <S.FieldValue>{userData.document || "-"}</S.FieldValue>
+                  <S.FieldLabel>{t("info.document")}</S.FieldLabel>
+                  <S.FieldValue>{userData.document || emptyValue}</S.FieldValue>
                 </S.FieldRow>
               </S.SectionCard>
 
-              <S.SectionLabel>CONTATO</S.SectionLabel>
+              <S.SectionLabel>{t("info.contact")}</S.SectionLabel>
               <S.SectionCard>
                 <S.FieldRow>
-                  <S.FieldLabel>E-MAIL</S.FieldLabel>
-                  <S.FieldValue>{email || "-"}</S.FieldValue>
+                  <S.FieldLabel>{t("info.email")}</S.FieldLabel>
+                  <S.FieldValue>{email || emptyValue}</S.FieldValue>
                 </S.FieldRow>
                 <S.FieldRow isLast>
-                  <S.FieldLabel>TELEFONE</S.FieldLabel>
-                  <S.FieldValue>{phone || "-"}</S.FieldValue>
+                  <S.FieldLabel>{t("info.phone")}</S.FieldLabel>
+                  <S.FieldValue>{phone || emptyValue}</S.FieldValue>
                 </S.FieldRow>
               </S.SectionCard>
 
-              <S.SectionLabel>ENDEREÇO</S.SectionLabel>
+              <S.SectionLabel>{t("info.address")}</S.SectionLabel>
               <S.SectionCard>
                 <S.FieldRow>
-                  <S.FieldLabel>LOGRADOURO</S.FieldLabel>
-                  <S.FieldValue>{formatAddressLine(address)}</S.FieldValue>
+                  <S.FieldLabel>{t("info.street")}</S.FieldLabel>
+                  <S.FieldValue>
+                    {formatAddressLine(address, emptyValue)}
+                  </S.FieldValue>
                 </S.FieldRow>
                 <S.FieldRow>
-                  <S.FieldLabel>CIDADE</S.FieldLabel>
-                  <S.FieldValue>{formatCityLine(address)}</S.FieldValue>
+                  <S.FieldLabel>{t("info.city")}</S.FieldLabel>
+                  <S.FieldValue>
+                    {formatCityLine(address, emptyValue)}
+                  </S.FieldValue>
                 </S.FieldRow>
                 <S.FieldRow isLast>
-                  <S.FieldLabel>CEP</S.FieldLabel>
-                  <S.FieldValue>{address?.zipCode || "-"}</S.FieldValue>
+                  <S.FieldLabel>{t("info.zipCode")}</S.FieldLabel>
+                  <S.FieldValue>{address?.zipCode || emptyValue}</S.FieldValue>
                 </S.FieldRow>
               </S.SectionCard>
             </S.ScrollContent>
@@ -190,7 +204,7 @@ export default function GetInfo() {
               <S.ErrorIconWrapper>
                 <AlertCircle size={28} color="#FF6B6B" strokeWidth={2.2} />
               </S.ErrorIconWrapper>
-              <S.ErrorText>Nenhuma informação encontrada.</S.ErrorText>
+              <S.ErrorText>{t("info.errorEmpty")}</S.ErrorText>
             </S.CenteredState>
           ) : null}
         </S.SafeArea>

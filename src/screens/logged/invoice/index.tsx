@@ -10,6 +10,7 @@ import QRCode from "react-native-qrcode-svg";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SvgUri } from "react-native-svg";
 import { ArrowLeft, Copy, Clock, X } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 
 import * as S from "./styles";
 import { StatusBar } from "react-native";
@@ -61,6 +62,7 @@ const EXPIRATION_SECONDS = 1800; // 30 minutos
 const URGENT_THRESHOLD_SECONDS = 120; // últimos 2 minutos = visual de alerta
 
 export default function Invoice() {
+  const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
   const { navigate } = useNavigation();
@@ -126,7 +128,7 @@ export default function Invoice() {
         const status = response.data?.invoice?.status;
 
         if (status === "CANCEL") {
-          showToast({ message: "Cobrança expirada", type: "error" });
+          showToast({ message: t("invoice.toastExpired"), type: "error" });
           clearAllIntervals();
           navigate("Dashboard" as never);
           return;
@@ -141,12 +143,12 @@ export default function Invoice() {
     } catch (error) {
       console.error("Erro ao consultar status da invoice:", error);
     }
-  }, [params, showToast, clearAllIntervals, navigate]);
+  }, [params, showToast, clearAllIntervals, navigate, t]);
 
   useEffect(() => {
     tickRef.current = setInterval(() => {
       if (timerRef.current <= 0) {
-        showToast({ message: "Tempo esgotado. Voltando...", type: "error" });
+        showToast({ message: t("invoice.toastTimeUp"), type: "error" });
         clearAllIntervals();
         navigation.goBack();
         return;
@@ -173,8 +175,8 @@ export default function Invoice() {
 
   const copyToClipboard = useCallback(async () => {
     await Clipboard.setString(qrString);
-    showToast({ message: "Endereço copiado!", type: "success" });
-  }, [qrString, showToast]);
+    showToast({ message: t("invoice.toastAddressCopied"), type: "success" });
+  }, [qrString, showToast, t]);
 
   const isUrgent = useMemo(
     () => timeLeft <= URGENT_THRESHOLD_SECONDS,
@@ -196,7 +198,7 @@ export default function Invoice() {
         {initializing ? (
           <S.CenteredState>
             <Loader />
-            <S.StateText>Carregando cobrança...</S.StateText>
+            <S.StateText>{t("invoice.loadingInvoice")}</S.StateText>
           </S.CenteredState>
         ) : (
           <S.SafeArea>
@@ -204,7 +206,7 @@ export default function Invoice() {
               <S.BackButton onPress={removeInvoice} activeOpacity={0.7}>
                 <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
               </S.BackButton>
-              <S.HeaderTitle>Cobrança</S.HeaderTitle>
+              <S.HeaderTitle>{t("invoice.title")}</S.HeaderTitle>
             </S.Header>
 
             <S.cardLogo>
@@ -232,7 +234,7 @@ export default function Invoice() {
               showsVerticalScrollIndicator={false}
             >
               <S.AmountCard>
-                <S.AmountLabel>VALOR A PAGAR</S.AmountLabel>
+                <S.AmountLabel>{t("invoice.amountLabel")}</S.AmountLabel>
                 <S.AmountRow>
                   <S.AmountValue>{amount}</S.AmountValue>
                   <S.TokenIcon
@@ -271,13 +273,15 @@ export default function Invoice() {
                   strokeWidth={2.2}
                 />
                 <S.TimerText urgent={isUrgent}>
-                  Expira em {formatTime(timeLeft)}
+                  {t("invoice.expiresIn", { time: formatTime(timeLeft) })}
                 </S.TimerText>
               </S.TimerCard>
 
               <S.CancelButton onPress={removeInvoice} activeOpacity={0.7}>
                 <X size={16} color="#FF6B6B" strokeWidth={2.2} />
-                <S.CancelButtonText>Cancelar cobrança</S.CancelButtonText>
+                <S.CancelButtonText>
+                  {t("invoice.cancelInvoice")}
+                </S.CancelButtonText>
               </S.CancelButton>
             </S.ScrollContent>
           </S.SafeArea>

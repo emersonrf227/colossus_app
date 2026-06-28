@@ -3,6 +3,7 @@ import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Check } from "lucide-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import { useToast } from "@/hook/Toast";
 import {
@@ -21,6 +22,7 @@ const STORAGE_KEY_LANGUAGE = "appLanguage";
 const STORAGE_KEY_CURRENCY = "appCurrency";
 
 export default function SettingsLanguageCurrency() {
+  const { t } = useTranslation();
   const { goBack } = useNavigation();
   const { showToast } = useToast();
 
@@ -58,12 +60,12 @@ export default function SettingsLanguageCurrency() {
         await i18n.changeLanguage(code);
       } catch {
         showToast({
-          message: "Não foi possível salvar o idioma.",
+          message: t("settingsLanguage.toastLanguageError"),
           type: "error",
         });
       }
     },
-    [showToast],
+    [showToast, t],
   );
 
   const handleSelectCurrency = useCallback(
@@ -73,12 +75,12 @@ export default function SettingsLanguageCurrency() {
         await AsyncStorage.setItem(STORAGE_KEY_CURRENCY, code);
       } catch {
         showToast({
-          message: "Não foi possível salvar a moeda.",
+          message: t("settingsLanguage.toastCurrencyError"),
           type: "error",
         });
       }
     },
-    [showToast],
+    [showToast, t],
   );
 
   if (!loaded) {
@@ -106,11 +108,11 @@ export default function SettingsLanguageCurrency() {
             <S.BackButton onPress={() => goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Idioma e Moeda</S.HeaderTitle>
+            <S.HeaderTitle>{t("settingsLanguage.title")}</S.HeaderTitle>
           </S.Header>
 
           <S.ScrollContent showsVerticalScrollIndicator={false}>
-            <S.SectionLabel>IDIOMA DO APP</S.SectionLabel>
+            <S.SectionLabel>{t("settingsLanguage.appLanguage")}</S.SectionLabel>
             <S.OptionsGroup>
               {Object.values(LANGUAGES).map((language, index) => {
                 const isSelected = selectedLanguage === language.code;
@@ -134,7 +136,9 @@ export default function SettingsLanguageCurrency() {
               })}
             </S.OptionsGroup>
 
-            <S.SectionLabel>MOEDA PARA COBRANÇA</S.SectionLabel>
+            <S.SectionLabel>
+              {t("settingsLanguage.currencyForBilling")}
+            </S.SectionLabel>
             <S.OptionsGroup>
               {Object.values(CURRENCIES).map((currency, index) => {
                 const isSelected = selectedCurrency === currency.code;
@@ -149,9 +153,9 @@ export default function SettingsLanguageCurrency() {
                     <S.OptionTextWrapper>
                       <S.OptionLabel>{currency.label}</S.OptionLabel>
                       <S.OptionSubLabel>
-                        {currency.code === "BRL" && "Real brasileiro"}
-                        {currency.code === "USD" && "Dólar americano"}
-                        {currency.code === "PYG" && "Guarani paraguaio"}
+                        {t(
+                          `settingsLanguage.currencySubLabel.${currency.code}`,
+                        )}
                       </S.OptionSubLabel>
                     </S.OptionTextWrapper>
                     <S.CheckCircle checked={isSelected}>

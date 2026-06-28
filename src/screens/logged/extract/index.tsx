@@ -31,18 +31,29 @@ interface Invoice {
 type StatusFilter = "OPEN" | "CANCEL" | "CONFIRMED";
 type PeriodPreset = "today" | "7d" | "30d" | "custom";
 
-const STATUS_OPTIONS: { value: StatusFilter; label: string; color: string }[] =
-  [
-    { value: "OPEN", label: "Aberta", color: "#F7B731" },
-    { value: "CONFIRMED", label: "Confirmada", color: "#007d30" },
-    { value: "CANCEL", label: "Cancelada", color: colors.danger },
-  ];
+const STATUS_OPTIONS: {
+  value: StatusFilter;
+  labelKey: string;
+  color: string;
+}[] = [
+  { value: "OPEN", labelKey: "extract.statusOptions.open", color: "#F7B731" },
+  {
+    value: "CONFIRMED",
+    labelKey: "extract.statusOptions.confirmed",
+    color: "#007d30",
+  },
+  {
+    value: "CANCEL",
+    labelKey: "extract.statusOptions.cancelled",
+    color: colors.danger,
+  },
+];
 
-const PERIOD_PRESETS: { value: PeriodPreset; label: string }[] = [
-  { value: "today", label: "Hoje" },
-  { value: "7d", label: "7 dias" },
-  { value: "30d", label: "30 dias" },
-  { value: "custom", label: "Personalizado" },
+const PERIOD_PRESETS: { value: PeriodPreset; labelKey: string }[] = [
+  { value: "today", labelKey: "extract.periods.today" },
+  { value: "7d", labelKey: "extract.periods.sevenDays" },
+  { value: "30d", labelKey: "extract.periods.thirtyDays" },
+  { value: "custom", labelKey: "extract.periods.custom" },
 ];
 
 function formatDate(date: Date): string {
@@ -67,7 +78,7 @@ function getRangeForPreset(preset: PeriodPreset): { from: string; to: string } {
 function statusMeta(status: string) {
   return (
     STATUS_OPTIONS.find((s) => s.value === status) ?? {
-      label: status,
+      labelKey: status, // fallback: mostra o status puro se não achar
       color: colors.textMuted,
     }
   );
@@ -241,7 +252,7 @@ export default function Extract() {
             <S.InvoiceStatusBadge dotColor={meta.color}>
               <S.StatusDot dotColor={meta.color} />
               <S.InvoiceStatusText dotColor={meta.color}>
-                {meta.label}
+                {t(meta.labelKey)}
               </S.InvoiceStatusText>
             </S.InvoiceStatusBadge>
           </S.InvoiceInfo>
@@ -281,7 +292,7 @@ export default function Extract() {
 
           <S.SectionLabel> {t("extract.period")}</S.SectionLabel>
           <S.ChipsRow>
-            {PERIOD_PRESETS.map(({ value, label }) => (
+            {PERIOD_PRESETS.map(({ value, labelKey }) => (
               <S.Chip
                 key={value}
                 selected={periodPreset === value}
@@ -289,7 +300,7 @@ export default function Extract() {
                 onPress={() => handleSelectPreset(value)}
               >
                 <S.ChipText selected={periodPreset === value}>
-                  {label}
+                  {t(labelKey)}
                 </S.ChipText>
               </S.Chip>
             ))}
@@ -324,7 +335,7 @@ export default function Extract() {
 
           <S.SectionLabel> {t("extract.status")}</S.SectionLabel>
           <S.ChipsRow>
-            {STATUS_OPTIONS.map(({ value, label, color }) => {
+            {STATUS_OPTIONS.map(({ value, labelKey, color }) => {
               const isSelected = statusFilter === value;
               return (
                 <S.StatusChip
@@ -336,7 +347,7 @@ export default function Extract() {
                 >
                   <S.StatusDot dotColor={color} />
                   <S.StatusChipText selected={isSelected}>
-                    {label}
+                    {t(labelKey)}
                   </S.StatusChipText>
                 </S.StatusChip>
               );

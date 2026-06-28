@@ -17,6 +17,7 @@ import {
   Languages,
   MapIcon,
 } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import { StatusBar } from "react-native";
 import LogoSvg from "@/assets/logov2.svg";
@@ -34,7 +35,7 @@ import {
 } from "../../../components/language";
 
 interface MenuItem {
-  label: string;
+  labelKey: string;
   icon: React.ComponentType<{
     size?: number;
     color?: string;
@@ -46,49 +47,49 @@ interface MenuItem {
 
 const MENU_ITEMS: MenuItem[] = [
   {
-    label: "Informações",
+    labelKey: "menu.items.info",
     icon: Info,
     accentColor: "#6C5CE7",
     route: "getInfo",
   },
   {
-    label: "Carteira",
+    labelKey: "menu.items.wallet",
     icon: Wallet,
     accentColor: "#00D2D3",
     route: "CadWallet",
   },
   {
-    label: "Cobranças",
+    labelKey: "menu.items.invoices",
     icon: FileText,
     accentColor: "#F7B731",
     route: "Extract",
   },
   {
-    label: "Suporte",
+    labelKey: "menu.items.support",
     icon: LifeBuoy,
     accentColor: "#3FA9F5",
     route: "supportScren",
   },
   {
-    label: "Sobre",
+    labelKey: "menu.items.about",
     icon: HelpCircle,
     accentColor: "#A55EEA",
     route: "getAbout",
   },
   {
-    label: "Termos de uso",
+    labelKey: "menu.items.termsOfUse",
     icon: ReceiptText,
     accentColor: "#26DE81",
     route: "TermsOfUse",
   },
   {
-    label: "Impressora",
+    labelKey: "menu.items.printer",
     icon: Printer,
     accentColor: "#FD9644",
     route: "SelectPrinterScreen",
   },
   {
-    label: "Comunnity",
+    labelKey: "menu.items.community",
     icon: MapIcon,
     accentColor: "#c3f883",
     route: "Maps",
@@ -96,6 +97,7 @@ const MENU_ITEMS: MenuItem[] = [
 ];
 
 export default function MenuScreen() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const { navigate, goBack } = navigation;
@@ -146,13 +148,13 @@ export default function MenuScreen() {
       navigation.navigate("SingIn" as never);
     } catch {
       showToast({
-        message: "Não foi possível sair. Tente novamente.",
+        message: t("menu.logoutError"),
         type: "error",
       });
     } finally {
       setLoading(false);
     }
-  }, [navigation, showToast]);
+  }, [navigation, showToast, t]);
 
   return (
     <S.Container>
@@ -170,7 +172,7 @@ export default function MenuScreen() {
             <S.BackButton onPress={() => goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Configurações</S.HeaderTitle>
+            <S.HeaderTitle>{t("menu.title")}</S.HeaderTitle>
           </S.Header>
 
           <S.cardLogo>
@@ -178,7 +180,7 @@ export default function MenuScreen() {
           </S.cardLogo>
 
           <S.ScrollContent showsVerticalScrollIndicator={false}>
-            <S.SectionLabel>PREFERÊNCIAS</S.SectionLabel>
+            <S.SectionLabel>{t("menu.preferences")}</S.SectionLabel>
 
             <S.HighlightCard
               onPress={() => handleNavigateTo("SettingsLanguage")}
@@ -188,33 +190,37 @@ export default function MenuScreen() {
                 <Languages size={20} color={colors.primary} strokeWidth={2.2} />
               </S.HighlightIconWrapper>
               <S.HighlightTextWrapper>
-                <S.HighlightTitle>Idioma e Moeda</S.HighlightTitle>
+                <S.HighlightTitle>
+                  {t("menu.languageAndCurrency")}
+                </S.HighlightTitle>
                 <S.HighlightSubtitle>
                   {language.label} · {currency.label}
                 </S.HighlightSubtitle>
               </S.HighlightTextWrapper>
             </S.HighlightCard>
 
-            <S.SectionLabel>GERAL</S.SectionLabel>
+            <S.SectionLabel>{t("menu.general")}</S.SectionLabel>
 
             <S.ButtonGrid>
-              {MENU_ITEMS.map(({ label, icon: Icon, accentColor, route }) => (
-                <S.MenuCard
-                  key={label}
-                  onPress={() => handleNavigateTo(route)}
-                  activeOpacity={0.75}
-                >
-                  <S.MenuCardIconWrapper accentColor={accentColor}>
-                    <Icon size={20} color={accentColor} strokeWidth={2.2} />
-                  </S.MenuCardIconWrapper>
-                  <S.MenuCardText>{label}</S.MenuCardText>
-                </S.MenuCard>
-              ))}
+              {MENU_ITEMS.map(
+                ({ labelKey, icon: Icon, accentColor, route }) => (
+                  <S.MenuCard
+                    key={labelKey}
+                    onPress={() => handleNavigateTo(route)}
+                    activeOpacity={0.75}
+                  >
+                    <S.MenuCardIconWrapper accentColor={accentColor}>
+                      <Icon size={20} color={accentColor} strokeWidth={2.2} />
+                    </S.MenuCardIconWrapper>
+                    <S.MenuCardText>{t(labelKey)}</S.MenuCardText>
+                  </S.MenuCard>
+                ),
+              )}
             </S.ButtonGrid>
 
             <S.LogoutButton onPress={handleLogout} activeOpacity={0.7}>
               <LogOut size={18} color={colors.danger} strokeWidth={2.2} />
-              <S.LogoutButtonText>Sair da conta</S.LogoutButtonText>
+              <S.LogoutButtonText>{t("menu.logout")}</S.LogoutButtonText>
             </S.LogoutButton>
           </S.ScrollContent>
         </S.SafeArea>

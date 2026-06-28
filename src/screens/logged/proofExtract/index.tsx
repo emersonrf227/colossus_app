@@ -14,6 +14,7 @@ import {
 } from "react-native-responsive-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Check, Printer, ArrowRight } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import Loader from "@/components/loader";
 
 interface invoiceData {
@@ -27,6 +28,7 @@ interface invoiceData {
 }
 
 export default function proofExtract() {
+  const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
   const obj: invoiceData = route.params;
@@ -77,26 +79,26 @@ export default function proofExtract() {
           // `[L]<img>https://iliketechnology.com.br/img/logo.png</img>\n` +
           `[L]\n` +
           `[L]\n` +
-          `[C]<b>Proof Colossus Crypto</b>\n` +
+          `[C]<b>${t("receipt.print.headerTitle")}</b>\n` +
           `[C]${doubleDivider}\n` +
           `[L]\n` +
-          `[C]<b>PAGAMENTO CONFIRMADO</b>\n` +
+          `[C]<b>${t("receipt.print.statusConfirmed")}</b>\n` +
           `[L]\n` +
           `[C]${divider}\n` +
-          `[L]<b>Valor</b>[R]<b>${invoice.amount} USDT</b>\n` +
-          `[L]Data/Hora[R]${formattedDate}\n` +
+          `[L]<b>${t("receipt.print.amountLabel")}</b>[R]<b>${invoice.amount} USDT</b>\n` +
+          `[L]${t("receipt.print.dateTimeLabel")}[R]${formattedDate}\n` +
           `[C]${divider}\n` +
           `[L]\n` +
-          `[L]<b>Destinatário:</b>\n` +
+          `[L]<b>${t("receipt.print.recipientLabel")}</b>\n` +
           `[L]${invoice.paymentAddress}\n` +
           `[L]\n` +
-          `[L]<b>Referência:</b> ${invoice.reference}\n` +
-          `[L]<b>TXID:</b> ${invoice.txid}\n` +
+          `[L]<b>${t("receipt.print.referenceLabel")}</b> ${invoice.reference}\n` +
+          `[L]<b>${t("receipt.print.txidLabel")}</b> ${invoice.txid}\n` +
           `[L]\n` +
           `[C]${divider}\n` +
           `[L]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
           `[L]\n` +
-          `[C]<font size='normal'>Escaneie para ver no Polygonscan</font>\n` +
+          `[C]<font size='normal'>${t("receipt.print.scanHint")}</font>\n` +
           `[C]${doubleDivider}\n` +
           `[L]\n` +
           `[C]support@iliketechnology.com.br\n` +
@@ -153,9 +155,9 @@ export default function proofExtract() {
               <S.SuccessIconCircle>
                 <Check size={30} color="#FFFFFF" strokeWidth={3} />
               </S.SuccessIconCircle>
-              <S.SuccessTitle>Pagamento confirmado</S.SuccessTitle>
+              <S.SuccessTitle>{t("receipt.paymentConfirmed")}</S.SuccessTitle>
               <S.SuccessSubtitle>
-                A transação foi validada na blockchain
+                {t("receipt.validatedOnBlockchain")}
               </S.SuccessSubtitle>
             </S.SuccessBadge>
 
@@ -163,12 +165,14 @@ export default function proofExtract() {
               <S.ReceiptHeader>
                 <S.ReceiptBrand>COLOSSUS CRYPTO</S.ReceiptBrand>
                 <S.ReceiptBrandSubtitle>
-                  Comprovante de pagamento
+                  {t("receipt.receiptSubtitle")}
                 </S.ReceiptBrandSubtitle>
               </S.ReceiptHeader>
 
               <S.AmountHighlight>
-                <S.AmountHighlightLabel>VALOR RECEBIDO</S.AmountHighlightLabel>
+                <S.AmountHighlightLabel>
+                  {t("receipt.amountReceived")}
+                </S.AmountHighlightLabel>
                 <S.AmountHighlightValue>
                   {invoice.amount} USDT
                 </S.AmountHighlightValue>
@@ -178,14 +182,14 @@ export default function proofExtract() {
 
               <S.DetailRow>
                 <S.DetailBlock>
-                  <S.DetailLabel>DATA DA CONFIRMAÇÃO</S.DetailLabel>
+                  <S.DetailLabel>{t("receipt.confirmationDate")}</S.DetailLabel>
                   <S.DetailValue>{formattedDate}</S.DetailValue>
                 </S.DetailBlock>
               </S.DetailRow>
 
               <S.DetailRow>
                 <S.DetailBlock>
-                  <S.DetailLabel>DESTINATÁRIO</S.DetailLabel>
+                  <S.DetailLabel>{t("receipt.recipient")}</S.DetailLabel>
                   <S.DetailValueMono>
                     {invoice.paymentAddress}
                   </S.DetailValueMono>
@@ -194,14 +198,14 @@ export default function proofExtract() {
 
               <S.DetailRow>
                 <S.DetailBlock>
-                  <S.DetailLabel>REFERÊNCIA</S.DetailLabel>
+                  <S.DetailLabel>{t("receipt.reference")}</S.DetailLabel>
                   <S.DetailValueMono>{invoice.reference}</S.DetailValueMono>
                 </S.DetailBlock>
               </S.DetailRow>
 
               <S.DetailRow>
                 <S.DetailBlock>
-                  <S.DetailLabel>TXID</S.DetailLabel>
+                  <S.DetailLabel>{t("receipt.txid")}</S.DetailLabel>
                   <S.DetailValueMono>{invoice.txid}</S.DetailValueMono>
                 </S.DetailBlock>
               </S.DetailRow>
@@ -220,11 +224,13 @@ export default function proofExtract() {
                 activeOpacity={0.85}
               >
                 <Printer size={18} color="#FFFFFF" strokeWidth={2.2} />
-                <S.ButtonText>Imprimir comprovante</S.ButtonText>
+                <S.ButtonText>{t("receipt.printButton")}</S.ButtonText>
               </S.ButtonPrint>
 
               <S.ButtonReturn onPress={handleReturn} activeOpacity={0.7}>
-                <S.ButtonReturnText>Voltar</S.ButtonReturnText>
+                <S.ButtonReturnText>
+                  {t("proofExtract.backButton")}
+                </S.ButtonReturnText>
                 <ArrowRight size={16} color="#FFFFFF" strokeWidth={2.2} />
               </S.ButtonReturn>
             </S.ActionsContainer>

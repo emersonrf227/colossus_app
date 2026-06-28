@@ -5,6 +5,7 @@ import { StatusBar } from "react-native";
 import LogoSvg from "@/assets/logov2.svg";
 import ThermalPrinterModule from "react-native-thermal-printer";
 import { Check, Printer, ArrowRight } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -30,6 +31,7 @@ const PRINTER_IP = "192.168.100.246";
 const PRINTER_PORT = 9100;
 
 export default function ProofConfirm() {
+  const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
   const { showToast } = useToast();
@@ -49,7 +51,7 @@ export default function ProofConfirm() {
 
     if (!printerModel) {
       showToast({
-        message: "Nenhuma impressora configurada. Acesse as configurações.",
+        message: t("receipt.toastNoPrinter"),
         type: "error",
       });
       return;
@@ -84,26 +86,26 @@ export default function ProofConfirm() {
         payload:
           // `[C]<img>https://seusite.com.br/logo-recibo.png</img>\n` +
           `[L]\n` +
-          `[C]<font size='big'><b>Proof Colossus Crypto</b></font>\n` +
+          `[C]<font size='big'><b>${t("receipt.print.headerTitle")}</b></font>\n` +
           `[C]${doubleDivider}\n` +
           `[L]\n` +
-          `[C]<b>PAGAMENTO CONFIRMADO</b>\n` +
+          `[C]<b>${t("receipt.print.statusConfirmed")}</b>\n` +
           `[L]\n` +
           `[C]${divider}\n` +
-          `[L]<b>Valor</b>[R]<b>${invoice.amount} USDT</b>\n` +
-          `[L]Data/Hora[R]${formattedDate}\n` +
+          `[L]<b>${t("receipt.print.amountLabel")}</b>[R]<b>${invoice.amount} USDT</b>\n` +
+          `[L]${t("receipt.print.dateTimeLabel")}[R]${formattedDate}\n` +
           `[C]${divider}\n` +
           `[L]\n` +
-          `[L]<b>Destinatário:</b>\n` +
+          `[L]<b>${t("receipt.print.recipientLabel")}</b>\n` +
           `[L]${invoice.paymentAddress}\n` +
           `[L]\n` +
-          `[L]<b>Referência:</b> ${invoice.reference}\n` +
-          `[L]<b>TXID:</b> ${invoice.txid}\n` +
+          `[L]<b>${t("receipt.print.referenceLabel")}</b> ${invoice.reference}\n` +
+          `[L]<b>${t("receipt.print.txidLabel")}</b> ${invoice.txid}\n` +
           `[L]\n` +
           `[C]${divider}\n` +
           `[C]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
           `[L]\n` +
-          `[C]<font size='normal'>Escaneie para ver no Polygonscan</font>\n` +
+          `[C]<font size='normal'>${t("receipt.print.scanHint")}</font>\n` +
           `[C]${doubleDivider}\n` +
           `[L]\n` +
           `[C]support@iliketechnology.com.br\n` +
@@ -112,17 +114,20 @@ export default function ProofConfirm() {
           `[L]\n`,
         printerNbrCharactersPerLine: lineWidth,
       });
-      showToast({ message: "Comprovante impresso!", type: "success" });
+      showToast({
+        message: t("receipt.toastPrintSuccess"),
+        type: "success",
+      });
     } catch (err) {
       console.log(err);
       showToast({
-        message: "Não foi possível imprimir. Verifique a impressora.",
+        message: t("receipt.toastPrintError"),
         type: "error",
       });
     } finally {
       setPrinting(false);
     }
-  }, [invoice, showToast]);
+  }, [invoice, showToast, t]);
 
   const handleReturn = useCallback(() => {
     navigation.navigate("Dashboard" as never);
@@ -142,7 +147,7 @@ export default function ProofConfirm() {
             translucent
           />
           <S.SafeArea>
-            <S.SuccessSubtitle>Comprovante não encontrado.</S.SuccessSubtitle>
+            <S.SuccessSubtitle>{t("receipt.notFound")}</S.SuccessSubtitle>
           </S.SafeArea>
         </S.Background>
       </S.Container>
@@ -170,9 +175,9 @@ export default function ProofConfirm() {
               <S.SuccessIconCircle>
                 <Check size={30} color="#FFFFFF" strokeWidth={3} />
               </S.SuccessIconCircle>
-              <S.SuccessTitle>Pagamento confirmado</S.SuccessTitle>
+              <S.SuccessTitle>{t("receipt.paymentConfirmed")}</S.SuccessTitle>
               <S.SuccessSubtitle>
-                A transação foi validada na blockchain
+                {t("receipt.validatedOnBlockchain")}
               </S.SuccessSubtitle>
             </S.SuccessBadge>
 
@@ -180,12 +185,14 @@ export default function ProofConfirm() {
               <S.ReceiptHeader>
                 <S.ReceiptBrand>COLOSSUS CRYPTO</S.ReceiptBrand>
                 <S.ReceiptBrandSubtitle>
-                  Comprovante de pagamento
+                  {t("receipt.receiptSubtitle")}
                 </S.ReceiptBrandSubtitle>
               </S.ReceiptHeader>
 
               <S.AmountHighlight>
-                <S.AmountHighlightLabel>VALOR RECEBIDO</S.AmountHighlightLabel>
+                <S.AmountHighlightLabel>
+                  {t("receipt.amountReceived")}
+                </S.AmountHighlightLabel>
                 <S.AmountHighlightValue>
                   {invoice.amount} USDT
                 </S.AmountHighlightValue>
@@ -195,14 +202,14 @@ export default function ProofConfirm() {
 
               <S.DetailRow>
                 <S.DetailBlock>
-                  <S.DetailLabel>DATA DA CONFIRMAÇÃO</S.DetailLabel>
+                  <S.DetailLabel>{t("receipt.confirmationDate")}</S.DetailLabel>
                   <S.DetailValue>{formattedDate}</S.DetailValue>
                 </S.DetailBlock>
               </S.DetailRow>
 
               <S.DetailRow>
                 <S.DetailBlock>
-                  <S.DetailLabel>DESTINATÁRIO</S.DetailLabel>
+                  <S.DetailLabel>{t("receipt.recipient")}</S.DetailLabel>
                   <S.DetailValueMono>
                     {invoice.paymentAddress}
                   </S.DetailValueMono>
@@ -211,14 +218,14 @@ export default function ProofConfirm() {
 
               <S.DetailRow>
                 <S.DetailBlock>
-                  <S.DetailLabel>REFERÊNCIA</S.DetailLabel>
+                  <S.DetailLabel>{t("receipt.reference")}</S.DetailLabel>
                   <S.DetailValueMono>{invoice.reference}</S.DetailValueMono>
                 </S.DetailBlock>
               </S.DetailRow>
 
               <S.DetailRow>
                 <S.DetailBlock>
-                  <S.DetailLabel>TXID</S.DetailLabel>
+                  <S.DetailLabel>{t("receipt.txid")}</S.DetailLabel>
                   <S.DetailValueMono>{invoice.txid}</S.DetailValueMono>
                 </S.DetailBlock>
               </S.DetailRow>
@@ -237,11 +244,13 @@ export default function ProofConfirm() {
                 activeOpacity={0.85}
               >
                 <Printer size={18} color="#FFFFFF" strokeWidth={2.2} />
-                <S.ButtonText>Imprimir comprovante</S.ButtonText>
+                <S.ButtonText>{t("receipt.printButton")}</S.ButtonText>
               </S.ButtonPrint>
 
               <S.ButtonReturn onPress={handleReturn} activeOpacity={0.7}>
-                <S.ButtonReturnText>Voltar ao início</S.ButtonReturnText>
+                <S.ButtonReturnText>
+                  {t("receipt.backButton")}
+                </S.ButtonReturnText>
                 <ArrowRight size={16} color="#FFFFFF" strokeWidth={2.2} />
               </S.ButtonReturn>
             </S.ActionsContainer>

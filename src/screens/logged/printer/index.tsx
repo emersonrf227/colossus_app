@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar } from "react-native";
 import { ArrowLeft, Printer, Check } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import {
   widthPercentageToDP as wp,
@@ -14,12 +15,13 @@ import { colors } from "../dashboard/styles";
 
 type PrinterModel = "50mm" | "80mm";
 
-const PRINTER_OPTIONS: { model: PrinterModel; subLabel: string }[] = [
-  { model: "50mm", subLabel: "Compacta" },
-  { model: "80mm", subLabel: "Padrão" },
+const PRINTER_OPTIONS: { model: PrinterModel; subLabelKey: string }[] = [
+  { model: "50mm", subLabelKey: "printer.options.compact" },
+  { model: "80mm", subLabelKey: "printer.options.standard" },
 ];
 
 export default function SelectPrinterScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [selected, setSelected] = useState<PrinterModel | null>(null);
   const { showToast } = useToast();
@@ -36,15 +38,18 @@ export default function SelectPrinterScreen() {
       try {
         await AsyncStorage.setItem("printerModel", model);
         setSelected(model);
-        showToast({ message: `Impressora ${model} salva!`, type: "success" });
+        showToast({
+          message: t("printer.toastSaved", { model }),
+          type: "success",
+        });
       } catch {
         showToast({
-          message: "Não foi possível salvar a configuração.",
+          message: t("printer.toastSaveError"),
           type: "error",
         });
       }
     },
-    [showToast],
+    [showToast, t],
   );
 
   return (
@@ -65,7 +70,7 @@ export default function SelectPrinterScreen() {
             >
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Impressora</S.HeaderTitle>
+            <S.HeaderTitle>{t("printer.title")}</S.HeaderTitle>
           </S.Header>
 
           <S.cardLogo>
@@ -73,13 +78,11 @@ export default function SelectPrinterScreen() {
           </S.cardLogo>
 
           <S.CardPad>
-            <S.TitleText>Tamanho da etiqueta</S.TitleText>
-            <S.SubtitleText>
-              Escolha o modelo compatível com sua impressora térmica
-            </S.SubtitleText>
+            <S.TitleText>{t("printer.labelSizeTitle")}</S.TitleText>
+            <S.SubtitleText>{t("printer.labelSizeSubtitle")}</S.SubtitleText>
 
             <S.OptionsRow>
-              {PRINTER_OPTIONS.map(({ model, subLabel }) => {
+              {PRINTER_OPTIONS.map(({ model, subLabelKey }) => {
                 const isSelected = selected === model;
                 return (
                   <S.PrinterCard
@@ -104,7 +107,7 @@ export default function SelectPrinterScreen() {
                       {model}
                     </S.PrinterCardLabel>
                     <S.PrinterCardSubLabel selected={isSelected}>
-                      {subLabel}
+                      {t(subLabelKey)}
                     </S.PrinterCardSubLabel>
                   </S.PrinterCard>
                 );
