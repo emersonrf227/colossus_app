@@ -323,4 +323,26 @@ export default {
       },
     },
   },
+  communityMap: {
+    headerTitle: "Comunidad Colossus",
+    filterAll: "Todos",
+    loading: "Cargando comunidad Colossus...",
+    errorLoad: "No fue posible cargar los locales.",
+    retry: "Intentar de nuevo",
+    errors: {
+      call: "No fue posible abrir el discador.",
+      whatsapp: "No fue posible abrir WhatsApp.",
+      website: "No fue posible abrir el sitio web.",
+    },
+    verified: "Verificado",
+    actions: {
+      call: "Llamar",
+      whatsapp: "WhatsApp",
+      website: "Sitio web",
+    },
+    address: "DIRECCIÓN",
+    openingHours: "HORARIO DE ATENCIÓN",
+    paymentMethods: "FORMAS DE PAGO",
+    tags: "ETIQUETAS",
+  },
 };

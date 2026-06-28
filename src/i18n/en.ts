@@ -324,4 +324,26 @@ export default {
       },
     },
   },
+  communityMap: {
+    headerTitle: "Colossus Community",
+    filterAll: "All",
+    loading: "Loading Colossus community...",
+    errorLoad: "Unable to load locations.",
+    retry: "Try again",
+    errors: {
+      call: "Unable to open the dialer.",
+      whatsapp: "Unable to open WhatsApp.",
+      website: "Unable to open the website.",
+    },
+    verified: "Verified",
+    actions: {
+      call: "Call",
+      whatsapp: "WhatsApp",
+      website: "Website",
+    },
+    address: "ADDRESS",
+    openingHours: "OPENING HOURS",
+    paymentMethods: "PAYMENT METHODS",
+    tags: "TAGS",
+  },
 };

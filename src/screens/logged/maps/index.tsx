@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { StatusBar, Linking, ActivityIndicator, Modal } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   X,
@@ -33,6 +34,7 @@ const INITIAL_REGION = {
 export default function CommunityMap() {
   const navigation = useNavigation();
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const [locations, setLocations] = useState<CommunityLocation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,12 +84,12 @@ export default function CommunityMap() {
         await Linking.openURL(url);
       } catch {
         showToast({
-          message: "Não foi possível abrir o discador.",
+          message: t("communityMap.errors.call"),
           type: "error",
         });
       }
     },
-    [showToast],
+    [showToast, t],
   );
 
   const handleWhatsApp = useCallback(
@@ -101,18 +103,18 @@ export default function CommunityMap() {
           await Linking.openURL(url);
         } else {
           showToast({
-            message: "Não foi possível abrir o WhatsApp.",
+            message: t("communityMap.errors.whatsapp"),
             type: "error",
           });
         }
       } catch {
         showToast({
-          message: "Não foi possível abrir o WhatsApp.",
+          message: t("communityMap.errors.whatsapp"),
           type: "error",
         });
       }
     },
-    [showToast],
+    [showToast, t],
   );
 
   const handleWebsite = useCallback(
@@ -121,10 +123,13 @@ export default function CommunityMap() {
       try {
         await Linking.openURL(website);
       } catch {
-        showToast({ message: "Não foi possível abrir o site.", type: "error" });
+        showToast({
+          message: t("communityMap.errors.website"),
+          type: "error",
+        });
       }
     },
-    [showToast],
+    [showToast, t],
   );
 
   return (
@@ -139,13 +144,13 @@ export default function CommunityMap() {
         {loading ? (
           <S.CenteredOverlay>
             <ActivityIndicator color={colors.primary} size="large" />
-            <S.StateText>Carregando comunidade Colossus...</S.StateText>
+            <S.StateText>{t("communityMap.loading")}</S.StateText>
           </S.CenteredOverlay>
         ) : hasError ? (
           <S.CenteredOverlay>
-            <S.StateText>Não foi possível carregar os locais.</S.StateText>
+            <S.StateText>{t("communityMap.errorLoad")}</S.StateText>
             <S.RetryButton onPress={loadLocations} activeOpacity={0.7}>
-              <S.RetryButtonText>Tentar novamente</S.RetryButtonText>
+              <S.RetryButtonText>{t("communityMap.retry")}</S.RetryButtonText>
             </S.RetryButton>
           </S.CenteredOverlay>
         ) : (
@@ -179,7 +184,7 @@ export default function CommunityMap() {
             >
               <ArrowLeft size={20} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Comunidade Colossus</S.HeaderTitle>
+            <S.HeaderTitle>{t("communityMap.headerTitle")}</S.HeaderTitle>
           </S.HeaderRow>
 
           {!loading && !hasError && segments.length > 0 && (
@@ -190,7 +195,7 @@ export default function CommunityMap() {
                 activeOpacity={0.75}
               >
                 <S.FilterChipText selected={selectedSegment === null}>
-                  Todos
+                  {t("communityMap.filterAll")}
                 </S.FilterChipText>
               </S.FilterChip>
 
@@ -282,7 +287,9 @@ export default function CommunityMap() {
                           color={colors.success}
                           strokeWidth={2.2}
                         />
-                        <S.VerifiedBadgeText>Verificado</S.VerifiedBadgeText>
+                        <S.VerifiedBadgeText>
+                          {t("communityMap.verified")}
+                        </S.VerifiedBadgeText>
                       </S.VerifiedBadge>
                     )}
                   </S.ModalHeaderRow>
@@ -306,7 +313,7 @@ export default function CommunityMap() {
                           strokeWidth={2.2}
                         />
                         <S.ActionButtonText accentColor={colors.primary}>
-                          Ligar
+                          {t("communityMap.actions.call")}
                         </S.ActionButtonText>
                       </S.ActionButton>
                     )}
@@ -324,7 +331,7 @@ export default function CommunityMap() {
                           strokeWidth={2.2}
                         />
                         <S.ActionButtonText accentColor={colors.success}>
-                          WhatsApp
+                          {t("communityMap.actions.whatsapp")}
                         </S.ActionButtonText>
                       </S.ActionButton>
                     )}
@@ -340,7 +347,7 @@ export default function CommunityMap() {
                           strokeWidth={2.2}
                         />
                         <S.ActionButtonText accentColor={colors.accent}>
-                          Site
+                          {t("communityMap.actions.website")}
                         </S.ActionButtonText>
                       </S.ActionButton>
                     )}
@@ -348,7 +355,9 @@ export default function CommunityMap() {
 
                   {selectedLocation.address?.formatted && (
                     <>
-                      <S.SectionLabel>ENDEREÇO</S.SectionLabel>
+                      <S.SectionLabel>
+                        {t("communityMap.address")}
+                      </S.SectionLabel>
                       <S.AddressText>
                         <MapPin size={12} color={colors.textMuted} />{" "}
                         {selectedLocation.address.formatted}
@@ -360,7 +369,7 @@ export default function CommunityMap() {
                     selectedLocation.openingHours.length > 0 && (
                       <>
                         <S.SectionLabel>
-                          HORÁRIO DE FUNCIONAMENTO
+                          {t("communityMap.openingHours")}
                         </S.SectionLabel>
                         {selectedLocation.openingHours.map((hour, index) => (
                           <S.HoursRow key={`${hour.day}-${index}`}>
@@ -376,7 +385,9 @@ export default function CommunityMap() {
                   {selectedLocation.paymentMethods &&
                     selectedLocation.paymentMethods.length > 0 && (
                       <>
-                        <S.SectionLabel>FORMAS DE PAGAMENTO</S.SectionLabel>
+                        <S.SectionLabel>
+                          {t("communityMap.paymentMethods")}
+                        </S.SectionLabel>
                         <S.PaymentMethodsRow>
                           {selectedLocation.paymentMethods.map((method) => (
                             <S.PaymentMethodPill
@@ -397,7 +408,9 @@ export default function CommunityMap() {
                   {selectedLocation.tags &&
                     selectedLocation.tags.length > 0 && (
                       <>
-                        <S.SectionLabel>TAGS</S.SectionLabel>
+                        <S.SectionLabel>
+                          {t("communityMap.tags")}
+                        </S.SectionLabel>
                         <S.TagsRow>
                           {selectedLocation.tags.map((tag) => (
                             <S.TagPill key={tag}>

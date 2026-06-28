@@ -318,4 +318,26 @@ export default {
       },
     },
   },
+  communityMap: {
+    headerTitle: "Colossus 社区",
+    filterAll: "全部",
+    loading: "正在加载 Colossus 社区...",
+    errorLoad: "无法加载地点信息。",
+    retry: "重试",
+    errors: {
+      call: "无法打开拨号程序。",
+      whatsapp: "无法打开 WhatsApp。",
+      website: "无法打开网站。",
+    },
+    verified: "已认证",
+    actions: {
+      call: "拨打电话",
+      whatsapp: "WhatsApp",
+      website: "网站",
+    },
+    address: "地址",
+    openingHours: "营业时间",
+    paymentMethods: "支付方式",
+    tags: "标签",
+  },
 };
