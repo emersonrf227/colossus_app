@@ -15,7 +15,7 @@ export interface CommunityLocation {
   subcategory?: string;
   description?: string;
   phone?: string;
-  whatsapp?: string;
+  telegram?: string;
   email?: string;
   website?: string;
   location: {
@@ -71,7 +71,7 @@ const MOCK_COMMUNITY_RESPONSE: CommunityLocation[] = [
     subcategory: "Padaria",
     description: "Padaria, confeitaria e cafeteria.",
     phone: "+55 11 99999-9999",
-    whatsapp: "+55 11 99999-9999",
+    telegram: "+55 11 99999-9999",
     email: "contato@padariacentral.com.br",
     website: "https://padariacentral.com.br",
     location: { latitude: -23.55052, longitude: -46.633308 },
@@ -107,7 +107,7 @@ const MOCK_COMMUNITY_RESPONSE: CommunityLocation[] = [
     subcategory: "Roupas femininas",
     description: "Loja de roupas e acessórios com curadoria própria.",
     phone: "+55 11 98888-7777",
-    whatsapp: "+55 11 98888-7777",
+    telegram: "+55 11 98888-7777",
     website: "https://studiomodabv.com.br",
     location: { latitude: -23.5582, longitude: -46.6603 },
     address: {
@@ -137,7 +137,7 @@ const MOCK_COMMUNITY_RESPONSE: CommunityLocation[] = [
     subcategory: "Assistência técnica",
     description: "Conserto de celulares, notebooks e consoles.",
     phone: "+55 11 97777-6666",
-    whatsapp: "+55 11 97777-6666",
+    telegram: "+55 11 97777-6666",
     location: { latitude: -23.5489, longitude: -46.6388 },
     address: {
       street: "Rua da Consolação",
@@ -164,7 +164,7 @@ const MOCK_COMMUNITY_RESPONSE: CommunityLocation[] = [
     segment: "Beleza",
     subcategory: "Salão de beleza",
     description: "Cabelo, estética e bem-estar em um só lugar.",
-    whatsapp: "+55 11 96666-5555",
+    telegram: "+55 11 96666-5555",
     location: { latitude: -23.561, longitude: -46.6558 },
     address: {
       street: "Alameda Santos",

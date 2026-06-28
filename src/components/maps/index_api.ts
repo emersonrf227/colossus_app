@@ -13,7 +13,7 @@ export interface CommunityLocation {
   subcategory?: string;
   description?: string;
   phone?: string;
-  whatsapp?: string;
+  telegram?: string;
   email?: string;
   website?: string;
   location: {

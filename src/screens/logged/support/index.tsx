@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Linking, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { ArrowLeft, MessageCircle } from "lucide-react-native";
+import { ArrowLeft, MessageCircle, Send } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import {
@@ -34,30 +34,24 @@ export default function SupportScreen() {
   const navigation = useNavigation();
   const { showToast } = useToast();
 
-  const openWhatsApp = useCallback(async () => {
-    const message = t("support.whatsappMessage");
-    const url = `https://wa.me/${WHATSAPP_NUMBER.replace(
-      "+",
-      "",
-    )}?text=${encodeURIComponent(message)}`;
+  const openTelegram = useCallback(async () => {
+    const username = "colossus_crypto";
+    // App scheme primeiro (abre direto no app do Telegram se instalado);
+    // se não for suportado, cai no link universal https://t.me/..., que
+    // o sistema resolve abrindo o app (se instalado) ou o navegador.
+    const appUrl = `tg://resolve?domain=${username}`;
+    const webUrl = `https://t.me/${username}`;
 
     try {
-      const supported = await Linking.canOpenURL(url);
-      if (supported) {
-        await Linking.openURL(url);
-      } else {
-        showToast({
-          message: t("support.whatsappError"),
-          type: "error",
-        });
-      }
+      const supported = await Linking.canOpenURL(appUrl);
+      await Linking.openURL(supported ? appUrl : webUrl);
     } catch {
       showToast({
-        message: t("support.whatsappError"),
+        message: "Não foi possível abrir o Telegram",
         type: "error",
       });
     }
-  }, [showToast, t]);
+  }, [showToast]);
 
   return (
     <S.Container>
@@ -92,18 +86,22 @@ export default function SupportScreen() {
           >
             <S.ContactCard>
               <S.ContactIconWrapper>
-                <MessageCircle size={28} color="#2ECC71" strokeWidth={2.2} />
+                <Send size={28} color="#26a4e2" strokeWidth={2.2} />
               </S.ContactIconWrapper>
               <S.ContactTitle>{t("support.needHelp")}</S.ContactTitle>
               <S.ContactSubtitle>
                 {t("support.contactSubtitle")}
               </S.ContactSubtitle>
-              <S.WhatsAppButton onPress={openWhatsApp} activeOpacity={0.85}>
-                <MessageCircle size={18} color="#FFFFFF" strokeWidth={2.2} />
-                <S.WhatsAppButtonText>
-                  {t("support.whatsappButton")}
-                </S.WhatsAppButtonText>
-              </S.WhatsAppButton>
+              <S.TelegramButton
+                style={{ backgroundColor: "#26a4e2" }}
+                onPress={openTelegram}
+                activeOpacity={0.85}
+              >
+                <Send size={18} color="#FFFFFF" strokeWidth={2.2} />
+                <S.TelegramButtonText>
+                  {t("support.telegramButton")}
+                </S.TelegramButtonText>
+              </S.TelegramButton>
             </S.ContactCard>
 
             <S.SectionLabel>{t("support.faqSectionTitle")}</S.SectionLabel>

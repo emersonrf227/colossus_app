@@ -70,7 +70,7 @@ export const ScrollContent = styled.ScrollView`
   flex: 1;
 `;
 
-// --- Card de contato via WhatsApp ---------------------------------------
+// --- Card de contato via Telegram ---------------------------------------
 
 export const ContactCard = styled.View`
   align-items: center;
@@ -106,7 +106,7 @@ export const ContactSubtitle = styled.Text`
   margin-bottom: 18px;
 `;
 
-export const WhatsAppButton = styled.TouchableOpacity`
+export const TelegramButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -122,7 +122,7 @@ export const WhatsAppButton = styled.TouchableOpacity`
   elevation: 8;
 `;
 
-export const WhatsAppButtonText = styled.Text`
+export const TelegramButtonText = styled.Text`
   color: #ffffff;
   font-size: 15px;
   font-weight: 700;

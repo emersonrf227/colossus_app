@@ -202,10 +202,10 @@ export default {
   support: {
     title: "支持",
     needHelp: "需要帮助吗？",
-    contactSubtitle: "通过 WhatsApp 直接联系我们的团队",
-    whatsappButton: "通过 WhatsApp 联系",
-    whatsappMessage: "你好，我需要帮助！",
-    whatsappError: "无法打开 WhatsApp",
+    contactSubtitle: "通过 Telegram 直接联系我们的团队",
+    telegramButton: "通过 Telegram 联系",
+    telegramMessage: "你好，我需要帮助！",
+    telegramError: "无法打开 Telegram",
     faqSectionTitle: "常见问题",
     faq: {
       q1: {
@@ -326,13 +326,13 @@ export default {
     retry: "重试",
     errors: {
       call: "无法打开拨号程序。",
-      whatsapp: "无法打开 WhatsApp。",
+      telegram: "无法打开 Telegram。",
       website: "无法打开网站。",
     },
     verified: "已认证",
     actions: {
       call: "拨打电话",
-      whatsapp: "WhatsApp",
+      telegram: "Telegram",
       website: "网站",
     },
     address: "地址",

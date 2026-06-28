@@ -206,10 +206,10 @@ export default {
   support: {
     title: "Suporte",
     needHelp: "Precisa de ajuda?",
-    contactSubtitle: "Fale direto com nosso time pelo WhatsApp",
-    whatsappButton: "Falar no WhatsApp",
-    whatsappMessage: "Olá, preciso de ajuda!",
-    whatsappError: "Não foi possível abrir o WhatsApp",
+    contactSubtitle: "Fale direto com nosso time pelo Telegram",
+    telegramButton: "Falar no Telegram",
+    telegramMessage: "Olá, preciso de ajuda!",
+    telegramError: "Não foi possível abrir o Telegram",
     faqSectionTitle: "PERGUNTAS FREQUENTES",
     faq: {
       q1: {
@@ -331,13 +331,13 @@ export default {
     retry: "Tentar novamente",
     errors: {
       call: "Não foi possível abrir o discador.",
-      whatsapp: "Não foi possível abrir o WhatsApp.",
+      telegram: "Não foi possível abrir o Telegram.",
       website: "Não foi possível abrir o site.",
     },
     verified: "Verificado",
     actions: {
       call: "Ligar",
-      whatsapp: "WhatsApp",
+      telegram: "Telegram",
       website: "Site",
     },
     address: "ENDEREÇO",

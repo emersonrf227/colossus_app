@@ -93,9 +93,9 @@ export default function CommunityMap() {
   );
 
   const handleWhatsApp = useCallback(
-    async (whatsapp?: string) => {
-      if (!whatsapp) return;
-      const cleaned = whatsapp.replace(/\D/g, "");
+    async (telegram?: string) => {
+      if (!telegram) return;
+      const cleaned = telegram.replace(/\D/g, "");
       const url = `https://wa.me/${cleaned}`;
       try {
         const supported = await Linking.canOpenURL(url);
@@ -103,13 +103,13 @@ export default function CommunityMap() {
           await Linking.openURL(url);
         } else {
           showToast({
-            message: t("communityMap.errors.whatsapp"),
+            message: t("communityMap.errors.telegram"),
             type: "error",
           });
         }
       } catch {
         showToast({
-          message: t("communityMap.errors.whatsapp"),
+          message: t("communityMap.errors.telegram"),
           type: "error",
         });
       }
@@ -317,11 +317,11 @@ export default function CommunityMap() {
                         </S.ActionButtonText>
                       </S.ActionButton>
                     )}
-                    {selectedLocation.whatsapp && (
+                    {selectedLocation.telegram && (
                       <S.ActionButton
                         accentColor={colors.success}
                         onPress={() =>
-                          handleWhatsApp(selectedLocation.whatsapp)
+                          handleWhatsApp(selectedLocation.telegram)
                         }
                         activeOpacity={0.75}
                       >
@@ -331,7 +331,7 @@ export default function CommunityMap() {
                           strokeWidth={2.2}
                         />
                         <S.ActionButtonText accentColor={colors.success}>
-                          {t("communityMap.actions.whatsapp")}
+                          {t("communityMap.actions.telegram")}
                         </S.ActionButtonText>
                       </S.ActionButton>
                     )}

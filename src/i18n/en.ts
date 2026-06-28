@@ -205,10 +205,10 @@ export default {
   support: {
     title: "Support",
     needHelp: "Need help?",
-    contactSubtitle: "Talk directly with our team via WhatsApp",
-    whatsappButton: "Chat on WhatsApp",
-    whatsappMessage: "Hello, I need help!",
-    whatsappError: "Unable to open WhatsApp",
+    contactSubtitle: "Talk directly with our team via Telegram",
+    telegramButton: "Chat on Telegram",
+    telegramMessage: "Hello, I need help!",
+    telegramError: "Unable to open Telegram",
     faqSectionTitle: "FREQUENTLY ASKED QUESTIONS",
     faq: {
       q1: {
@@ -332,13 +332,13 @@ export default {
     retry: "Try again",
     errors: {
       call: "Unable to open the dialer.",
-      whatsapp: "Unable to open WhatsApp.",
+      telegram: "Unable to open Telegram.",
       website: "Unable to open the website.",
     },
     verified: "Verified",
     actions: {
       call: "Call",
-      whatsapp: "WhatsApp",
+      telegram: "Telegram",
       website: "Website",
     },
     address: "ADDRESS",

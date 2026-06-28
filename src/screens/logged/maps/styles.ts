@@ -286,7 +286,7 @@ export const SectionLabel = styled.Text`
   margin-top: ${hp(1.5)}px;
 `;
 
-// Ações de contato (telefone, whatsapp, site) como botões em linha
+// Ações de contato (telefone, telegram, site) como botões em linha
 export const ActionsRow = styled.View`
   flex-direction: row;
   gap: 10px;
