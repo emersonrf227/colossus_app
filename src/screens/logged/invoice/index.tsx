@@ -65,7 +65,7 @@ export default function Invoice() {
   const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();
-  const { navigate } = useNavigation();
+  const { navigate, reset } = useNavigation();
   const { showToast } = useToast();
 
   const logoIlike = require("@/assets/ilikepb.png");

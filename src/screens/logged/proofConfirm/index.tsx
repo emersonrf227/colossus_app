@@ -1,5 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import * as S from "./styles";
 import { StatusBar } from "react-native";
 import LogoSvg from "@/assets/logov2.svg";
@@ -36,6 +40,7 @@ export default function ProofConfirm() {
   const navigation = useNavigation();
   const { showToast } = useToast();
   const [printing, setPrinting] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
 
   const params = route.params as InvoiceData | undefined;
   const invoice = params?.data?.invoice;
@@ -44,29 +49,93 @@ export default function ProofConfirm() {
     ? new Date(invoice.updatedAt).toLocaleString("pt-BR")
     : "—";
 
-  const print = useCallback(async () => {
+  // const print = useCallback(async () => {
+  //   if (!invoice) return;
+
+  //   const printerModel = await AsyncStorage.getItem("printerModel");
+
+  //   if (!printerModel) {
+  //     showToast({
+  //       message: t("receipt.toastNoPrinter"),
+  //       type: "error",
+  //     });
+  //     return;
+  //   }
+
+  //   setPrinting(true);
+  //   try {
+  //     const lineWidth = printerModel === "80mm" ? 47 : 32;
+  //     const divider = "-".repeat(lineWidth);
+  //     const doubleDivider = "=".repeat(lineWidth);
+
+  //     const formattedDate = new Date(invoice.updatedAt).toLocaleString(
+  //       "pt-BR",
+  //       {
+  //         day: "2-digit",
+  //         month: "2-digit",
+  //         year: "numeric",
+  //         hour: "2-digit",
+  //         minute: "2-digit",
+  //       },
+  //     );
+
+  //     await ThermalPrinterModule.printBluetooth({
+  //       payload:
+  //         // `[L]<img>https://iliketechnology.com.br/img/logo.png</img>\n` +
+  //         `[L]\n` +
+  //         `[L]\n` +
+  //         `[C]<b>${t("receipt.print.headerTitle")}</b>\n` +
+  //         `[C]${doubleDivider}\n` +
+  //         `[L]\n` +
+  //         `[C]<b>${t("receipt.print.statusConfirmed")}</b>\n` +
+  //         `[L]\n` +
+  //         `[C]${divider}\n` +
+  //         `[L]<b>${t("receipt.print.amountLabel")}</b>[R]<b>${invoice.amount} USDT</b>\n` +
+  //         `[L]${t("receipt.print.dateTimeLabel")}[R]${formattedDate}\n` +
+  //         `[C]${divider}\n` +
+  //         `[L]\n` +
+  //         `[L]<b>${t("receipt.print.recipientLabel")}</b>\n` +
+  //         `[L]${invoice.paymentAddress}\n` +
+  //         `[L]\n` +
+  //         `[L]<b>${t("receipt.print.referenceLabel")}</b> ${invoice.reference}\n` +
+  //         `[L]<b>${t("receipt.print.txidLabel")}</b> ${invoice.txid}\n` +
+  //         `[L]\n` +
+  //         `[C]${divider}\n` +
+  //         `[L]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
+  //         `[L]\n` +
+  //         `[C]<font size='normal'>${t("receipt.print.scanHint")}</font>\n` +
+  //         `[C]${doubleDivider}\n` +
+  //         `[L]\n` +
+  //         `[C]support@iliketechnology.com.br\n` +
+  //         `[C]support@colossuscrypto.com.br\n` +
+  //         `[L]\n` +
+  //         `[L]\n`,
+  //       printerNbrCharactersPerLine: lineWidth,
+  //     });
+  //   } catch (err) {
+  //     showToast({
+  //       message: t("receipt.toastPrintError"),
+  //       type: "error",
+  //     });
+  //     console.log(err);
+  //   } finally {
+  //     setPrinting(false);
+  //   }
+  // }, [invoice, showToast, t]);
+
+  const print = async () => {
     if (!invoice) return;
-
     const printerModel = await AsyncStorage.getItem("printerModel");
-
-    if (!printerModel) {
-      showToast({
-        message: t("receipt.toastNoPrinter"),
-        type: "error",
-      });
-      return;
-    }
-
+    setSelected(printerModel);
+    ThermalPrinterModule.defaultConfig = {
+      ...ThermalPrinterModule.defaultConfig,
+      ip: "192.168.100.246",
+      port: 9100,
+      autoCut: false,
+      timeout: 30000, // in milliseconds (version >= 2.2.0)
+    };
     setPrinting(true);
     try {
-      ThermalPrinterModule.defaultConfig = {
-        ...ThermalPrinterModule.defaultConfig,
-        ip: PRINTER_IP,
-        port: PRINTER_PORT,
-        autoCut: false,
-        timeout: 30000,
-      };
-
       const lineWidth = printerModel === "80mm" ? 47 : 32;
       const divider = "-".repeat(lineWidth);
       const doubleDivider = "=".repeat(lineWidth);
@@ -84,9 +153,10 @@ export default function ProofConfirm() {
 
       await ThermalPrinterModule.printBluetooth({
         payload:
-          // `[C]<img>https://seusite.com.br/logo-recibo.png</img>\n` +
+          // `[L]<img>https://iliketechnology.com.br/img/logo.png</img>\n` +
           `[L]\n` +
-          `[C]<font size='big'><b>${t("receipt.print.headerTitle")}</b></font>\n` +
+          `[L]\n` +
+          `[C]<b>${t("receipt.print.headerTitle")}</b>\n` +
           `[C]${doubleDivider}\n` +
           `[L]\n` +
           `[C]<b>${t("receipt.print.statusConfirmed")}</b>\n` +
@@ -103,7 +173,7 @@ export default function ProofConfirm() {
           `[L]<b>${t("receipt.print.txidLabel")}</b> ${invoice.txid}\n` +
           `[L]\n` +
           `[C]${divider}\n` +
-          `[C]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
+          `[L]<qrcode size='20'>https://polygonscan.com/tx/${invoice.txid}</qrcode>\n` +
           `[L]\n` +
           `[C]<font size='normal'>${t("receipt.print.scanHint")}</font>\n` +
           `[C]${doubleDivider}\n` +
@@ -114,27 +184,44 @@ export default function ProofConfirm() {
           `[L]\n`,
         printerNbrCharactersPerLine: lineWidth,
       });
-      showToast({
-        message: t("receipt.toastPrintSuccess"),
-        type: "success",
-      });
     } catch (err) {
-      console.log(err);
       showToast({
         message: t("receipt.toastPrintError"),
         type: "error",
       });
+      console.log(err);
     } finally {
       setPrinting(false);
     }
-  }, [invoice, showToast, t]);
+  };
 
   const handleReturn = useCallback(() => {
-    navigation.navigate("Dashboard" as never);
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Dashboard" }],
+    });
   }, [navigation]);
 
   // Borda serrilhada do rodapé do recibo (efeito "rasgo de cupom fiscal")
   const tornNotches = Array.from({ length: 16 });
+  ThermalPrinterModule.defaultConfig = {
+    ...ThermalPrinterModule.defaultConfig,
+    ip: "192.168.100.246",
+    port: 9100,
+    autoCut: false,
+    timeout: 30000, // in milliseconds (version >= 2.2.0)
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      (async () => {
+        const printerModel = await AsyncStorage.getItem("printerModel");
+        console.log("Modelo salvo:", printerModel);
+        setSelected(printerModel);
+        print();
+      })();
+    }, []),
+  );
 
   if (!invoice) {
     return (

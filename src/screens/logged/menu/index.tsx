@@ -145,7 +145,10 @@ export default function MenuScreen() {
         "uuid",
         "typeAuth",
       ]);
-      reset("SingIn" as never);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "SingIn" }],
+      });
     } catch {
       showToast({
         message: t("menu.logoutError"),
@@ -217,7 +220,6 @@ export default function MenuScreen() {
                 ),
               )}
             </S.ButtonGrid>
-
             <S.LogoutButton onPress={handleLogout} activeOpacity={0.7}>
               <LogOut size={18} color={colors.danger} strokeWidth={2.2} />
               <S.LogoutButtonText>{t("menu.logout")}</S.LogoutButtonText>

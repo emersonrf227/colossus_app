@@ -40,7 +40,10 @@ export default function proofExtract() {
     if (navigation.canGoBack()) {
       navigation.goBack();
     } else {
-      navigation.navigate("Dashboard" as never);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Dashboard" }],
+      });
     }
   }, [navigation]);
   const formattedDate = invoice?.updatedAt
