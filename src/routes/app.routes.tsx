@@ -19,6 +19,7 @@ import SelectPrinterScreen from "@/screens/logged/printer";
 import SelectNetworks from "@/screens/logged/selectNetwork";
 import SettingsLanguage from "@/screens/logged/settingsLanguage";
 import Maps from "@/screens/logged/maps";
+import WalletSetup from "@/screens/logged/walletSetup";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -44,6 +45,7 @@ export function AppRoutes() {
       <Screen name="SelectNetworks" component={SelectNetworks} />
       <Screen name="SettingsLanguage" component={SettingsLanguage} />
       <Screen name="Maps" component={Maps} />
+      <Screen name="WalletSetup" component={WalletSetup} />
     </Navigator>
   );
 }
