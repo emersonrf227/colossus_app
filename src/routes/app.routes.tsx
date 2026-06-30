@@ -20,6 +20,9 @@ import SelectNetworks from "@/screens/logged/selectNetwork";
 import SettingsLanguage from "@/screens/logged/settingsLanguage";
 import Maps from "@/screens/logged/maps";
 import WalletSetup from "@/screens/logged/walletSetup";
+import WalletBackup from "@/screens/logged/walletBackup";
+import WalletGate from "@/screens/logged/walletGate";
+import WalletHome from "@/screens/logged/walletHome";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -46,6 +49,9 @@ export function AppRoutes() {
       <Screen name="SettingsLanguage" component={SettingsLanguage} />
       <Screen name="Maps" component={Maps} />
       <Screen name="WalletSetup" component={WalletSetup} />
+      <Screen name="WalletBackup" component={WalletBackup} />
+      <Screen name="WalletGate" component={WalletGate} />
+      <Screen name="WalletHome" component={WalletHome} />
     </Navigator>
   );
 }
