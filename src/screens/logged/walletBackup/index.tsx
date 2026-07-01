@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
-import { StatusBar } from "react-native";
+import { ActivityIndicator, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Eye, AlertTriangle, Check } from "lucide-react-native";
 
@@ -20,14 +20,30 @@ export default function WalletBackup() {
   const { navigate } = navigation;
   const { showToast } = useToast();
 
-  // A wallet é gerada uma única vez, em memória, na montagem da tela —
-  // e SÓ é persistida (criptografada) depois que o usuário confirmar
-  // corretamente as palavras sorteadas. Até esse ponto, ela existe
-  // apenas neste estado de componente; se o usuário sair da tela antes
-  // de confirmar, nada é salvo e a próxima tentativa gera uma wallet
-  // nova do zero (não há "meia wallet" persistida).
-  const wallet = useMemo(() => generateWallet(), []);
-  const words = useMemo(() => wallet.mnemonic.split(" "), [wallet]);
+  const [walletData, setWalletData] = useState<{
+    address: string;
+    mnemonic: string;
+  } | null>(null);
+  const [generating, setGenerating] = useState(true);
+
+  useEffect(() => {
+    try {
+      const generated = generateWallet();
+      setWalletData(generated);
+    } catch {
+      showToast({
+        message: "Não foi possível gerar a carteira. Tente novamente.",
+        type: "error",
+      });
+      navigation.goBack();
+    } finally {
+      setGenerating(false);
+    }
+  }, []);
+  const words = useMemo(
+    () => walletData?.mnemonic.split(" ") ?? [],
+    [walletData],
+  );
 
   const [step, setStep] = useState<Step>("reveal");
   const [blurred, setBlurred] = useState(true);
@@ -65,6 +81,8 @@ export default function WalletBackup() {
   );
 
   const handleFinish = useCallback(async () => {
+    if (!walletData) return;
+
     const errors: Record<number, boolean> = {};
     let allCorrect = true;
 
@@ -88,39 +106,26 @@ export default function WalletBackup() {
 
     setSubmitting(true);
     try {
-      // Ordem importa: persiste a seed localmente primeiro (rápido,
-      // sempre funciona offline), só então registra o endereço na API
-      // (pode falhar por rede). Se o registro na API falhar, a seed já
-      // está salva neste device — o usuário não perde a carteira, só
-      // precisa que o endereço seja sincronizado depois.
-      await persistGeneratedWallet(wallet);
+      await persistGeneratedWallet(walletData);
 
       try {
         await registerWalletAddress({
           network: "polygon",
-          address: wallet.address,
+          address: walletData.address,
         });
       } catch {
-        // A seed já está salva neste device nesse ponto — o usuário não
-        // perde a carteira, mas o endereço ainda não está sincronizado
-        // com o backend (logo, não vai aparecer no GET saller/wallet
-        // até isso ser refeito). Não há retry automático implementado
-        // ainda; o usuário precisa que o endereço seja sincronizado depois.
         showToast({
           message:
             "Carteira criada localmente, mas não foi possível registrá-la no servidor. Verifique sua internet e tente novamente em Configurações > Carteira.",
           type: "error",
         });
-        // Mesmo com falha no backend, segue para configurar o PIN —
-        // a wallet existe localmente e o PIN é necessário para usá-la.
         navigate("WalletPinSetup" as never, { mode: "create" } as never);
         return;
       }
 
-      // Fluxo obrigatório: criar o PIN de segurança antes de ir para
-      // WalletHome. O WalletPinSetup navega para WalletHome ao final.
       navigate("WalletPinSetup" as never, { mode: "create" } as never);
-    } catch {
+    } catch (e) {
+      console.log(e);
       showToast({
         message: "Não foi possível salvar a carteira. Tente novamente.",
         type: "error",
@@ -128,7 +133,7 @@ export default function WalletBackup() {
     } finally {
       setSubmitting(false);
     }
-  }, [checkIndexes, words, confirmInputs, wallet, showToast, navigate]);
+  }, [checkIndexes, words, confirmInputs, walletData, showToast, navigate]);
 
   const allFieldsFilled = checkIndexes.every(
     (index) => (confirmInputs[index] ?? "").length > 0,
@@ -158,7 +163,13 @@ export default function WalletBackup() {
           </S.Header>
 
           <S.ScrollContent showsVerticalScrollIndicator={false}>
-            {step === "reveal" ? (
+            {generating ? (
+              <ActivityIndicator
+                color={colors.primary}
+                size="large"
+                style={{ marginTop: 60 }}
+              />
+            ) : step === "reveal" ? (
               <>
                 <S.WarningCard>
                   <AlertTriangle

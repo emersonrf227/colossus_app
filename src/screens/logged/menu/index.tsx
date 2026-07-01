@@ -56,7 +56,7 @@ const MENU_ITEMS: MenuItem[] = [
     labelKey: "menu.items.wallet",
     icon: Wallet,
     accentColor: "#00D2D3",
-    route: "WalletSetup",
+    route: "WalletGate",
   },
   {
     labelKey: "menu.items.invoices",

@@ -13,7 +13,7 @@ import {
   saveLastCredentials,
   getLastCredentials,
   clearLastCredentials,
-} from "./secureCredentials";
+} from "./../components/wallet/secureCredentials";
 
 interface SignInResult {
   error: boolean;

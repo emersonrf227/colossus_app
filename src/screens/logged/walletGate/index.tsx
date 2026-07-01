@@ -32,8 +32,11 @@ export default function WalletGate() {
     (async () => {
       try {
         const status = await getWalletStatus();
+
         if (!isActive || hasNavigatedRef.current) return;
         hasNavigatedRef.current = true;
+
+        console.log("none ======>", status.mode);
 
         if (status.mode === "none") {
           navigation.reset({
@@ -49,6 +52,7 @@ export default function WalletGate() {
         if (status.mode === "full") {
           const pinConfigured = await hasWalletPin();
           if (!pinConfigured) {
+            console.log("walletPin");
             navigation.reset({
               index: 0,
               routes: [{ name: "WalletPinSetup" as never }],
@@ -69,7 +73,7 @@ export default function WalletGate() {
             },
           ],
         });
-      } catch {
+      } catch (e) {
         if (!isActive) return;
         showToast({
           message: "Não foi possível verificar sua carteira. Tente novamente.",

@@ -22,23 +22,22 @@ export const WALLET_NETWORKS: Record<WalletNetworkKey, NetworkConfig> = {
     key: "polygon",
     label: "Polygon",
     chainId: 137,
-    // 👉 Troque pelo seu endpoint real (Alchemy/Infura/QuickNode/etc).
-    rpcUrl: "https://SEU_RPC_POLYGON_AQUI",
+    rpcUrl:
+      "https://polygon.blockpi.network/v1/rpc/cd94efee8a3c6fa8ce9cd47e58d959e919486c9d",
     nativeCurrencySymbol: "POL",
-    // 👉 Endereço oficial do contrato USDT na Polygon — confirme antes de usar.
-    usdtContractAddress: "0xc2132D05D31c914a87C6611C10748AEb04B58e8",
+    usdtContractAddress: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
     explorerTxUrl: (txid) => `https://polygonscan.com/tx/${txid}`,
   },
   plasma: {
     key: "plasma",
     label: "Plasma",
     // 👉 Preencha com o chainId real da rede Plasma.
-    chainId: 0,
+    chainId: 9745,
     // 👉 Troque pelo seu endpoint real para a rede Plasma.
-    rpcUrl: "https://SEU_RPC_PLASMA_AQUI",
+    rpcUrl: "https://rpc.plasma.to",
     nativeCurrencySymbol: "XPL",
     // 👉 Endereço do contrato USDT na rede Plasma — confirme antes de usar.
-    usdtContractAddress: "0xSEU_CONTRATO_USDT_PLASMA_AQUI",
+    usdtContractAddress: "0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb",
     explorerTxUrl: (txid) => `https://plasmascan.to/tx/${txid}`,
   },
 };
@@ -54,12 +53,18 @@ export const ERC20_MIN_ABI = [
 // Cache de providers por rede, para não recriar a conexão RPC a cada
 // chamada — ethers.JsonRpcProvider mantém estado interno (nonce cache,
 // etc) que vale reaproveitar entre chamadas na mesma sessão do app.
-const providerCache: Partial<Record<WalletNetworkKey, ethers.JsonRpcProvider>> = {};
+const providerCache: Partial<Record<WalletNetworkKey, ethers.JsonRpcProvider>> =
+  {};
 
-export function getProvider(networkKey: WalletNetworkKey): ethers.JsonRpcProvider {
+export function getProvider(
+  networkKey: WalletNetworkKey,
+): ethers.JsonRpcProvider {
   if (!providerCache[networkKey]) {
     const config = WALLET_NETWORKS[networkKey];
-    providerCache[networkKey] = new ethers.JsonRpcProvider(config.rpcUrl, config.chainId);
+    providerCache[networkKey] = new ethers.JsonRpcProvider(
+      config.rpcUrl,
+      config.chainId,
+    );
   }
   return providerCache[networkKey]!;
 }

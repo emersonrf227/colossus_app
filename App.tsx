@@ -1,3 +1,5 @@
+import "react-native-get-random-values";
+
 import { View } from "react-native";
 import { Routes } from "./src/routes";
 import { ThemeProvider } from "styled-components";
@@ -5,6 +7,7 @@ import theme from "./src/theme";
 import { AuthProvider } from "@/hook/AuthContext";
 import { ToastProvider } from "@/hook/Toast";
 import i18n from "i18next";
+import { ethers } from "ethers";
 
 export default function App() {
   return (

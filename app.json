@@ -44,6 +44,13 @@
       }
     },
 
-    "plugins": []
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Necessário para ler endereços de carteira via QR code."
+        }
+      ]
+    ]
   }
 }

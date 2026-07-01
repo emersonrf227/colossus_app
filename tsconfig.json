@@ -1,24 +1,14 @@
 {
   "compilerOptions": {
+    "moduleResolution": "bundler",
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": [
-        "src/*",
-        "./*"
-      ],
-      "tailwind.config": [
-        "./tailwind.config.js"
-      ]
+      "@/*": ["src/*", "./*"],
+      "tailwind.config": ["./tailwind.config.js"]
     },
-    "types": [
-      "react-native-svg"
-    ]
+    "types": ["react-native-svg"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "types.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "types.d.ts"],
   "extends": "expo/tsconfig.base"
 }

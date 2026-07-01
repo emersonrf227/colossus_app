@@ -120,7 +120,7 @@ export default function WalletHome() {
   }, [record.address, showToast]);
 
   const goToWithdraw = useCallback(() => {
-    // navigate("WalletWithdraw" as never, { record } as never);
+    navigate("WalletWithdraw" as never, { record } as never);
   }, [navigate, record]);
 
   const goToPix = useCallback(() => {
