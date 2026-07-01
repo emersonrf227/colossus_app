@@ -3,6 +3,7 @@ import { ActivityIndicator, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as S from "./styles";
 import { getWalletStatus } from "../../../components/wallet/walletStatus";
+import { hasWalletPin } from "../../../components/wallet/walletPin";
 import { useToast } from "@/hook/Toast";
 import { colors } from "../dashboard/styles";
 
@@ -40,6 +41,20 @@ export default function WalletGate() {
             routes: [{ name: "WalletSetup" as never }],
           });
           return;
+        }
+
+        // Se o usuário tem wallet em modo completo (seed local) mas
+        // ainda não configurou o PIN (ex: fluxo interrompido na primeira
+        // abertura), manda configurar o PIN antes de abrir a carteira.
+        if (status.mode === "full") {
+          const pinConfigured = await hasWalletPin();
+          if (!pinConfigured) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "WalletPinSetup" as never }],
+            });
+            return;
+          }
         }
 
         navigation.reset({

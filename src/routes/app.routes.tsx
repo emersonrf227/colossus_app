@@ -23,6 +23,7 @@ import WalletSetup from "@/screens/logged/walletSetup";
 import WalletBackup from "@/screens/logged/walletBackup";
 import WalletGate from "@/screens/logged/walletGate";
 import WalletHome from "@/screens/logged/walletHome";
+import WalletPinSetup from "@/screens/logged/walletSetup";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -52,6 +53,7 @@ export function AppRoutes() {
       <Screen name="WalletBackup" component={WalletBackup} />
       <Screen name="WalletGate" component={WalletGate} />
       <Screen name="WalletHome" component={WalletHome} />
+      <Screen name="WalletPinSetup" component={WalletPinSetup} />
     </Navigator>
   );
 }

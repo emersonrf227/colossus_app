@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Eye, AlertTriangle, Check } from "lucide-react-native";
+
 import * as S from "./styles";
 import { useToast } from "@/hook/Toast";
 import {
@@ -104,18 +105,21 @@ export default function WalletBackup() {
         // perde a carteira, mas o endereço ainda não está sincronizado
         // com o backend (logo, não vai aparecer no GET saller/wallet
         // até isso ser refeito). Não há retry automático implementado
-        // ainda; o usuário precisa tentar novamente manualmente.
+        // ainda; o usuário precisa que o endereço seja sincronizado depois.
         showToast({
           message:
             "Carteira criada localmente, mas não foi possível registrá-la no servidor. Verifique sua internet e tente novamente em Configurações > Carteira.",
           type: "error",
         });
-        navigate("WalletHome" as never);
+        // Mesmo com falha no backend, segue para configurar o PIN —
+        // a wallet existe localmente e o PIN é necessário para usá-la.
+        navigate("WalletPinSetup" as never, { mode: "create" } as never);
         return;
       }
 
-      showToast({ message: "Carteira criada com sucesso!", type: "success" });
-      navigate("WalletHome" as never);
+      // Fluxo obrigatório: criar o PIN de segurança antes de ir para
+      // WalletHome. O WalletPinSetup navega para WalletHome ao final.
+      navigate("WalletPinSetup" as never, { mode: "create" } as never);
     } catch {
       showToast({
         message: "Não foi possível salvar a carteira. Tente novamente.",
