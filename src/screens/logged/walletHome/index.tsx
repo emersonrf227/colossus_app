@@ -49,9 +49,14 @@ export default function WalletHome() {
   const route = useRoute();
   const { showToast } = useToast();
 
-  const params = route.params as RouteParams;
-  const [mode, setMode] = useState<WalletAccessMode>(params.mode);
-  const [record, setRecord] = useState<ApiWalletRecord>(params.record);
+  const params = (route.params ?? {}) as Partial<RouteParams>;
+  const [mode, setMode] = useState<WalletAccessMode>(params.mode ?? "none");
+  const [record, setRecord] = useState<ApiWalletRecord | null>(
+    params.record ?? null,
+  );
+  const [loadingStatus, setLoadingStatus] = useState(
+    !params.mode || !params.record,
+  );
 
   const [balances, setBalances] = useState<NetworkBalance[]>([]);
   const [loadingBalances, setLoadingBalances] = useState(true);
@@ -62,6 +67,7 @@ export default function WalletHome() {
 
   const loadBalances = useCallback(
     async (isRefresh = false) => {
+      if (!record?.address) return;
       if (isRefresh) setRefreshing(true);
       else setLoadingBalances(true);
       setHasBalanceError(false);
@@ -81,12 +87,24 @@ export default function WalletHome() {
         setRefreshing(false);
       }
     },
-    [record.address],
+    [record?.address],
   );
 
   useEffect(() => {
+    // Se veio sem params (ex: fluxo pós-criação de wallet), busca o
+    // status real da API antes de carregar os saldos.
+    if (loadingStatus) {
+      getWalletStatus()
+        .then((status) => {
+          setMode(status.mode);
+          if (status.record) setRecord(status.record);
+          setLoadingStatus(false);
+        })
+        .catch(() => setLoadingStatus(false));
+      return;
+    }
     loadBalances();
-  }, [loadBalances]);
+  }, [loadingStatus, loadBalances]);
 
   // Sempre que a tela ganha foco de novo (ex: voltando de um saque
   // concluído), revalida o status — o modo pode ter mudado (improvável,
@@ -115,16 +133,18 @@ export default function WalletHome() {
   );
 
   const copyAddress = useCallback(async () => {
+    if (!record?.address) return;
     await Clipboard.setString(record.address);
     showToast({ message: "Endereço copiado!", type: "success" });
-  }, [record.address, showToast]);
+  }, [record?.address, showToast]);
 
   const goToWithdraw = useCallback(() => {
+    if (!record) return;
     navigate("WalletWithdraw" as never, { record } as never);
   }, [navigate, record]);
 
   const goToPix = useCallback(() => {
-    // navigate("WalletWithdrawPix" as never, { record } as never);
+    navigate("WalletWithdrawPix" as never, { record } as never);
   }, [navigate, record]);
 
   const goToExport = useCallback(() => {
@@ -168,109 +188,123 @@ export default function WalletHome() {
               />
             }
           >
-            {!isFullAccess && (
-              <S.ViewOnlyBanner>
-                <Eye size={16} color="#F7B731" strokeWidth={2.2} />
-                <S.ViewOnlyBannerText>
-                  Você está vendo esta carteira apenas para consulta. A chave de
-                  acesso está associada a outro dispositivo — saques só podem
-                  ser feitos a partir dele.
-                </S.ViewOnlyBannerText>
-              </S.ViewOnlyBanner>
-            )}
-
-            <S.TotalCard>
-              <S.TotalLabel>SALDO TOTAL EM USDT</S.TotalLabel>
-              {loadingBalances ? (
-                <ActivityIndicator color={colors.primary} />
-              ) : (
-                <>
-                  <S.TotalValue>{totalUsdt.toFixed(2)}</S.TotalValue>
-                  <S.TotalSubvalue>Somando todas as redes</S.TotalSubvalue>
-                </>
-              )}
-            </S.TotalCard>
-
-            <S.AddressCard onPress={copyAddress} activeOpacity={0.7}>
-              <S.AddressText numberOfLines={1}>{record.address}</S.AddressText>
-              <Copy size={16} color={colors.primary} strokeWidth={2.2} />
-            </S.AddressCard>
-
-            {isFullAccess && (
-              <S.ActionsRow>
-                <S.ActionButton
-                  accentColor={colors.primary}
-                  onPress={goToWithdraw}
-                  activeOpacity={0.75}
-                >
-                  <S.ActionIconWrapper accentColor={colors.primary}>
-                    <Send size={18} color={colors.primary} strokeWidth={2.2} />
-                  </S.ActionIconWrapper>
-                  <S.ActionButtonText accentColor={colors.primary}>
-                    Sacar
-                  </S.ActionButtonText>
-                </S.ActionButton>
-
-                <S.ActionButton
-                  accentColor={colors.success}
-                  onPress={goToPix}
-                  activeOpacity={0.75}
-                >
-                  <S.ActionIconWrapper accentColor={colors.success}>
-                    <Banknote
-                      size={18}
-                      color={colors.success}
-                      strokeWidth={2.2}
-                    />
-                  </S.ActionIconWrapper>
-                  <S.ActionButtonText accentColor={colors.success}>
-                    PIX
-                  </S.ActionButtonText>
-                </S.ActionButton>
-              </S.ActionsRow>
-            )}
-
-            <S.SectionLabel>SALDO POR REDE</S.SectionLabel>
-
-            {hasBalanceError ? (
+            {loadingStatus ? (
               <S.CenteredState>
-                <AlertTriangle
-                  size={24}
-                  color={colors.textMuted}
-                  strokeWidth={1.8}
-                />
-                <S.StateText>
-                  Não foi possível consultar os saldos agora. Arraste para baixo
-                  para tentar de novo.
-                </S.StateText>
+                <ActivityIndicator color={colors.primary} size="large" />
               </S.CenteredState>
             ) : (
-              balances.map((balance) => {
-                const config = getNetworkConfig(balance.network);
-                return (
-                  <S.NetworkBalanceCard key={balance.network}>
-                    <S.NetworkIconWrapper>
-                      <Network
-                        size={20}
-                        color={colors.primary}
-                        strokeWidth={2.2}
-                      />
-                    </S.NetworkIconWrapper>
-                    <S.NetworkInfo>
-                      <S.NetworkName>{config.label}</S.NetworkName>
-                      {balance.lowGasWarning && isFullAccess && (
-                        <S.NetworkGasWarning>
-                          Saldo de {config.nativeCurrencySymbol} baixo para
-                          taxas
-                        </S.NetworkGasWarning>
-                      )}
-                    </S.NetworkInfo>
-                    <S.NetworkBalanceValue>
-                      {parseFloat(balance.usdtBalance).toFixed(2)}
-                    </S.NetworkBalanceValue>
-                  </S.NetworkBalanceCard>
-                );
-              })
+              <>
+                {!isFullAccess && mode !== "none" && (
+                  <S.ViewOnlyBanner>
+                    <Eye size={16} color="#F7B731" strokeWidth={2.2} />
+                    <S.ViewOnlyBannerText>
+                      Você está vendo esta carteira apenas para consulta. A
+                      chave de acesso está associada a outro dispositivo —
+                      saques só podem ser feitos a partir dele.
+                    </S.ViewOnlyBannerText>
+                  </S.ViewOnlyBanner>
+                )}
+
+                <S.TotalCard>
+                  <S.TotalLabel>SALDO TOTAL EM USDT</S.TotalLabel>
+                  {loadingBalances ? (
+                    <ActivityIndicator color={colors.primary} />
+                  ) : (
+                    <>
+                      <S.TotalValue>{totalUsdt.toFixed(2)}</S.TotalValue>
+                      <S.TotalSubvalue>Somando todas as redes</S.TotalSubvalue>
+                    </>
+                  )}
+                </S.TotalCard>
+
+                <S.AddressCard onPress={copyAddress} activeOpacity={0.7}>
+                  <S.AddressText numberOfLines={1}>
+                    {record?.address ?? ""}
+                  </S.AddressText>
+                  <Copy size={16} color={colors.primary} strokeWidth={2.2} />
+                </S.AddressCard>
+
+                {isFullAccess && (
+                  <S.ActionsRow>
+                    <S.ActionButton
+                      accentColor={colors.primary}
+                      onPress={goToWithdraw}
+                      activeOpacity={0.75}
+                    >
+                      <S.ActionIconWrapper accentColor={colors.primary}>
+                        <Send
+                          size={18}
+                          color={colors.primary}
+                          strokeWidth={2.2}
+                        />
+                      </S.ActionIconWrapper>
+                      <S.ActionButtonText accentColor={colors.primary}>
+                        Sacar
+                      </S.ActionButtonText>
+                    </S.ActionButton>
+
+                    <S.ActionButton
+                      accentColor={colors.success}
+                      onPress={goToPix}
+                      activeOpacity={0.75}
+                    >
+                      <S.ActionIconWrapper accentColor={colors.success}>
+                        <Banknote
+                          size={18}
+                          color={colors.success}
+                          strokeWidth={2.2}
+                        />
+                      </S.ActionIconWrapper>
+                      <S.ActionButtonText accentColor={colors.success}>
+                        PIX
+                      </S.ActionButtonText>
+                    </S.ActionButton>
+                  </S.ActionsRow>
+                )}
+
+                <S.SectionLabel>SALDO POR REDE</S.SectionLabel>
+
+                {hasBalanceError ? (
+                  <S.CenteredState>
+                    <AlertTriangle
+                      size={24}
+                      color={colors.textMuted}
+                      strokeWidth={1.8}
+                    />
+                    <S.StateText>
+                      Não foi possível consultar os saldos agora. Arraste para
+                      baixo para tentar de novo.
+                    </S.StateText>
+                  </S.CenteredState>
+                ) : (
+                  balances.map((balance) => {
+                    const config = getNetworkConfig(balance.network);
+                    return (
+                      <S.NetworkBalanceCard key={balance.network}>
+                        <S.NetworkIconWrapper>
+                          <Network
+                            size={20}
+                            color={colors.primary}
+                            strokeWidth={2.2}
+                          />
+                        </S.NetworkIconWrapper>
+                        <S.NetworkInfo>
+                          <S.NetworkName>{config.label}</S.NetworkName>
+                          {balance.lowGasWarning && isFullAccess && (
+                            <S.NetworkGasWarning>
+                              Saldo de {config.nativeCurrencySymbol} baixo para
+                              taxas
+                            </S.NetworkGasWarning>
+                          )}
+                        </S.NetworkInfo>
+                        <S.NetworkBalanceValue>
+                          {parseFloat(balance.usdtBalance).toFixed(2)}
+                        </S.NetworkBalanceValue>
+                      </S.NetworkBalanceCard>
+                    );
+                  })
+                )}
+              </>
             )}
           </S.ScrollContent>
         </S.SafeArea>

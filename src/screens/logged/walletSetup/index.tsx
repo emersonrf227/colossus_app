@@ -8,6 +8,7 @@ import {
   Sparkles,
   ClipboardPaste,
   ShieldAlert,
+  KeyRound,
 } from "lucide-react-native";
 
 import * as S from "./styles";
@@ -43,7 +44,6 @@ export default function WalletSetup() {
       showToast({ message: "Endereço inválido.", type: "error" });
       return;
     }
-
     setSubmitting(true);
     try {
       await persistExternalWallet(externalAddress);
@@ -61,6 +61,10 @@ export default function WalletSetup() {
 
   const handleCreateNew = useCallback(() => {
     navigate("WalletBackup" as never);
+  }, [navigate]);
+
+  const handleImport = useCallback(() => {
+    navigate("WalletImport" as never);
   }, [navigate]);
 
   return (
@@ -88,12 +92,14 @@ export default function WalletSetup() {
             <S.IntroIconWrapper>
               <Wallet size={30} color={colors.primary} strokeWidth={2} />
             </S.IntroIconWrapper>
-            <S.IntroTitle>Como você quer receber?</S.IntroTitle>
+            <S.IntroTitle>Como você quer configurar?</S.IntroTitle>
             <S.IntroSubtitle>
-              Use uma wallet que você já tem, ou crie uma nova direto pelo app.
+              Crie uma nova carteira, importe uma existente ou conecte um
+              endereço externo para visualização.
             </S.IntroSubtitle>
           </S.IntroWrapper>
 
+          {/* Opção 1: Criar nova */}
           <S.OptionCard onPress={handleCreateNew} activeOpacity={0.8}>
             <S.OptionHeaderRow>
               <S.OptionIconWrapper accentColor={colors.primary}>
@@ -110,19 +116,36 @@ export default function WalletSetup() {
             </S.OptionDescription>
           </S.OptionCard>
 
+          {/* Opção 2: Importar via seed phrase */}
+          <S.OptionCard onPress={handleImport} activeOpacity={0.8}>
+            <S.OptionHeaderRow>
+              <S.OptionIconWrapper accentColor={colors.accent}>
+                <KeyRound size={20} color={colors.accent} strokeWidth={2.2} />
+              </S.OptionIconWrapper>
+              <S.OptionTitle>Importar carteira existente</S.OptionTitle>
+            </S.OptionHeaderRow>
+            <S.OptionDescription>
+              Já tem uma carteira com frase de 12 palavras (MetaMask, Trust
+              Wallet, SafePal)? Importe aqui para ter acesso completo a saldo,
+              saque e PIX.
+            </S.OptionDescription>
+          </S.OptionCard>
+
+          {/* Opção 3: Endereço externo (só visualização) */}
           <S.OptionCard
             onPress={() => setMode(mode === "external" ? "choice" : "external")}
             activeOpacity={0.8}
           >
             <S.OptionHeaderRow>
-              <S.OptionIconWrapper accentColor={colors.accent}>
-                <Wallet size={20} color={colors.accent} strokeWidth={2.2} />
+              <S.OptionIconWrapper accentColor={colors.textMuted}>
+                <Wallet size={20} color={colors.textMuted} strokeWidth={2.2} />
               </S.OptionIconWrapper>
-              <S.OptionTitle>Usar carteira externa</S.OptionTitle>
+              <S.OptionTitle>Só visualizar saldo</S.OptionTitle>
             </S.OptionHeaderRow>
             <S.OptionDescription>
-              Já tem uma carteira (SafePal, Trust Wallet, MetaMask, etc)?
-              Informe o endereço público para receber por ela.
+              Informe apenas o endereço público. Você verá o saldo mas não
+              poderá sacar pelo app — movimentações ficam na sua wallet
+              original.
             </S.OptionDescription>
 
             {mode === "external" && (
@@ -150,18 +173,16 @@ export default function WalletSetup() {
                   disabled={submitting || !externalAddress}
                   activeOpacity={0.85}
                 >
-                  <S.ConfirmButtonText>
-                    Conectar esta carteira
-                  </S.ConfirmButtonText>
+                  <S.ConfirmButtonText>Conectar endereço</S.ConfirmButtonText>
                 </S.ConfirmButton>
               </S.ExternalFormWrapper>
             )}
           </S.OptionCard>
 
           <S.WarningNote>
-            <ShieldAlert size={11} color={colors.textMuted} /> Importante: ao
-            usar uma carteira externa, saques e movimentações são feitos
-            diretamente no app dessa carteira — não pelo Colossus Crypto.
+            <ShieldAlert size={11} color={colors.textMuted} /> Nunca compartilhe
+            sua frase de 12 palavras ou chave privada com ninguém. A Colossus
+            Crypto jamais vai pedir essas informações.
           </S.WarningNote>
         </S.SafeArea>
       </S.Background>

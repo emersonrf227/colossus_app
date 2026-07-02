@@ -19,7 +19,7 @@ import Loader from "@/components/loader";
 import {
   withdrawCrypto,
   WithdrawError,
-} from "../../../components/wallet/walletTransactions";
+} from "../../../components/wallet/walletTransactions_contransfer";
 import {
   fetchAllNetworkBalances,
   NetworkBalance,

@@ -46,7 +46,7 @@ export default function WalletBackup() {
   );
 
   const [step, setStep] = useState<Step>("reveal");
-  const [blurred, setBlurred] = useState(true);
+  const [blurred, setBlurred] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const checkIndexes = useMemo(

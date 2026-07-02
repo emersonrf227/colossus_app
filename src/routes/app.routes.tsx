@@ -27,6 +27,8 @@ import WalletPinSetup from "@/screens/logged/walletPinSetup";
 import WalletWithdraw from "@/screens/logged/walletwithdraw";
 import WalletWithdrawSuccess from "@/screens/logged/walletWithdrawSuccess";
 
+import WalletImport from "@/screens/logged/walletImport";
+
 const { Navigator, Screen } = createNativeStackNavigator();
 
 export function AppRoutes() {
@@ -58,6 +60,7 @@ export function AppRoutes() {
       <Screen name="WalletPinSetup" component={WalletPinSetup} />
       <Screen name="WalletWithdraw" component={WalletWithdraw} />
       <Screen name="WalletWithdrawSuccess" component={WalletWithdrawSuccess} />
+      <Screen name="WalletImport" component={WalletImport} />
     </Navigator>
   );
 }
