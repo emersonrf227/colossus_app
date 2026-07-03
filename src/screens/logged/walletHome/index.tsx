@@ -144,7 +144,7 @@ export default function WalletHome() {
   }, [navigate, record]);
 
   const goToPix = useCallback(() => {
-    navigate("WalletWithdrawPix" as never, { record } as never);
+    navigate("Walletwithdrawpix" as never, { record } as never);
   }, [navigate, record]);
 
   const goToExport = useCallback(() => {
