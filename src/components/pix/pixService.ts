@@ -1,4 +1,4 @@
-import rstruther from "@/infraestructure/http/nodeApi";
+import swapxApi from "@/infraestructure/http/swapixApi";
 import axios from "axios";
 
 // ---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ export async function fetchSwapQuote(amountBrl: number): Promise<SwapQuote> {
  * Usado para calcular o valor real de USDT que o usuário precisa enviar.
  */
 export async function fetchNetworkTicker(): Promise<NetworkTicker> {
-  const response = await rstruther.get("sell/ticker");
+  const response = await swapxApi.get("sell/ticker");
   const res = response.data?.data?.res;
 
   if (!res) throw new Error("Não foi possível obter o ticker de rede.");
@@ -136,7 +136,7 @@ export function calculateUsdtNeeded(params: {
 // ---------------------------------------------------------------------------
 
 export async function decodeBrCode(emv: string): Promise<DecodedBrCode> {
-  const response = await rstruther.post("sell/decode-brcode", { emv });
+  const response = await swapxApi.post("sell/decode-brcode", { emv });
   console.log(response.data);
   if (response.data?.statusCode !== 200) {
     throw new Error("QR Code inválido ou não reconhecido.");
@@ -161,7 +161,7 @@ export interface CreatePixParams {
 export async function createPixTransaction(
   params: CreatePixParams,
 ): Promise<PixTransaction> {
-  const response = await rstruther.post("sell/create-crypto-to-pix", {
+  const response = await swapxApi.post("sell/create-crypto-to-pix", {
     network: params.network,
     key: params.key,
     typeKey: params.typeKey,
@@ -187,7 +187,7 @@ export async function createPixTransaction(
 export async function getPixTransactionStatus(
   uuid: string,
 ): Promise<PixTransaction> {
-  const response = await rstruther.get("sell/get-status-crypto-to-pix", {
+  const response = await swapxApi.get("sell/get-status-crypto-to-pix", {
     params: { uuid },
   });
 
