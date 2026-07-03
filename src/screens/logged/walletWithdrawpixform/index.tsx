@@ -29,6 +29,12 @@ import {
 } from "../../../components/pix/pixService";
 import { ApiWalletRecord } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
+export const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -402,6 +408,10 @@ export default function WalletWithdrawPixForm() {
             </BackButton>
             <HeaderTitle>Dados do PIX</HeaderTitle>
           </Header>
+
+          <CardLogo>
+            <LogoSvg width={wp(28)} height={hp(7)} />
+          </CardLogo>
 
           <ScrollView
             showsVerticalScrollIndicator={false}

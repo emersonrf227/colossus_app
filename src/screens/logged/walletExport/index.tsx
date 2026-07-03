@@ -19,6 +19,7 @@ import { useToast } from "@/hook/Toast";
 import PinConfirmModal from "../PinConfirmModal";
 import { getStoredMnemonic } from "../../../components/wallet/walletStorage";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -220,6 +221,12 @@ const IconWrapper = styled.View`
   background-color: rgba(108, 92, 231, 0.18);
 `;
 
+export const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
+
 export default function WalletExport() {
   const navigation = useNavigation();
   const { showToast } = useToast();
@@ -280,6 +287,9 @@ export default function WalletExport() {
             </BackButton>
             <HeaderTitle>Frase de recuperação</HeaderTitle>
           </Header>
+          <CardLogo>
+            <LogoSvg width={wp(28)} height={hp(7)} />
+          </CardLogo>
 
           {!unlocked ? (
             // Estado bloqueado — pede PIN antes de mostrar qualquer coisa

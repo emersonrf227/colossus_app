@@ -9,6 +9,12 @@ import {
 } from "../../../components/wallet/walletPin";
 import { useToast } from "@/hook/Toast";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
+
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const PIN_LENGTH = 6;
 const KEYPAD = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "", "0", "⌫"];
@@ -143,6 +149,10 @@ export default function WalletPinSetup() {
               </S.BackButton>
             )}
           </S.Header>
+
+          <S.cardLogo>
+            <LogoSvg width={wp(38)} height={hp(11)} />
+          </S.cardLogo>
 
           <S.Content>
             <S.StepLabel>

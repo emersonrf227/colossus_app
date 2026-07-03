@@ -12,6 +12,11 @@ import {
 } from "../../../components/wallet/walletStorage";
 import { registerWalletAddress } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type Step = "reveal" | "confirm";
 
@@ -161,6 +166,9 @@ export default function WalletBackup() {
               {step === "reveal" ? "Frase de recuperação" : "Confirme o backup"}
             </S.HeaderTitle>
           </S.Header>
+          <S.cardLogo>
+            <LogoSvg width={wp(38)} height={hp(11)} />
+          </S.cardLogo>
 
           <S.ScrollContent showsVerticalScrollIndicator={false}>
             {generating ? (

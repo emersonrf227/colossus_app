@@ -15,6 +15,7 @@
 //   PixKeyType,
 // } from "../../../components/pix/pixService";
 // import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
 
 // const STATUSBAR_HEIGHT =
 //   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -424,6 +425,12 @@ const CopyButton = styled.TouchableOpacity`
   padding: 4px;
 `;
 
+export const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
+
 function truncateTxid(txid: string): string {
   if (!txid || txid.length <= 20) return txid;
   return `${txid.slice(0, 8)}...${txid.slice(-6)}`;
@@ -541,6 +548,10 @@ export default function WalletWithdrawPixStatus() {
         />
         <SafeArea>
           <Content>
+            <CardLogo>
+              <LogoSvg width={wp(28)} height={hp(7)} />
+            </CardLogo>
+
             <IconWrapper>
               <Clock size={36} color={colors.primary} strokeWidth={1.8} />
             </IconWrapper>

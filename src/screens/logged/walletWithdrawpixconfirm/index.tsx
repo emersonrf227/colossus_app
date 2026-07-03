@@ -25,6 +25,7 @@ import {
 import { ApiWalletRecord } from "../../../components/wallet/walletStatus";
 import { getStoredWalletAddress } from "../../../components/wallet/walletStorage";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -166,6 +167,12 @@ const PrimaryButtonText = styled.Text`
   font-weight: 700;
 `;
 
+export const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
+
 interface RouteParams {
   record: ApiWalletRecord;
   network: WalletNetwork;
@@ -265,6 +272,10 @@ export default function WalletWithdrawPixConfirm() {
             </BackButton>
             <HeaderTitle>Confirmar PIX</HeaderTitle>
           </Header>
+
+          <CardLogo>
+            <LogoSvg width={wp(28)} height={hp(7)} />
+          </CardLogo>
 
           <ScrollContent
             showsVerticalScrollIndicator={false}

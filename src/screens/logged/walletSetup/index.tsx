@@ -15,6 +15,11 @@ import * as S from "./styles";
 import { useToast } from "@/hook/Toast";
 import { persistExternalWallet } from "../../../components/wallet/walletStorage";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 type Mode = "choice" | "external";
 
@@ -87,6 +92,10 @@ export default function WalletSetup() {
             </S.BackButton>
             <S.HeaderTitle>Configurar carteira</S.HeaderTitle>
           </S.Header>
+
+          <S.CardLogo>
+            <LogoSvg width={wp(38)} height={hp(11)} />
+          </S.CardLogo>
 
           <S.IntroWrapper>
             <S.IntroIconWrapper>

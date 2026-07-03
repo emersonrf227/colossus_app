@@ -37,6 +37,11 @@ import {
   WalletNetworkKey,
 } from "../../../components/wallet/walletProviders";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 interface RouteParams {
   mode: WalletAccessMode;
@@ -200,6 +205,10 @@ export default function WalletHome() {
               </S.IconButton>
             )}
           </S.Header>
+
+          <S.cardLogo>
+            <LogoSvg width={wp(38)} height={hp(11)} />
+          </S.cardLogo>
 
           <S.ScrollContent
             showsVerticalScrollIndicator={false}

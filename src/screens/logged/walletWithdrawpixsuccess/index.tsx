@@ -15,6 +15,7 @@ import {
 import { Platform, StatusBar as RNStatusBar } from "react-native";
 import { PixTransaction } from "../../../components/pix/pixService";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -48,8 +49,9 @@ const Content = styled.View`
   padding-bottom: ${hp(4)}px;
 `;
 const IconWrapper = styled.View`
-  width: 88px;
-  height: 88px;
+  width: 30px;
+  height: 30px;
+  margin-top: 50px;
   border-radius: 44px;
   align-items: center;
   justify-content: center;
@@ -175,6 +177,12 @@ const SecondaryButtonText = styled.Text`
   font-weight: 600;
 `;
 
+export const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
+
 interface RouteParams {
   txid: string;
   explorerUrl: string;
@@ -222,6 +230,9 @@ export default function WalletWithdrawPixSuccess() {
           translucent
         />
         <SafeArea>
+          <CardLogo>
+            <LogoSvg width={wp(28)} height={hp(9)} />
+          </CardLogo>
           <Content>
             <IconWrapper>
               <CheckCircle size={48} color={colors.success} strokeWidth={1.8} />

@@ -135,3 +135,9 @@ export const ErrorText = styled.Text`
   margin-top: ${hp(1)}px;
   text-align: center;
 `;
+
+export const cardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
