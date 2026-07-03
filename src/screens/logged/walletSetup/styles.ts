@@ -200,3 +200,9 @@ export const WarningNote = styled.Text`
   text-align: center;
   padding-horizontal: 16px;
 `;
+
+export const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;

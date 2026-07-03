@@ -208,3 +208,9 @@ export const SubmitButtonText = styled.Text`
   font-size: 15px;
   font-weight: 700;
 `;
+
+export const cardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;

@@ -14,6 +14,7 @@ import { useToast } from "@/hook/Toast";
 import { persistGeneratedWallet } from "../../../components/wallet/walletStorage";
 import { registerWalletAddress } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -140,6 +141,12 @@ const SubmitButtonText = styled.Text`
   font-weight: 700;
 `;
 
+export const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
+
 export default function WalletImport() {
   const navigation = useNavigation();
   const { navigate, goBack } = navigation;
@@ -256,6 +263,10 @@ export default function WalletImport() {
             </BackButton>
             <HeaderTitle>Importar carteira</HeaderTitle>
           </Header>
+
+          <CardLogo>
+            <LogoSvg width={wp(28)} height={hp(7)} />
+          </CardLogo>
 
           <ScrollView
             showsVerticalScrollIndicator={false}

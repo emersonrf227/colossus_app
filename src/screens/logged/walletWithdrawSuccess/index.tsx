@@ -19,6 +19,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -149,6 +150,12 @@ const SecondaryButtonText = styled.Text`
   font-weight: 600;
 `;
 
+export const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
+
 interface RouteParams {
   txid: string;
   explorerUrl: string;
@@ -191,6 +198,9 @@ export default function WalletWithdrawSuccess() {
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </BackButton>
           </Header>
+          <CardLogo>
+            <LogoSvg width={wp(28)} height={hp(7)} />
+          </CardLogo>
 
           <Content>
             <IconWrapper>

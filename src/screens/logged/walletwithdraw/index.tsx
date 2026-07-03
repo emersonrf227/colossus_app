@@ -31,6 +31,11 @@ import {
 } from "../../../components/wallet/walletProviders";
 import { ApiWalletRecord } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 interface RouteParams {
   record: ApiWalletRecord;
@@ -191,6 +196,10 @@ export default function WalletWithdraw() {
             </S.BackButton>
             <S.HeaderTitle>Sacar USDT</S.HeaderTitle>
           </S.Header>
+
+          <S.cardLogo>
+            <LogoSvg width={wp(38)} height={hp(11)} />
+          </S.cardLogo>
 
           <S.ScrollContent
             showsVerticalScrollIndicator={false}

@@ -26,6 +26,12 @@ import WalletHome from "@/screens/logged/walletHome";
 import WalletPinSetup from "@/screens/logged/walletPinSetup";
 import WalletWithdraw from "@/screens/logged/walletwithdraw";
 import WalletWithdrawSuccess from "@/screens/logged/walletWithdrawSuccess";
+import Walletwithdrawpixsuccess from "@/screens/logged/walletWithdrawpixsuccess";
+import WalletWithdrawPixForm from "@/screens/logged/walletWithdrawpixform";
+import Walletwithdrawpixconfirm from "@/screens/logged/walletWithdrawpixconfirm";
+import Walletwithdrawpixstatus from "@/screens/logged/walletWithdrawpixstatus";
+import Walletwithdrawpix from "@/screens/logged/walletWithdrawpix";
+import WalletExport from "@/screens/logged/walletExport";
 
 import WalletImport from "@/screens/logged/walletImport";
 
@@ -61,6 +67,21 @@ export function AppRoutes() {
       <Screen name="WalletWithdraw" component={WalletWithdraw} />
       <Screen name="WalletWithdrawSuccess" component={WalletWithdrawSuccess} />
       <Screen name="WalletImport" component={WalletImport} />
+      <Screen name="Walletwithdrawpix" component={Walletwithdrawpix} />
+      <Screen name="WalletWithdrawPixForm" component={WalletWithdrawPixForm} />
+      <Screen
+        name="Walletwithdrawpixconfirm"
+        component={Walletwithdrawpixconfirm}
+      />
+      <Screen
+        name="Walletwithdrawpixstatus"
+        component={Walletwithdrawpixstatus}
+      />
+      <Screen
+        name="Walletwithdrawpixsuccess"
+        component={Walletwithdrawpixsuccess}
+      />
+      <Screen name="WalletExport" component={WalletExport} />
     </Navigator>
   );
 }

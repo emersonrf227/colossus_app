@@ -6,6 +6,7 @@ import { getWalletStatus } from "../../../components/wallet/walletStatus";
 import { hasWalletPin } from "../../../components/wallet/walletPin";
 import { useToast } from "@/hook/Toast";
 import { colors } from "../dashboard/styles";
+import Loader from "@/components/loader";
 
 /**
  * Esta tela não tem UI própria de decisão — ela existe só para
@@ -35,14 +36,8 @@ export default function WalletGate() {
 
         if (!isActive || hasNavigatedRef.current) return;
         hasNavigatedRef.current = true;
-
-        console.log("none ======>", status.mode);
-
         if (status.mode === "none") {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "WalletSetup" as never }],
-          });
+          navigation.navigate("WalletSetup" as never);
           return;
         }
 
@@ -53,25 +48,18 @@ export default function WalletGate() {
           const pinConfigured = await hasWalletPin();
           if (!pinConfigured) {
             console.log("walletPin");
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "WalletPinSetup" as never }],
-            });
+            navigation.navigate(
+              "WalletPinSetup" as never,
+              { mode: "create" } as never,
+            );
+
             return;
           }
         }
 
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: "WalletHome" as never,
-              params: {
-                mode: status.mode,
-                record: status.record,
-              } as never,
-            },
-          ],
+        (navigation as any).replace("WalletHome", {
+          mode: status.mode,
+          record: status.record,
         });
       } catch (e) {
         if (!isActive) return;
@@ -95,7 +83,8 @@ export default function WalletGate() {
         backgroundColor="transparent"
         translucent
       />
-      <ActivityIndicator color={colors.primary} size="large" />
+      <Loader />
+      {/* <ActivityIndicator color={colors.primary} size="large" /> */}
     </S.Container>
   );
 }
