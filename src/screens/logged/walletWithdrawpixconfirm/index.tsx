@@ -226,7 +226,7 @@ export default function WalletWithdrawPixConfirm() {
 
       // 4. Vai para tela de polling de status
       navigate(
-        "WalletWithdrawPixStatus" as never,
+        "Walletwithdrawpixstatus" as never,
         {
           uuid: pixTx.uuid,
           txid,

@@ -126,7 +126,7 @@ export function calculateUsdtNeeded(params: {
 }): number {
   const { amountBrl, priceUsd, tickerPercent } = params;
   const markup = 1 - tickerPercent / 100;
-  const bruto = amountBrl / markup;
+  const bruto = (amountBrl + 0.17) / markup;
   const usdt = bruto / priceUsd;
   return Math.ceil(usdt * 100) / 100; // arredonda pra cima em 2 casas
 }
@@ -137,7 +137,7 @@ export function calculateUsdtNeeded(params: {
 
 export async function decodeBrCode(emv: string): Promise<DecodedBrCode> {
   const response = await rstruther.post("sell/decode-brcode", { emv });
-
+  console.log(response.data);
   if (response.data?.statusCode !== 200) {
     throw new Error("QR Code inválido ou não reconhecido.");
   }

@@ -144,8 +144,32 @@ export default function WalletHome() {
   }, [navigate, record]);
 
   const goToPix = useCallback(() => {
-    navigate("Walletwithdrawpix" as never, { record } as never);
-  }, [navigate, record]);
+    if (!record) return;
+
+    // Passa o saldo de cada rede separadamente para que a tela de PIX
+    // consiga mostrar e validar o saldo correto ao trocar de rede.
+    const polygonBalance = parseFloat(
+      balances.find((b) => b.network === "polygon")?.usdtBalance ?? "0",
+    );
+    const plasmaBalance = parseFloat(
+      balances.find((b) => b.network === "plasma")?.usdtBalance ?? "0",
+    );
+
+    // Usa Polygon como rede padrão se tiver saldo, senão Plasma
+    const defaultNetwork = polygonBalance > 0 ? "POLYGON" : "PLASMA";
+    const defaultBalance =
+      defaultNetwork === "POLYGON" ? polygonBalance : plasmaBalance;
+
+    navigate(
+      "Walletwithdrawpix" as never,
+      {
+        record,
+        network: defaultNetwork,
+        usdtBalance: defaultBalance,
+        balances: { POLYGON: polygonBalance, PLASMA: plasmaBalance },
+      } as never,
+    );
+  }, [navigate, record, balances]);
 
   const goToExport = useCallback(() => {
     navigate("WalletExport" as never);

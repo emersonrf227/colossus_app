@@ -231,6 +231,11 @@ interface RouteParams {
   amountBrl: number;
   usdtNeeded: number;
   quote: SwapQuote;
+  prefilledPix?: {
+    pixKey: string;
+    keyType: PixKeyType;
+    merchantName: string | null;
+  };
 }
 
 export default function WalletWithdrawPixForm() {
@@ -239,10 +244,15 @@ export default function WalletWithdrawPixForm() {
   const route = useRoute();
   const { showToast } = useToast();
   const params = route.params as RouteParams;
-  const { record, network, amountBrl, usdtNeeded, quote } = params;
+  const { record, network, amountBrl, usdtNeeded, quote, prefilledPix } =
+    params;
 
-  const [keyType, setKeyType] = useState<PixKeyType>("CPF");
-  const [pixKey, setPixKey] = useState("");
+  // Se veio com PIX pré-decodificado (copia e cola ou QR da tela anterior),
+  // inicializa os campos já preenchidos com COPYPASTE como tipo de chave.
+  const [keyType, setKeyType] = useState<PixKeyType>(
+    prefilledPix?.keyType ?? "CPF",
+  );
+  const [pixKey, setPixKey] = useState(prefilledPix?.pixKey ?? "");
   const [email, setEmail] = useState("");
   const [saveEmail, setSaveEmail] = useState(false);
   const [typeModalVisible, setTypeModalVisible] = useState(false);
@@ -250,8 +260,13 @@ export default function WalletWithdrawPixForm() {
   const [scanned, setScanned] = useState(false);
   const [decoding, setDecoding] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
-  const [decodedName, setDecodedName] = useState<string | null>(null);
-  const [lockedAmount, setLockedAmount] = useState<number | null>(null); // para QR com valor fixo
+  const [decodedName, setDecodedName] = useState<string | null>(
+    prefilledPix?.merchantName ?? null,
+  );
+  const [lockedAmount, setLockedAmount] = useState<number | null>(null);
+
+  // Campo de chave bloqueado se veio pré-preenchido via QR/copia e cola
+  const pixKeyLocked = !!prefilledPix;
 
   // Carrega email salvo
   React.useEffect(() => {
@@ -340,7 +355,7 @@ export default function WalletWithdrawPixForm() {
     }
 
     navigate(
-      "WalletWithdrawPixConfirm" as never,
+      "Walletwithdrawpixconfirm" as never,
       {
         record,
         network,
@@ -415,15 +430,18 @@ export default function WalletWithdrawPixForm() {
             {/* Tipo de chave */}
             <SectionLabel>TIPO DE CHAVE PIX</SectionLabel>
             <TypeSelectorButton
-              onPress={() => setTypeModalVisible(true)}
-              activeOpacity={0.75}
+              onPress={() => !pixKeyLocked && setTypeModalVisible(true)}
+              activeOpacity={pixKeyLocked ? 1 : 0.75}
+              style={{ opacity: pixKeyLocked ? 0.7 : 1 }}
             >
               <TypeSelectorText>{selectedType.label}</TypeSelectorText>
-              <ChevronDown
-                size={18}
-                color={colors.textMuted}
-                strokeWidth={2.2}
-              />
+              {!pixKeyLocked && (
+                <ChevronDown
+                  size={18}
+                  color={colors.textMuted}
+                  strokeWidth={2.2}
+                />
+              )}
             </TypeSelectorButton>
 
             {/* Chave PIX */}
@@ -437,10 +455,15 @@ export default function WalletWithdrawPixForm() {
                 }
                 placeholderTextColor="rgba(255,255,255,0.3)"
                 value={pixKey}
-                onChangeText={(t) => {
-                  setPixKey(t);
-                  setDecodedName(null);
-                }}
+                onChangeText={
+                  pixKeyLocked
+                    ? undefined
+                    : (t) => {
+                        setPixKey(t);
+                        setDecodedName(null);
+                      }
+                }
+                editable={!pixKeyLocked}
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType={
@@ -450,8 +473,9 @@ export default function WalletWithdrawPixForm() {
                       ? "email-address"
                       : "default"
                 }
+                style={{ opacity: pixKeyLocked ? 0.7 : 1 }}
               />
-              {keyType === "COPYPASTE" && (
+              {keyType === "COPYPASTE" && !pixKeyLocked && (
                 <TouchableOpacity
                   onPress={handleOpenQr}
                   activeOpacity={0.7}

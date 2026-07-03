@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { StatusBar, ActivityIndicator } from "react-native";
+import {
+  StatusBar,
+  ActivityIndicator,
+  Clipboard,
+  Modal,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   ArrowLeft,
@@ -7,6 +16,10 @@ import {
   ArrowRight,
   AlertTriangle,
   Clock,
+  QrCode,
+  ClipboardPaste,
+  X,
+  CheckCircle,
 } from "lucide-react-native";
 import styled from "styled-components/native";
 import {
@@ -14,13 +27,16 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Platform, StatusBar as RNStatusBar } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { useToast } from "@/hook/Toast";
 import {
   fetchSwapQuote,
   fetchNetworkTicker,
   calculateUsdtNeeded,
+  decodeBrCode,
   SwapQuote,
   WalletNetwork,
+  DecodedBrCode,
 } from "../../../components/pix/pixService";
 import { ApiWalletRecord } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
@@ -152,6 +168,73 @@ const NetworkChipText = styled.Text`
   font-size: 13px;
   font-weight: 700;
 `;
+
+// Copia e Cola
+const CopyPasteCard = styled.View`
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: ${hp(2)}px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+const CopyPasteTitle = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+`;
+const CopyPasteActions = styled.View`
+  flex-direction: row;
+  gap: 10px;
+`;
+const CopyPasteButton = styled.TouchableOpacity`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-vertical: 12px;
+  border-radius: 12px;
+  background-color: rgba(108, 92, 231, 0.15);
+  border-width: 1px;
+  border-color: ${colors.primary};
+`;
+const CopyPasteButtonText = styled.Text`
+  color: ${colors.primary};
+  font-size: 12.5px;
+  font-weight: 700;
+`;
+const DecodedCard = styled.View`
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 10px;
+  background-color: rgba(46, 204, 113, 0.1);
+  border-width: 1px;
+  border-color: rgba(46, 204, 113, 0.3);
+`;
+const DecodedRow = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+`;
+const DecodedLabel = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 12px;
+`;
+const DecodedValue = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 13px;
+  font-weight: 700;
+`;
+const DecodedAmountNote = styled.Text`
+  color: ${colors.success};
+  font-size: 11.5px;
+  margin-top: 6px;
+`;
+
 const AmountCard = styled.View`
   border-radius: 18px;
   padding: 20px;
@@ -242,6 +325,7 @@ interface RouteParams {
   record: ApiWalletRecord;
   network?: WalletNetwork;
   usdtBalance?: number;
+  balances?: { POLYGON: number; PLASMA: number };
 }
 
 export default function WalletWithdrawPix() {
@@ -255,13 +339,26 @@ export default function WalletWithdrawPix() {
   const [selectedNetwork, setSelectedNetwork] = useState<WalletNetwork>(
     params.network ?? "POLYGON",
   );
-  const usdtBalance = params.usdtBalance ?? 0;
+  const usdtBalance = React.useMemo(() => {
+    if (params.balances) return params.balances[selectedNetwork] ?? 0;
+    return params.usdtBalance ?? 0;
+  }, [selectedNetwork, params.balances, params.usdtBalance]);
+
   const [amountBrl, setAmountBrl] = useState("");
+  const [amountLocked, setAmountLocked] = useState(false); // true quando vem do QR com valor fixo
   const [quote, setQuote] = useState<SwapQuote | null>(null);
   const [ticker, setTicker] = useState(2.5);
   const [loadingQuote, setLoadingQuote] = useState(true);
   const [timeLeft, setTimeLeft] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Copia e Cola / QR
+  const [decodedPix, setDecodedPix] = useState<DecodedBrCode | null>(null);
+  const [emvRaw, setEmvRaw] = useState<string>(""); // string original do QR/copia e cola
+  const [decoding, setDecoding] = useState(false);
+  const [qrModalVisible, setQrModalVisible] = useState(false);
+  const [scanned, setScanned] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
 
   const usdtNeeded = React.useMemo(() => {
     if (!quote || !amountBrl) return 0;
@@ -324,6 +421,96 @@ export default function WalletWithdrawPix() {
       .toString()
       .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
+  // Decodifica o EMV (copia e cola ou QR) e preenche os campos
+  const handleDecodeEmv = useCallback(
+    async (emv: string) => {
+      if (!emv.trim()) return;
+      setDecoding(true);
+      setEmvRaw(emv.trim()); // guarda o EMV original para passar para a próxima tela
+      try {
+        const decoded = await decodeBrCode(emv.trim());
+        setDecodedPix(decoded);
+
+        // Se o QR/código tem valor fixo, preenche e bloqueia o campo
+        if (
+          Number(decoded.transactionAmount) &&
+          Number(decoded.transactionAmount) > 0
+        ) {
+          setAmountBrl(
+            Number(decoded.transactionAmount).toFixed(2).replace(".", ","),
+          );
+          setAmountLocked(true);
+        } else {
+          setAmountLocked(false);
+        }
+
+        showToast({
+          message: `PIX identificado: ${decoded.merchantName}`,
+          type: "success",
+        });
+      } catch {
+        showToast({
+          message: "Código PIX inválido ou não reconhecido.",
+          type: "error",
+        });
+        setDecodedPix(null);
+        setEmvRaw("");
+        setAmountLocked(false);
+      } finally {
+        setDecoding(false);
+      }
+    },
+    [showToast],
+  );
+
+  const handlePasteEmv = useCallback(async () => {
+    try {
+      const text = await Clipboard.getString();
+      if (!text.trim()) {
+        showToast({ message: "Área de transferência vazia.", type: "error" });
+        return;
+      }
+      await handleDecodeEmv(text);
+    } catch {
+      showToast({
+        message: "Não foi possível acessar a área de transferência.",
+        type: "error",
+      });
+    }
+  }, [handleDecodeEmv, showToast]);
+
+  const handleOpenQr = useCallback(async () => {
+    if (!permission?.granted) {
+      const result = await requestPermission();
+      if (!result.granted) {
+        showToast({
+          message: "Permissão de câmera necessária.",
+          type: "error",
+        });
+        return;
+      }
+    }
+    setScanned(false);
+    setQrModalVisible(true);
+  }, [permission, requestPermission, showToast]);
+
+  const handleQrScanned = useCallback(
+    async ({ data }: { data: string }) => {
+      if (scanned) return;
+      setScanned(true);
+      setQrModalVisible(false);
+      await handleDecodeEmv(data);
+    },
+    [scanned, handleDecodeEmv],
+  );
+
+  const handleClearPix = useCallback(() => {
+    setDecodedPix(null);
+    setEmvRaw("");
+    setAmountBrl("");
+    setAmountLocked(false);
+  }, []);
+
   const handleProceed = useCallback(() => {
     if (!canProceed || !quote) return;
     navigate(
@@ -334,6 +521,15 @@ export default function WalletWithdrawPix() {
         amountBrl: parseFloat(amountBrl.replace(",", ".")),
         usdtNeeded,
         quote,
+        // Passa o EMV completo com tipo COPYPASTE — a próxima tela
+        // usa a string inteira como chave, não a pixKey extraída.
+        prefilledPix: decodedPix
+          ? {
+              pixKey: emvRaw,
+              keyType: "COPYPASTE" as const,
+              merchantName: decodedPix.merchantName,
+            }
+          : undefined,
       } as never,
     );
   }, [
@@ -343,6 +539,8 @@ export default function WalletWithdrawPix() {
     usdtNeeded,
     selectedNetwork,
     record,
+    decodedPix,
+    emvRaw,
     navigate,
   ]);
 
@@ -398,10 +596,6 @@ export default function WalletWithdrawPix() {
                   </QuoteValue>
                 </QuoteRow>
                 <QuoteRow>
-                  <QuoteLabel>Taxa da operação</QuoteLabel>
-                  <QuoteValue>R$ {quote.fee_brl}</QuoteValue>
-                </QuoteRow>
-                <QuoteRow>
                   <QuoteLabel>Markup da rede ({selectedNetwork})</QuoteLabel>
                   <QuoteValue>{ticker}%</QuoteValue>
                 </QuoteRow>
@@ -437,6 +631,78 @@ export default function WalletWithdrawPix() {
               </WarningCard>
             )}
 
+            {/* Copia e Cola / QR — identifica o PIX e preenche o valor se fixo */}
+            <SectionLabel>TEM UM CÓDIGO PIX?</SectionLabel>
+            <CopyPasteCard>
+              <CopyPasteTitle>COLAR CÓDIGO OU ESCANEAR QR</CopyPasteTitle>
+              <CopyPasteActions>
+                <CopyPasteButton
+                  onPress={handlePasteEmv}
+                  activeOpacity={0.75}
+                  disabled={decoding}
+                >
+                  <ClipboardPaste
+                    size={16}
+                    color={colors.primary}
+                    strokeWidth={2.2}
+                  />
+                  <CopyPasteButtonText>
+                    {decoding ? "Decodificando..." : "Colar código"}
+                  </CopyPasteButtonText>
+                </CopyPasteButton>
+                <CopyPasteButton
+                  onPress={handleOpenQr}
+                  activeOpacity={0.75}
+                  disabled={decoding}
+                >
+                  <QrCode size={16} color={colors.primary} strokeWidth={2.2} />
+                  <CopyPasteButtonText>Escanear QR</CopyPasteButtonText>
+                </CopyPasteButton>
+              </CopyPasteActions>
+
+              {decodedPix && (
+                <DecodedCard>
+                  <DecodedRow>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 6,
+                      }}
+                    >
+                      <CheckCircle
+                        size={14}
+                        color={colors.success}
+                        strokeWidth={2.2}
+                      />
+                      <DecodedLabel>PIX identificado</DecodedLabel>
+                    </View>
+                    <TouchableOpacity
+                      onPress={handleClearPix}
+                      activeOpacity={0.7}
+                    >
+                      <X size={14} color={colors.textMuted} strokeWidth={2.2} />
+                    </TouchableOpacity>
+                  </DecodedRow>
+                  <DecodedRow>
+                    <DecodedLabel>Beneficiário</DecodedLabel>
+                    <DecodedValue>{decodedPix.merchantName}</DecodedValue>
+                  </DecodedRow>
+                  <DecodedRow>
+                    <DecodedLabel>Cidade</DecodedLabel>
+                    <DecodedValue>{decodedPix.merchantCity}</DecodedValue>
+                  </DecodedRow>
+                  {amountLocked && (
+                    <DecodedAmountNote>
+                      ✓ Valor fixo de R$ {decodedPix.transactionAmount}{" "}
+                      preenchido automaticamente
+                    </DecodedAmountNote>
+                  )}
+                </DecodedCard>
+              )}
+            </CopyPasteCard>
+
+            {/* Valor — bloqueado se o QR já tem valor fixo */}
             <SectionLabel>QUANTO QUER RECEBER?</SectionLabel>
             <AmountCard>
               <AmountInputRow>
@@ -446,9 +712,22 @@ export default function WalletWithdrawPix() {
                   placeholderTextColor="rgba(255,255,255,0.25)"
                   keyboardType="decimal-pad"
                   value={amountBrl}
-                  onChangeText={setAmountBrl}
+                  onChangeText={amountLocked ? undefined : setAmountBrl}
+                  editable={!amountLocked}
+                  style={{ opacity: amountLocked ? 0.6 : 1 }}
                 />
               </AmountInputRow>
+              {amountLocked && (
+                <Text
+                  style={{
+                    color: colors.textMuted,
+                    fontSize: 11,
+                    marginTop: 4,
+                  }}
+                >
+                  Valor fixo definido pelo QR Code
+                </Text>
+              )}
             </AmountCard>
 
             {usdtNeeded > 0 && (
@@ -500,6 +779,83 @@ export default function WalletWithdrawPix() {
           </ScrollContent>
         </SafeArea>
       </Background>
+
+      {/* Modal câmera QR */}
+      <Modal
+        visible={qrModalVisible}
+        animationType="slide"
+        onRequestClose={() => setQrModalVisible(false)}
+      >
+        <View style={styles.qrContainer}>
+          <CameraView
+            style={StyleSheet.absoluteFillObject}
+            facing="back"
+            barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+            onBarcodeScanned={scanned ? undefined : handleQrScanned}
+          />
+          <View style={styles.overlay}>
+            <View style={styles.overlayTop} />
+            <View style={styles.overlayMiddle}>
+              <View style={styles.overlaySide} />
+              <View style={styles.scanArea}>
+                <View style={[styles.corner, styles.cornerTL]} />
+                <View style={[styles.corner, styles.cornerTR]} />
+                <View style={[styles.corner, styles.cornerBL]} />
+                <View style={[styles.corner, styles.cornerBR]} />
+              </View>
+              <View style={styles.overlaySide} />
+            </View>
+            <View style={styles.overlayBottom}>
+              <Text style={styles.hint}>Aponte para o QR Code do PIX</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            onPress={() => setQrModalVisible(false)}
+            style={styles.closeButton}
+          >
+            <X size={22} color="#FFFFFF" strokeWidth={2.2} />
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </Container>
   );
 }
+
+const SCAN_SIZE = 240;
+const styles = StyleSheet.create({
+  qrContainer: { flex: 1, backgroundColor: "#000" },
+  overlay: { ...StyleSheet.absoluteFillObject, flexDirection: "column" },
+  overlayTop: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)" },
+  overlayMiddle: { flexDirection: "row", height: SCAN_SIZE },
+  overlaySide: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)" },
+  scanArea: { width: SCAN_SIZE, height: SCAN_SIZE },
+  overlayBottom: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    alignItems: "center",
+    paddingTop: 28,
+  },
+  hint: { color: "#FFFFFF", fontSize: 14, opacity: 0.8 },
+  corner: {
+    position: "absolute",
+    width: 24,
+    height: 24,
+    borderColor: "#6C5CE7",
+    borderWidth: 3,
+  },
+  cornerTL: { top: 0, left: 0, borderRightWidth: 0, borderBottomWidth: 0 },
+  cornerTR: { top: 0, right: 0, borderLeftWidth: 0, borderBottomWidth: 0 },
+  cornerBL: { bottom: 0, left: 0, borderRightWidth: 0, borderTopWidth: 0 },
+  cornerBR: { bottom: 0, right: 0, borderLeftWidth: 0, borderTopWidth: 0 },
+  closeButton: {
+    position: "absolute",
+    top: 52,
+    left: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(255,255,255,0.15)",
+  },
+});
