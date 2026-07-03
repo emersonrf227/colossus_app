@@ -139,6 +139,7 @@ export default function ProofConfirm() {
       const lineWidth = printerModel === "80mm" ? 47 : 32;
       const divider = "-".repeat(lineWidth);
       const doubleDivider = "=".repeat(lineWidth);
+      const devices = await ThermalPrinterModule.getBluetoothDeviceList();
 
       const formattedDate = new Date(invoice.updatedAt).toLocaleString(
         "pt-BR",
@@ -183,6 +184,7 @@ export default function ProofConfirm() {
           `[L]\n` +
           `[L]\n`,
         printerNbrCharactersPerLine: lineWidth,
+        macAddress: devices[0].macAddress,
       });
     } catch (err) {
       showToast({

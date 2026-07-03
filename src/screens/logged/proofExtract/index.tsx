@@ -60,7 +60,9 @@ export default function proofExtract() {
       autoCut: false,
       timeout: 30000, // in milliseconds (version >= 2.2.0)
     };
+    const devices = await ThermalPrinterModule.getBluetoothDeviceList();
 
+    console.log(devices);
     try {
       const lineWidth = printerModel === "80mm" ? 47 : 32;
       const divider = "-".repeat(lineWidth);
@@ -109,6 +111,16 @@ export default function proofExtract() {
           `[L]\n` +
           `[L]\n`,
         printerNbrCharactersPerLine: lineWidth,
+        macAddress: devices[0].macAddress,
+      });
+
+      await ThermalPrinterModule.printTcp({
+        payload: `[L]\n` + `[C]<b>Proof Colossus Crypto</b>\n` + `[L]\n`,
+        printerNbrCharactersPerLine: lineWidth,
+        ip: "192.168.100.246",
+        port: 9100,
+        autoCut: false,
+        timeout: 30000,
       });
     } catch (err) {
       //error handling
