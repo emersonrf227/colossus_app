@@ -1,16 +1,14 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { Clipboard, Modal, StatusBar, View, StyleSheet } from "react-native";
+import { Clipboard, StatusBar } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   ArrowLeft,
   ClipboardPaste,
   Send,
   Network as NetworkIcon,
-  QrCode,
-  X,
 } from "lucide-react-native";
 import { isAddress } from "ethers";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import { useTranslation } from "react-i18next";
 
 import * as S from "./styles";
 import PinConfirmModal from "../PinConfirmModal";
@@ -19,7 +17,7 @@ import Loader from "@/components/loader";
 import {
   withdrawCrypto,
   WithdrawError,
-} from "../../../components/wallet/walletTransactions_contransfer";
+} from "../../../components/wallet/walletTransactions";
 import {
   fetchAllNetworkBalances,
   NetworkBalance,
@@ -46,7 +44,7 @@ export default function WalletWithdraw() {
   const { navigate, goBack } = navigation;
   const route = useRoute();
   const { showToast } = useToast();
-
+  const { t } = useTranslation();
   const { record } = route.params as RouteParams;
 
   const [selectedNetwork, setSelectedNetwork] =
@@ -56,15 +54,11 @@ export default function WalletWithdraw() {
   const [balances, setBalances] = useState<NetworkBalance[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [pinModalVisible, setPinModalVisible] = useState(false);
-  const [qrModalVisible, setQrModalVisible] = useState(false);
-  const [scanned, setScanned] = useState(false);
-
-  const [permission, requestPermission] = useCameraPermissions();
 
   React.useEffect(() => {
-    fetchAllNetworkBalances(record.address).then(({ balances: fetched }) => {
-      setBalances(fetched);
-    });
+    fetchAllNetworkBalances(record.address).then(({ balances: fetched }) =>
+      setBalances(fetched),
+    );
   }, [record.address]);
 
   const selectedBalance = useMemo(
@@ -72,74 +66,31 @@ export default function WalletWithdraw() {
     [balances, selectedNetwork],
   );
 
-  const handleOpenQr = useCallback(async () => {
-    if (!permission?.granted) {
-      const result = await requestPermission();
-      if (!result.granted) {
-        showToast({
-          message: "Permissão de câmera necessária para ler QR codes.",
-          type: "error",
-        });
-        return;
-      }
-    }
-    setScanned(false);
-    setQrModalVisible(true);
-  }, [permission, requestPermission, showToast]);
-
-  const handleQrScanned = useCallback(
-    ({ data }: { data: string }) => {
-      if (scanned) return;
-      setScanned(true);
-      setQrModalVisible(false);
-
-      // Endereços EVM podem vir no formato "ethereum:0x..." ou só "0x..."
-      let address = data.trim();
-      if (address.toLowerCase().startsWith("ethereum:")) {
-        address = address.split(":")[1].split("?")[0];
-      }
-
-      if (isAddress(address)) {
-        setToAddress(address);
-        showToast({ message: "Endereço lido com sucesso!", type: "success" });
-      } else {
-        showToast({
-          message: "QR code não contém um endereço válido.",
-          type: "error",
-        });
-      }
-    },
-    [scanned, showToast],
-  );
-
   const handlePasteAddress = useCallback(async () => {
     try {
       const text = await Clipboard.getString();
       setToAddress(text.trim());
     } catch {
-      showToast({
-        message: "Não foi possível acessar a área de transferência",
-        type: "error",
-      });
+      showToast({ message: t("walletWithdraw.clipboardError"), type: "error" });
     }
-  }, [showToast]);
+  }, [showToast, t]);
 
   const handleMax = useCallback(() => {
     if (selectedBalance) setAmount(selectedBalance.usdtBalance);
   }, [selectedBalance]);
 
   const validateForm = useCallback((): string | null => {
-    if (!isAddress(toAddress)) return "Endereço de destino inválido.";
+    if (!isAddress(toAddress)) return t("walletWithdraw.invalidAddress");
     const numericAmount = parseFloat(amount.replace(",", "."));
-    if (!numericAmount || numericAmount <= 0) return "Informe um valor válido.";
+    if (!numericAmount || numericAmount <= 0)
+      return t("walletWithdraw.invalidAmount");
     if (
       selectedBalance &&
       numericAmount > parseFloat(selectedBalance.usdtBalance)
-    ) {
-      return "Saldo insuficiente nesta rede.";
-    }
+    )
+      return t("walletWithdraw.insufficientBalance");
     return null;
-  }, [toAddress, amount, selectedBalance]);
+  }, [toAddress, amount, selectedBalance, t]);
 
   const handleSubmitPress = useCallback(() => {
     const error = validateForm();
@@ -159,24 +110,21 @@ export default function WalletWithdraw() {
         toAddress,
         amount,
       });
-      showToast({ message: "Saque enviado com sucesso!", type: "success" });
+      showToast({ message: t("walletWithdraw.successToast"), type: "success" });
       navigate(
         "WalletWithdrawSuccess" as never,
-        {
-          txid: result.txid,
-          explorerUrl: result.explorerUrl,
-        } as never,
+        { txid: result.txid, explorerUrl: result.explorerUrl } as never,
       );
     } catch (error: any) {
       const message =
         error instanceof WithdrawError
           ? error.message
-          : "Não foi possível concluir o saque.";
+          : t("walletWithdraw.errorToast");
       showToast({ message, type: "error" });
     } finally {
       setSubmitting(false);
     }
-  }, [selectedNetwork, toAddress, amount, showToast, navigate]);
+  }, [selectedNetwork, toAddress, amount, showToast, navigate, t]);
 
   return (
     <S.Container>
@@ -188,15 +136,13 @@ export default function WalletWithdraw() {
           backgroundColor="transparent"
           translucent
         />
-
         <S.SafeArea>
           <S.Header>
             <S.BackButton onPress={() => goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Sacar USDT</S.HeaderTitle>
+            <S.HeaderTitle>{t("walletWithdraw.title")}</S.HeaderTitle>
           </S.Header>
-
           <S.cardLogo>
             <LogoSvg width={wp(38)} height={hp(11)} />
           </S.cardLogo>
@@ -205,7 +151,7 @@ export default function WalletWithdraw() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 24 }}
           >
-            <S.SectionLabel>REDE</S.SectionLabel>
+            <S.SectionLabel>{t("walletWithdraw.networkLabel")}</S.SectionLabel>
             <S.NetworkRow>
               {ALL_WALLET_NETWORKS.map((networkKey) => {
                 const config = getNetworkConfig(networkKey);
@@ -236,34 +182,29 @@ export default function WalletWithdraw() {
               })}
             </S.NetworkRow>
 
-            <S.SectionLabel>ENDEREÇO DE DESTINO</S.SectionLabel>
+            <S.SectionLabel>{t("walletWithdraw.addressLabel")}</S.SectionLabel>
             <S.InputWrapper>
               <S.StyledInput
-                placeholder="0x..."
+                placeholder={t("walletWithdraw.addressPlaceholder")}
                 placeholderTextColor="rgba(255,255,255,0.35)"
                 value={toAddress}
                 onChangeText={setToAddress}
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-              {/* Botão de QR */}
-              <S.PasteButton onPress={handleOpenQr} activeOpacity={0.7}>
-                <QrCode size={18} color={colors.primary} strokeWidth={2.2} />
-              </S.PasteButton>
-              {/* Botão de colar */}
               <S.PasteButton onPress={handlePasteAddress} activeOpacity={0.7}>
                 <ClipboardPaste
                   size={18}
-                  color={colors.textMuted}
+                  color={colors.primary}
                   strokeWidth={2.2}
                 />
               </S.PasteButton>
             </S.InputWrapper>
 
-            <S.SectionLabel>VALOR</S.SectionLabel>
+            <S.SectionLabel>{t("walletWithdraw.amountLabel")}</S.SectionLabel>
             <S.AmountRow>
               <S.AmountInput
-                placeholder="0.00"
+                placeholder={t("walletWithdraw.amountPlaceholder")}
                 placeholderTextColor="rgba(255,255,255,0.3)"
                 keyboardType="decimal-pad"
                 value={amount}
@@ -271,19 +212,23 @@ export default function WalletWithdraw() {
               />
               <S.AmountSuffix>USDT</S.AmountSuffix>
               <S.MaxButton onPress={handleMax} activeOpacity={0.7}>
-                <S.MaxButtonText>MÁX.</S.MaxButtonText>
+                <S.MaxButtonText>
+                  {t("walletWithdraw.maxButton")}
+                </S.MaxButtonText>
               </S.MaxButton>
             </S.AmountRow>
             {selectedBalance && (
               <S.AvailableText>
-                Disponível: {parseFloat(selectedBalance.usdtBalance).toFixed(2)}{" "}
-                USDT
+                {t("walletWithdraw.available", {
+                  amount: parseFloat(selectedBalance.usdtBalance).toFixed(2),
+                })}
               </S.AvailableText>
             )}
             {selectedBalance?.lowGasWarning && (
               <S.WarningText>
-                Saldo de {selectedBalance.nativeCurrencySymbol} baixo — pode não
-                ser suficiente para pagar a taxa da rede.
+                {t("walletWithdraw.lowGas", {
+                  symbol: selectedBalance.nativeCurrencySymbol,
+                })}
               </S.WarningText>
             )}
 
@@ -293,120 +238,20 @@ export default function WalletWithdraw() {
               activeOpacity={0.85}
             >
               <Send size={18} color="#FFFFFF" strokeWidth={2.2} />
-              <S.SubmitButtonText>Revisar e sacar</S.SubmitButtonText>
+              <S.SubmitButtonText>
+                {t("walletWithdraw.submitButton")}
+              </S.SubmitButtonText>
             </S.SubmitButton>
           </S.ScrollContent>
         </S.SafeArea>
       </S.Background>
-
-      {/* Modal de QR Code */}
-      <Modal
-        visible={qrModalVisible}
-        animationType="slide"
-        onRequestClose={() => setQrModalVisible(false)}
-      >
-        <View style={styles.qrContainer}>
-          <CameraView
-            style={StyleSheet.absoluteFillObject}
-            facing="back"
-            barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-            onBarcodeScanned={scanned ? undefined : handleQrScanned}
-          />
-
-          {/* Overlay com recorte central */}
-          <View style={styles.overlay}>
-            <View style={styles.overlayTop} />
-            <View style={styles.overlayMiddle}>
-              <View style={styles.overlaySide} />
-              <View style={styles.scanArea}>
-                {/* Cantos do recorte */}
-                <View style={[styles.corner, styles.cornerTL]} />
-                <View style={[styles.corner, styles.cornerTR]} />
-                <View style={[styles.corner, styles.cornerBL]} />
-                <View style={[styles.corner, styles.cornerBR]} />
-              </View>
-              <View style={styles.overlaySide} />
-            </View>
-            <View style={styles.overlayBottom}>
-              <View style={styles.qrHint}></View>
-            </View>
-          </View>
-
-          {/* Botão fechar */}
-          <S.BackButton
-            onPress={() => setQrModalVisible(false)}
-            activeOpacity={0.7}
-            style={styles.closeButton}
-          >
-            <X size={22} color="#FFFFFF" strokeWidth={2.2} />
-          </S.BackButton>
-        </View>
-      </Modal>
-
       <PinConfirmModal
         visible={pinModalVisible}
-        title="Confirme o saque"
-        subtitle={`Você está enviando ${amount || "0"} USDT. Confirme o PIN para prosseguir.`}
+        title={t("walletWithdraw.pinTitle")}
+        subtitle={t("walletWithdraw.pinSubtitle", { amount: amount || "0" })}
         onCancel={() => setPinModalVisible(false)}
         onConfirmed={handlePinConfirmed}
       />
     </S.Container>
   );
 }
-
-const SCAN_SIZE = 240;
-
-const styles = StyleSheet.create({
-  qrContainer: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    flexDirection: "column",
-  },
-  overlayTop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-  },
-  overlayMiddle: {
-    flexDirection: "row",
-    height: SCAN_SIZE,
-  },
-  overlaySide: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-  },
-  scanArea: {
-    width: SCAN_SIZE,
-    height: SCAN_SIZE,
-  },
-  overlayBottom: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    alignItems: "center",
-    paddingTop: 28,
-  },
-  qrHint: {
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.12)",
-  },
-  corner: {
-    position: "absolute",
-    width: 24,
-    height: 24,
-    borderColor: "#6C5CE7",
-    borderWidth: 3,
-  },
-  cornerTL: { top: 0, left: 0, borderRightWidth: 0, borderBottomWidth: 0 },
-  cornerTR: { top: 0, right: 0, borderLeftWidth: 0, borderBottomWidth: 0 },
-  cornerBL: { bottom: 0, left: 0, borderRightWidth: 0, borderTopWidth: 0 },
-  cornerBR: { bottom: 0, right: 0, borderLeftWidth: 0, borderTopWidth: 0 },
-  closeButton: {
-    position: "absolute",
-    top: 52,
-    left: 20,
-  },
-});

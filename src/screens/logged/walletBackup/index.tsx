@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { ActivityIndicator, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Eye, AlertTriangle, Check } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 
 import * as S from "./styles";
 import { useToast } from "@/hook/Toast";
@@ -24,6 +25,7 @@ export default function WalletBackup() {
   const navigation = useNavigation();
   const { navigate } = navigation;
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const [walletData, setWalletData] = useState<{
     address: string;
@@ -36,24 +38,20 @@ export default function WalletBackup() {
       const generated = generateWallet();
       setWalletData(generated);
     } catch {
-      showToast({
-        message: "Não foi possível gerar a carteira. Tente novamente.",
-        type: "error",
-      });
+      showToast({ message: t("walletBackup.errorGenerate"), type: "error" });
       navigation.goBack();
     } finally {
       setGenerating(false);
     }
   }, []);
+
   const words = useMemo(
     () => walletData?.mnemonic.split(" ") ?? [],
     [walletData],
   );
-
   const [step, setStep] = useState<Step>("reveal");
   const [blurred, setBlurred] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
   const checkIndexes = useMemo(
     () => pickRandomWordIndexes(words.length, 3),
     [words.length],
@@ -65,14 +63,11 @@ export default function WalletBackup() {
 
   const handleRevealAndContinue = useCallback(() => {
     if (blurred) {
-      showToast({
-        message: "Toque em 'Revelar palavras' antes de continuar.",
-        type: "error",
-      });
+      showToast({ message: t("walletBackup.revealFirst"), type: "error" });
       return;
     }
     setStep("confirm");
-  }, [blurred, showToast]);
+  }, [blurred, showToast, t]);
 
   const handleConfirmInputChange = useCallback(
     (index: number, value: string) => {
@@ -87,10 +82,8 @@ export default function WalletBackup() {
 
   const handleFinish = useCallback(async () => {
     if (!walletData) return;
-
     const errors: Record<number, boolean> = {};
     let allCorrect = true;
-
     checkIndexes.forEach((index) => {
       const expected = words[index].toLowerCase();
       const typed = (confirmInputs[index] ?? "").toLowerCase();
@@ -98,47 +91,34 @@ export default function WalletBackup() {
       errors[index] = !isCorrect;
       if (!isCorrect) allCorrect = false;
     });
-
     setFieldErrors(errors);
-
     if (!allCorrect) {
       showToast({
-        message: "Alguma palavra não confere. Verifique seu backup.",
+        message: t("walletBackup.errorWordMismatch"),
         type: "error",
       });
       return;
     }
-
     setSubmitting(true);
     try {
       await persistGeneratedWallet(walletData);
-
       try {
         await registerWalletAddress({
           network: "polygon",
           address: walletData.address,
         });
       } catch {
-        showToast({
-          message:
-            "Carteira criada localmente, mas não foi possível registrá-la no servidor. Verifique sua internet e tente novamente em Configurações > Carteira.",
-          type: "error",
-        });
+        showToast({ message: t("walletBackup.errorRegister"), type: "error" });
         navigate("WalletPinSetup" as never, { mode: "create" } as never);
         return;
       }
-
       navigate("WalletPinSetup" as never, { mode: "create" } as never);
-    } catch (e) {
-      console.log(e);
-      showToast({
-        message: "Não foi possível salvar a carteira. Tente novamente.",
-        type: "error",
-      });
+    } catch {
+      showToast({ message: t("walletBackup.errorSave"), type: "error" });
     } finally {
       setSubmitting(false);
     }
-  }, [checkIndexes, words, confirmInputs, walletData, showToast, navigate]);
+  }, [checkIndexes, words, confirmInputs, walletData, showToast, navigate, t]);
 
   const allFieldsFilled = checkIndexes.every(
     (index) => (confirmInputs[index] ?? "").length > 0,
@@ -153,7 +133,6 @@ export default function WalletBackup() {
           backgroundColor="transparent"
           translucent
         />
-
         <S.SafeArea>
           <S.Header>
             <S.BackButton
@@ -163,7 +142,9 @@ export default function WalletBackup() {
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
             <S.HeaderTitle>
-              {step === "reveal" ? "Frase de recuperação" : "Confirme o backup"}
+              {step === "reveal"
+                ? t("walletBackup.titleReveal")
+                : t("walletBackup.titleConfirm")}
             </S.HeaderTitle>
           </S.Header>
           <S.cardLogo>
@@ -186,11 +167,10 @@ export default function WalletBackup() {
                     strokeWidth={2.2}
                   />
                   <S.WarningText>
-                    <S.WarningHighlight>Nunca compartilhe</S.WarningHighlight>{" "}
-                    estas 12 palavras com ninguém. Qualquer pessoa com elas pode
-                    acessar e mover todo o saldo da sua carteira. A Colossus
-                    Crypto nunca vai pedir essas palavras por telefone, chat ou
-                    e-mail.
+                    <S.WarningHighlight>
+                      {t("walletBackup.warningNeverShare")}
+                    </S.WarningHighlight>
+                    {t("walletBackup.warningText")}
                   </S.WarningText>
                 </S.WarningCard>
 
@@ -201,7 +181,7 @@ export default function WalletBackup() {
                   >
                     <Eye size={16} color={colors.textMuted} strokeWidth={2.2} />
                     <S.RevealButtonText>
-                      Toque para revelar as palavras
+                      {t("walletBackup.revealButton")}
                     </S.RevealButtonText>
                   </S.RevealButton>
                 ) : (
@@ -221,26 +201,25 @@ export default function WalletBackup() {
                   activeOpacity={0.85}
                 >
                   <S.PrimaryButtonText>
-                    Já anotei, continuar
+                    {t("walletBackup.continueButton")}
                   </S.PrimaryButtonText>
                 </S.PrimaryButton>
               </>
             ) : (
               <>
-                <S.StepLabel>ÚLTIMA ETAPA</S.StepLabel>
-                <S.StepTitle>Confirme que anotou corretamente</S.StepTitle>
+                <S.StepLabel>{t("walletBackup.stepLabel")}</S.StepLabel>
+                <S.StepTitle>{t("walletBackup.stepTitle")}</S.StepTitle>
                 <S.StepSubtitle>
-                  Digite as palavras solicitadas para confirmar seu backup. Isso
-                  garante que você realmente guardou a frase em local seguro.
+                  {t("walletBackup.stepSubtitle")}
                 </S.StepSubtitle>
 
                 {checkIndexes.map((index) => (
                   <S.ConfirmFieldWrapper key={index}>
                     <S.ConfirmFieldLabel>
-                      PALAVRA Nº {index + 1}
+                      {t("walletBackup.wordLabel", { number: index + 1 })}
                     </S.ConfirmFieldLabel>
                     <S.ConfirmInput
-                      placeholder="Digite a palavra"
+                      placeholder={t("walletBackup.wordPlaceholder")}
                       placeholderTextColor="rgba(255,255,255,0.3)"
                       value={confirmInputs[index] ?? ""}
                       onChangeText={(text) =>
@@ -260,7 +239,7 @@ export default function WalletBackup() {
                 >
                   <Check size={18} color="#FFFFFF" strokeWidth={2.4} />
                   <S.PrimaryButtonText>
-                    Confirmar e criar carteira
+                    {t("walletBackup.confirmButton")}
                   </S.PrimaryButtonText>
                 </S.PrimaryButton>
               </>

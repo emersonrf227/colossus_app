@@ -2,14 +2,14 @@ import React, { useState, useCallback, useRef } from "react";
 import { StatusBar, TextInput, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Download, AlertTriangle } from "lucide-react-native";
-import styled from "styled-components/native";
 import { ethers } from "ethers";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Platform, StatusBar as RNStatusBar } from "react-native";
-
 import { useToast } from "@/hook/Toast";
 import { persistGeneratedWallet } from "../../../components/wallet/walletStorage";
 import { registerWalletAddress } from "../../../components/wallet/walletStatus";
@@ -18,8 +18,6 @@ import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
-
-// --- Estilos ---
 const Container = styled.View`
   flex: 1;
   background-color: ${colors.bgDark};
@@ -140,7 +138,6 @@ const SubmitButtonText = styled.Text`
   font-size: 15px;
   font-weight: 700;
 `;
-
 export const CardLogo = styled.View`
   align-items: center;
   margin-top: ${hp(0.5)}px;
@@ -151,26 +148,21 @@ export default function WalletImport() {
   const navigation = useNavigation();
   const { navigate, goBack } = navigation;
   const { showToast } = useToast();
-
+  const { t } = useTranslation();
   const [words, setWords] = useState<string[]>(Array(12).fill(""));
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [submitting, setSubmitting] = useState(false);
-
-  // Refs para navegar entre campos com o teclado
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
   const handleWordChange = useCallback((index: number, value: string) => {
-    // Detecta se o usuário colou a frase inteira no primeiro campo
     const trimmed = value.trim();
     const parts = trimmed.split(/\s+/);
     if (parts.length === 12 && index === 0) {
       setWords(parts.map((w) => w.toLowerCase()));
       setErrors(Array(12).fill(false));
-      // Foca no último campo após colar
       inputRefs.current[11]?.focus();
       return;
     }
-
     setWords((prev) => {
       const next = [...prev];
       next[index] = value.toLowerCase().trim();
@@ -184,65 +176,44 @@ export default function WalletImport() {
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    // Valida que todos os campos estão preenchidos
     const newErrors = words.map((w) => !w || w.trim().length === 0);
     if (newErrors.some(Boolean)) {
       setErrors(newErrors);
-      showToast({ message: "Preencha todas as 12 palavras.", type: "error" });
+      showToast({ message: t("walletImport.errorFillAll"), type: "error" });
       return;
     }
-
     const mnemonic = words.map((w) => w.trim()).join(" ");
-
-    // Valida o mnemônico via ethers antes de salvar
     try {
-      ethers.Mnemonic.fromPhrase(mnemonic); // lança se inválido
+      ethers.Mnemonic.fromPhrase(mnemonic);
     } catch {
       showToast({
-        message:
-          "Frase de recuperação inválida. Verifique as palavras e a ordem.",
+        message: t("walletImport.errorInvalidMnemonic"),
         type: "error",
       });
       return;
     }
-
     setSubmitting(true);
     try {
       const wallet = ethers.Wallet.fromPhrase(mnemonic);
-
-      // Persiste a seed localmente (criptografada)
       await persistGeneratedWallet({ address: wallet.address, mnemonic });
-
-      // Registra o endereço na API
       try {
         await registerWalletAddress({
           network: "polygon",
           address: wallet.address,
         });
       } catch {
-        showToast({
-          message:
-            "Carteira importada localmente, mas não foi possível registrá-la no servidor. Verifique sua internet.",
-          type: "error",
-        });
+        showToast({ message: t("walletImport.errorRegister"), type: "error" });
         navigate("WalletPinSetup" as never, { mode: "create" } as never);
         return;
       }
-
-      showToast({
-        message: "Carteira importada com sucesso!",
-        type: "success",
-      });
+      showToast({ message: t("walletImport.successImport"), type: "success" });
       navigate("WalletPinSetup" as never, { mode: "create" } as never);
     } catch {
-      showToast({
-        message: "Não foi possível importar a carteira. Tente novamente.",
-        type: "error",
-      });
+      showToast({ message: t("walletImport.errorImport"), type: "error" });
     } finally {
       setSubmitting(false);
     }
-  }, [words, showToast, navigate]);
+  }, [words, showToast, navigate, t]);
 
   const allFilled = words.every((w) => w.trim().length > 0);
 
@@ -255,19 +226,16 @@ export default function WalletImport() {
           backgroundColor="transparent"
           translucent
         />
-
         <SafeArea>
           <Header>
             <BackButton onPress={() => goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </BackButton>
-            <HeaderTitle>Importar carteira</HeaderTitle>
+            <HeaderTitle>{t("walletImport.title")}</HeaderTitle>
           </Header>
-
           <CardLogo>
             <LogoSvg width={wp(28)} height={hp(7)} />
           </CardLogo>
-
           <ScrollView
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
@@ -279,15 +247,13 @@ export default function WalletImport() {
                 strokeWidth={2.2}
               />
               <WarningText>
-                <WarningHighlight>Nunca compartilhe</WarningHighlight> sua frase
-                de recuperação. A Colossus Crypto nunca vai pedir essas palavras
-                por telefone, chat ou e-mail. Digite apenas em conexões
-                confiáveis.
+                <WarningHighlight>
+                  {t("walletImport.warningNeverShare")}
+                </WarningHighlight>
+                {t("walletImport.warningText")}
               </WarningText>
             </WarningCard>
-
-            <SectionLabel>FRASE DE RECUPERAÇÃO (12 PALAVRAS)</SectionLabel>
-
+            <SectionLabel>{t("walletImport.sectionLabel")}</SectionLabel>
             <WordsGrid>
               {Array.from({ length: 12 }).map((_, index) => (
                 <WordInputWrapper key={index} hasError={errors[index]}>
@@ -296,7 +262,7 @@ export default function WalletImport() {
                     ref={(ref) => {
                       inputRefs.current[index] = ref;
                     }}
-                    placeholder="palavra"
+                    placeholder={t("walletImport.wordPlaceholder")}
                     placeholderTextColor="rgba(255,255,255,0.25)"
                     value={words[index]}
                     onChangeText={(text) => handleWordChange(index, text)}
@@ -311,7 +277,6 @@ export default function WalletImport() {
                 </WordInputWrapper>
               ))}
             </WordsGrid>
-
             <SubmitButton
               onPress={handleSubmit}
               disabled={!allFilled || submitting}
@@ -319,7 +284,9 @@ export default function WalletImport() {
             >
               <Download size={18} color="#FFFFFF" strokeWidth={2.2} />
               <SubmitButtonText>
-                {submitting ? "Importando..." : "Importar carteira"}
+                {submitting
+                  ? t("walletImport.importing")
+                  : t("walletImport.importButton")}
               </SubmitButtonText>
             </SubmitButton>
           </ScrollView>

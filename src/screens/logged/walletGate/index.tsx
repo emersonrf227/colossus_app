@@ -84,7 +84,6 @@ export default function WalletGate() {
         translucent
       />
       <Loader />
-      {/* <ActivityIndicator color={colors.primary} size="large" /> */}
     </S.Container>
   );
 }

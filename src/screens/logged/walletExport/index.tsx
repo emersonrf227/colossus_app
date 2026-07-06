@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, Clipboard } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import {
   ArrowLeft,
@@ -8,7 +8,7 @@ import {
   AlertTriangle,
   Copy,
 } from "lucide-react-native";
-import { Clipboard } from "react-native";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import {
   widthPercentageToDP as wp,
@@ -23,7 +23,6 @@ import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
-
 const Container = styled.View`
   flex: 1;
   background-color: ${colors.bgDark};
@@ -71,7 +70,6 @@ const HeaderTitle = styled.Text`
 const ScrollContent = styled.ScrollView`
   flex: 1;
 `;
-
 const WarningCard = styled.View`
   flex-direction: row;
   align-items: flex-start;
@@ -93,7 +91,6 @@ const WarningHighlight = styled.Text`
   font-weight: 700;
   color: ${colors.danger};
 `;
-
 const WordsGrid = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
@@ -123,19 +120,6 @@ const WordText = styled.Text`
   font-size: 13px;
   font-weight: 600;
 `;
-
-const BlurOverlay = styled.View`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 12px;
-  background-color: rgba(11, 14, 20, 0.92);
-  align-items: center;
-  justify-content: center;
-`;
-
 const RevealButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
@@ -154,7 +138,6 @@ const RevealButtonText = styled.Text`
   font-size: 13px;
   font-weight: 600;
 `;
-
 const CopyButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
@@ -173,7 +156,6 @@ const CopyButtonText = styled.Text`
   font-size: 13px;
   font-weight: 600;
 `;
-
 const LockedState = styled.View`
   flex: 1;
   align-items: center;
@@ -220,7 +202,6 @@ const IconWrapper = styled.View`
   justify-content: center;
   background-color: rgba(108, 92, 231, 0.18);
 `;
-
 export const CardLogo = styled.View`
   align-items: center;
   margin-top: ${hp(0.5)}px;
@@ -230,12 +211,11 @@ export const CardLogo = styled.View`
 export default function WalletExport() {
   const navigation = useNavigation();
   const { showToast } = useToast();
-
+  const { t } = useTranslation();
   const [pinVisible, setPinVisible] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
   const [mnemonic, setMnemonic] = useState<string | null>(null);
   const [blurred, setBlurred] = useState(true);
-
   const words = mnemonic ? mnemonic.split(" ") : [];
 
   const handlePinConfirmed = useCallback(async () => {
@@ -243,32 +223,22 @@ export default function WalletExport() {
     try {
       const stored = await getStoredMnemonic();
       if (!stored) {
-        showToast({
-          message:
-            "Nenhuma seed phrase encontrada. Esta wallet pode ser externa.",
-          type: "error",
-        });
+        showToast({ message: t("walletExport.errorNotFound"), type: "error" });
         return;
       }
       setMnemonic(stored);
       setUnlocked(true);
-      setBlurred(true); // começa borrada mesmo após autenticar
+      setBlurred(true);
     } catch {
-      showToast({
-        message: "Não foi possível recuperar a seed phrase.",
-        type: "error",
-      });
+      showToast({ message: t("walletExport.errorRecover"), type: "error" });
     }
-  }, [showToast]);
+  }, [showToast, t]);
 
   const handleCopyAll = useCallback(() => {
     if (!mnemonic) return;
     Clipboard.setString(mnemonic);
-    showToast({
-      message: "Frase copiada! Guarde em local seguro.",
-      type: "success",
-    });
-  }, [mnemonic, showToast]);
+    showToast({ message: t("walletExport.copiedSuccess"), type: "success" });
+  }, [mnemonic, showToast, t]);
 
   return (
     <Container>
@@ -279,38 +249,36 @@ export default function WalletExport() {
           backgroundColor="transparent"
           translucent
         />
-
         <SafeArea>
           <Header>
             <BackButton onPress={() => navigation.goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </BackButton>
-            <HeaderTitle>Frase de recuperação</HeaderTitle>
+            <HeaderTitle>{t("walletExport.title")}</HeaderTitle>
           </Header>
           <CardLogo>
             <LogoSvg width={wp(28)} height={hp(7)} />
           </CardLogo>
 
           {!unlocked ? (
-            // Estado bloqueado — pede PIN antes de mostrar qualquer coisa
             <LockedState>
               <IconWrapper>
                 <Eye size={28} color={colors.primary} strokeWidth={2} />
               </IconWrapper>
-              <LockedTitle>Conteúdo protegido</LockedTitle>
+              <LockedTitle>{t("walletExport.lockedTitle")}</LockedTitle>
               <LockedSubtitle>
-                Sua frase de recuperação de 12 palavras só pode ser visualizada
-                após confirmar seu PIN de segurança.
+                {t("walletExport.lockedSubtitle")}
               </LockedSubtitle>
               <UnlockButton
                 onPress={() => setPinVisible(true)}
                 activeOpacity={0.85}
               >
-                <UnlockButtonText>Confirmar PIN para ver</UnlockButtonText>
+                <UnlockButtonText>
+                  {t("walletExport.unlockButton")}
+                </UnlockButtonText>
               </UnlockButton>
             </LockedState>
           ) : (
-            // Estado desbloqueado — mostra as palavras (com blur por padrão)
             <ScrollContent
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 24 }}
@@ -322,12 +290,12 @@ export default function WalletExport() {
                   strokeWidth={2.2}
                 />
                 <WarningText>
-                  <WarningHighlight>Nunca compartilhe</WarningHighlight> estas
-                  palavras com ninguém. Qualquer pessoa com elas pode mover todo
-                  o saldo da sua carteira sem reversão possível.
+                  <WarningHighlight>
+                    {t("walletExport.warningNeverShare")}
+                  </WarningHighlight>
+                  {t("walletExport.warningText")}
                 </WarningText>
               </WarningCard>
-
               <WordsGrid>
                 {words.map((word, index) => (
                   <WordChip key={index}>
@@ -335,7 +303,6 @@ export default function WalletExport() {
                     {!blurred ? (
                       <WordText>{word}</WordText>
                     ) : (
-                      // Blur: mostra o chip mas oculta o texto
                       <WordText
                         style={{
                           color: "transparent",
@@ -349,7 +316,6 @@ export default function WalletExport() {
                   </WordChip>
                 ))}
               </WordsGrid>
-
               <RevealButton
                 onPress={() => setBlurred((b) => !b)}
                 activeOpacity={0.75}
@@ -357,7 +323,9 @@ export default function WalletExport() {
                 {blurred ? (
                   <>
                     <Eye size={16} color={colors.textMuted} strokeWidth={2.2} />
-                    <RevealButtonText>Toque para revelar</RevealButtonText>
+                    <RevealButtonText>
+                      {t("walletExport.revealButton")}
+                    </RevealButtonText>
                   </>
                 ) : (
                   <>
@@ -366,26 +334,28 @@ export default function WalletExport() {
                       color={colors.textMuted}
                       strokeWidth={2.2}
                     />
-                    <RevealButtonText>Ocultar palavras</RevealButtonText>
+                    <RevealButtonText>
+                      {t("walletExport.hideButton")}
+                    </RevealButtonText>
                   </>
                 )}
               </RevealButton>
-
               {!blurred && (
                 <CopyButton onPress={handleCopyAll} activeOpacity={0.75}>
                   <Copy size={15} color={colors.primary} strokeWidth={2.2} />
-                  <CopyButtonText>Copiar todas as palavras</CopyButtonText>
+                  <CopyButtonText>
+                    {t("walletExport.copyButton")}
+                  </CopyButtonText>
                 </CopyButton>
               )}
             </ScrollContent>
           )}
         </SafeArea>
       </Background>
-
       <PinConfirmModal
         visible={pinVisible}
-        title="Confirme seu PIN"
-        subtitle="Autenticação necessária para exibir sua frase de recuperação."
+        title={t("walletExport.pinTitle")}
+        subtitle={t("walletExport.pinSubtitle")}
         onCancel={() => setPinVisible(false)}
         onConfirmed={handlePinConfirmed}
       />

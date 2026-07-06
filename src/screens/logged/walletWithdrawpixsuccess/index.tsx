@@ -1,5 +1,11 @@
 import React, { useCallback } from "react";
-import { StatusBar, Linking, Share } from "react-native";
+import {
+  StatusBar,
+  Linking,
+  Share,
+  Platform,
+  StatusBar as RNStatusBar,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   CheckCircle,
@@ -12,14 +18,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Platform, StatusBar as RNStatusBar } from "react-native";
+import { useTranslation } from "react-i18next";
 import { PixTransaction } from "../../../components/pix/pixService";
 import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
-
 const Container = styled.View`
   flex: 1;
   background-color: ${colors.bgDark};
@@ -42,6 +47,11 @@ const SafeArea = styled.SafeAreaView`
   padding-horizontal: ${wp(5)}px;
   padding-top: ${STATUSBAR_HEIGHT}px;
 `;
+const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
 const Content = styled.View`
   flex: 1;
   align-items: center;
@@ -49,9 +59,8 @@ const Content = styled.View`
   padding-bottom: ${hp(4)}px;
 `;
 const IconWrapper = styled.View`
-  width: 30px;
-  height: 30px;
-  margin-top: 50px;
+  width: 88px;
+  height: 88px;
   border-radius: 44px;
   align-items: center;
   justify-content: center;
@@ -73,7 +82,6 @@ const Subtitle = styled.Text`
   padding-horizontal: 16px;
   margin-bottom: ${hp(3)}px;
 `;
-
 const ReceiptCard = styled.View`
   width: 100%;
   border-radius: 16px;
@@ -116,7 +124,6 @@ const ReceiptValue = styled.Text`
   flex: 1.5;
   text-align: right;
 `;
-
 const HighlightCard = styled.View`
   width: 100%;
   border-radius: 16px;
@@ -140,7 +147,6 @@ const HighlightValue = styled.Text`
   font-size: 22px;
   font-weight: 800;
 `;
-
 const ActionsColumn = styled.View`
   width: 100%;
   gap: 10px;
@@ -177,12 +183,6 @@ const SecondaryButtonText = styled.Text`
   font-weight: 600;
 `;
 
-export const CardLogo = styled.View`
-  align-items: center;
-  margin-top: ${hp(0.5)}px;
-  margin-bottom: ${hp(1)}px;
-`;
-
 interface RouteParams {
   txid: string;
   explorerUrl: string;
@@ -192,32 +192,30 @@ interface RouteParams {
 export default function WalletWithdrawPixSuccess() {
   const navigation = useNavigation();
   const route = useRoute();
+  const { t } = useTranslation();
   const { txid, explorerUrl, pixTransaction: tx } = route.params as RouteParams;
 
   const handleOpenExplorer = useCallback(() => {
     Linking.openURL(explorerUrl).catch(() => {});
   }, [explorerUrl]);
-
   const handleShare = useCallback(async () => {
     try {
       await Share.share({
-        message:
-          `✅ PIX enviado com sucesso!\n\n` +
-          `Beneficiário: ${tx.displayDestination ?? tx.destinarionAddress}\n` +
-          `Chave PIX: ${tx.destinarionAddress} (${tx.typeDestinationKey})\n` +
-          `Valor: R$ ${tx.send_brl}\n` +
-          `End-to-End: ${tx.endtoend ?? "-"}\n` +
-          `USDT enviado: ${tx.amount_usd}\n\n` +
-          `Blockchain: ${explorerUrl}`,
+        message: t("walletWithdrawPixSuccess.shareMessage", {
+          name: tx.displayDestination ?? tx.destinarionAddress,
+          key: tx.destinarionAddress,
+          type: tx.typeDestinationKey,
+          brl: tx.send_brl,
+          endtoend: tx.endtoend ?? "-",
+          usdt: tx.amount_usd,
+          url: explorerUrl,
+        }),
       });
     } catch {}
-  }, [tx, explorerUrl]);
+  }, [tx, explorerUrl, t]);
 
   const handleNewTransaction = useCallback(() => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "WalletHome" as never }],
-    });
+    navigation.reset({ index: 0, routes: [{ name: "WalletHome" as never }] });
   }, [navigation]);
 
   return (
@@ -231,79 +229,89 @@ export default function WalletWithdrawPixSuccess() {
         />
         <SafeArea>
           <CardLogo>
-            <LogoSvg width={wp(28)} height={hp(9)} />
+            <LogoSvg width={wp(28)} height={hp(7)} />
           </CardLogo>
           <Content>
             <IconWrapper>
               <CheckCircle size={48} color={colors.success} strokeWidth={1.8} />
             </IconWrapper>
-
-            <Title>PIX enviado!</Title>
-            <Subtitle>
-              O pagamento foi processado com sucesso. O beneficiário deve
-              receber em instantes.
-            </Subtitle>
-
-            {/* Valor em destaque */}
+            <Title>{t("walletWithdrawPixSuccess.title")}</Title>
+            <Subtitle>{t("walletWithdrawPixSuccess.subtitle")}</Subtitle>
             <HighlightCard>
               <HighlightRow>
-                <HighlightLabel>Valor recebido via PIX</HighlightLabel>
+                <HighlightLabel>
+                  {t("walletWithdrawPixSuccess.valueLabel")}
+                </HighlightLabel>
                 <HighlightValue>R$ {tx.send_brl}</HighlightValue>
               </HighlightRow>
             </HighlightCard>
-
-            {/* Comprovante */}
             <ReceiptCard>
-              <ReceiptTitle>COMPROVANTE</ReceiptTitle>
+              <ReceiptTitle>
+                {t("walletWithdrawPixSuccess.receiptTitle")}
+              </ReceiptTitle>
               {tx.displayDestination && (
                 <ReceiptRow>
-                  <ReceiptLabel>Beneficiário</ReceiptLabel>
+                  <ReceiptLabel>
+                    {t("walletWithdrawPixSuccess.beneficiary")}
+                  </ReceiptLabel>
                   <ReceiptValue>{tx.displayDestination}</ReceiptValue>
                 </ReceiptRow>
               )}
               <ReceiptRow>
-                <ReceiptLabel>Chave PIX</ReceiptLabel>
+                <ReceiptLabel>
+                  {t("walletWithdrawPixSuccess.pixKey")}
+                </ReceiptLabel>
                 <ReceiptValue numberOfLines={2}>
                   {tx.destinarionAddress}
                 </ReceiptValue>
               </ReceiptRow>
               <ReceiptRow>
-                <ReceiptLabel>Tipo</ReceiptLabel>
+                <ReceiptLabel>
+                  {t("walletWithdrawPixSuccess.type")}
+                </ReceiptLabel>
                 <ReceiptValue>{tx.typeDestinationKey}</ReceiptValue>
               </ReceiptRow>
               <ReceiptRow>
-                <ReceiptLabel>USDT enviado</ReceiptLabel>
+                <ReceiptLabel>
+                  {t("walletWithdrawPixSuccess.usdtSent")}
+                </ReceiptLabel>
                 <ReceiptValue>{tx.amount_usd}</ReceiptValue>
               </ReceiptRow>
               <ReceiptRow>
-                <ReceiptLabel>Total BRL</ReceiptLabel>
+                <ReceiptLabel>
+                  {t("walletWithdrawPixSuccess.totalBrl")}
+                </ReceiptLabel>
                 <ReceiptValue>R$ {tx.total_brl}</ReceiptValue>
               </ReceiptRow>
               {tx.endtoend && (
                 <ReceiptRow>
-                  <ReceiptLabel>End-to-End</ReceiptLabel>
+                  <ReceiptLabel>
+                    {t("walletWithdrawPixSuccess.endToEnd")}
+                  </ReceiptLabel>
                   <ReceiptValue numberOfLines={1} style={{ fontSize: 10 }}>
                     {tx.endtoend}
                   </ReceiptValue>
                 </ReceiptRow>
               )}
               <LastReceiptRow>
-                <ReceiptLabel>TXID Blockchain</ReceiptLabel>
+                <ReceiptLabel>
+                  {t("walletWithdrawPixSuccess.txidBlockchain")}
+                </ReceiptLabel>
                 <ReceiptValue numberOfLines={1} style={{ fontSize: 10 }}>
                   {txid}
                 </ReceiptValue>
               </LastReceiptRow>
             </ReceiptCard>
-
             <ActionsColumn>
               <PrimaryButton
                 onPress={handleNewTransaction}
                 activeOpacity={0.85}
               >
                 <RefreshCw size={16} color="#FFFFFF" strokeWidth={2.2} />
-                <PrimaryButtonText>Realizar nova transação</PrimaryButtonText>
+                <PrimaryButtonText>
+                  {t("walletWithdrawPixSuccess.newTransaction")}
+                </PrimaryButtonText>
               </PrimaryButton>
-
               <SecondaryButton
                 onPress={handleOpenExplorer}
                 activeOpacity={0.75}
@@ -313,9 +321,10 @@ export default function WalletWithdrawPixSuccess() {
                   color={colors.textPrimary}
                   strokeWidth={2.2}
                 />
-                <SecondaryButtonText>Ver na blockchain</SecondaryButtonText>
+                <SecondaryButtonText>
+                  {t("walletWithdrawPixSuccess.viewBlockchain")}
+                </SecondaryButtonText>
               </SecondaryButton>
-
               <SecondaryButton onPress={handleShare} activeOpacity={0.75}>
                 <Share2
                   size={16}
@@ -323,7 +332,7 @@ export default function WalletWithdrawPixSuccess() {
                   strokeWidth={2.2}
                 />
                 <SecondaryButtonText>
-                  Compartilhar comprovante
+                  {t("walletWithdrawPixSuccess.shareReceipt")}
                 </SecondaryButtonText>
               </SecondaryButton>
             </ActionsColumn>

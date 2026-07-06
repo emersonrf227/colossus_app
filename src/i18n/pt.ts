@@ -26,7 +26,6 @@ export default {
     label_new_pass: "NOVA SENHA",
     inew: "Nova Senha",
     cnew: "Confirmar Nova Senha",
-
     bconfirm: "Confirmar",
     breturn: "Voltar",
   },
@@ -50,13 +49,8 @@ export default {
   },
   dashboard: {
     generateCharge: "Gerar cobrança",
-    keypad: {
-      clear: "C",
-      backspace: "⌫",
-    },
-    validation: {
-      invalidAmount: "Informe um valor válido.",
-    },
+    keypad: { clear: "C", backspace: "⌫" },
+    validation: { invalidAmount: "Informe um valor válido." },
   },
   extract: {
     title: "Cobranças",
@@ -76,9 +70,7 @@ export default {
     noConfirmationDate: "Sem data de confirmação",
     loading: "Carregando cobranças...",
     empty: "Nenhuma cobrança encontrada para esse período e status.",
-    errors: {
-      loadInvoices: "Erro ao buscar cobranças.",
-    },
+    errors: { loadInvoices: "Erro ao buscar cobranças." },
   },
   about: {
     title: "Sobre",
@@ -146,10 +138,7 @@ export default {
     labelSizeSubtitle: "Escolha o modelo compatível com sua impressora térmica",
     toastSaved: "Impressora {{model}} salva!",
     toastSaveError: "Não foi possível salvar a configuração.",
-    options: {
-      compact: "Compacta",
-      standard: "Padrão",
-    },
+    options: { compact: "Compacta", standard: "Padrão" },
   },
   receipt: {
     toastNoPrinter: "Nenhuma impressora configurada. Acesse as configurações.",
@@ -335,14 +324,278 @@ export default {
       website: "Não foi possível abrir o site.",
     },
     verified: "Verificado",
-    actions: {
-      call: "Ligar",
-      telegram: "Telegram",
-      website: "Site",
-    },
+    actions: { call: "Ligar", telegram: "Telegram", website: "Site" },
     address: "ENDEREÇO",
     openingHours: "HORÁRIO DE FUNCIONAMENTO",
     paymentMethods: "FORMAS DE PAGAMENTO",
     tags: "TAGS",
+  },
+
+  // ─── Wallet ───────────────────────────────────────────────────────────────
+  wallet: {
+    title: "Carteira",
+    totalBalance: "SALDO TOTAL EM USDT",
+    allNetworks: "Somando todas as redes",
+    addressCopied: "Endereço copiado!",
+    withdraw: "Sacar",
+    pix: "PIX",
+    balanceByNetwork: "SALDO POR REDE",
+    balanceError:
+      "Não foi possível consultar os saldos agora. Arraste para baixo para tentar de novo.",
+    lowGas: "Saldo de {{symbol}} baixo para taxas",
+    viewOnly:
+      "Você está vendo esta carteira apenas para consulta. A chave de acesso está associada a outro dispositivo — saques só podem ser feitos a partir dele.",
+  },
+
+  walletSetup: {
+    title: "Configurar carteira",
+    subtitle: "Como você quer configurar?",
+    description:
+      "Crie uma nova carteira, importe uma existente ou conecte um endereço externo para visualização.",
+    createNew: "Criar nova carteira",
+    createDescription:
+      "O app gera uma carteira só sua, com saldo, saque e PIX integrados. Você guarda a frase de recuperação de 12 palavras.",
+    recommended: "RECOMENDADO",
+    import: "Importar carteira existente",
+    importDescription:
+      "Já tem uma carteira com frase de 12 palavras (MetaMask, Trust Wallet, SafePal)? Importe aqui para ter acesso completo a saldo, saque e PIX.",
+    viewOnly: "Só visualizar saldo",
+    viewOnlyDescription:
+      "Informe apenas o endereço público. Você verá o saldo mas não poderá sacar pelo app — movimentações ficam na sua wallet original.",
+    connectAddress: "Conectar endereço",
+    warning:
+      "Nunca compartilhe sua frase de 12 palavras ou chave privada com ninguém. A Colossus Crypto jamais vai pedir essas informações.",
+    clipboardError: "Não foi possível acessar a área de transferência",
+    invalidAddress: "Endereço inválido.",
+    connectSuccess: "Wallet externa conectada!",
+    connectError: "Não foi possível salvar a wallet. Tente novamente.",
+  },
+
+  walletBackup: {
+    titleReveal: "Frase de recuperação",
+    titleConfirm: "Confirme o backup",
+    warningNeverShare: "Nunca compartilhe",
+    warningText:
+      " estas 12 palavras com ninguém. Qualquer pessoa com elas pode acessar e mover todo o saldo da sua carteira. A Colossus Crypto nunca vai pedir essas palavras por telefone, chat ou e-mail.",
+    revealButton: "Toque para revelar as palavras",
+    continueButton: "Já anotei, continuar",
+    stepLabel: "ÚLTIMA ETAPA",
+    stepTitle: "Confirme que anotou corretamente",
+    stepSubtitle:
+      "Digite as palavras solicitadas para confirmar seu backup. Isso garante que você realmente guardou a frase em local seguro.",
+    wordLabel: "PALAVRA Nº {{number}}",
+    wordPlaceholder: "Digite a palavra",
+    confirmButton: "Confirmar e criar carteira",
+    errorWordMismatch: "Alguma palavra não confere. Verifique seu backup.",
+    errorGenerate: "Não foi possível gerar a carteira. Tente novamente.",
+    errorSave: "Não foi possível salvar a carteira. Tente novamente.",
+    errorRegister:
+      "Carteira criada localmente, mas não foi possível registrá-la no servidor. Verifique sua internet e tente novamente em Configurações > Carteira.",
+    revealFirst: "Toque em 'Revelar palavras' antes de continuar.",
+  },
+
+  walletImport: {
+    title: "Importar carteira",
+    warningNeverShare: "Nunca compartilhe",
+    warningText:
+      " sua frase de recuperação. A Colossus Crypto nunca vai pedir essas palavras por telefone, chat ou e-mail. Digite apenas em conexões confiáveis.",
+    sectionLabel: "FRASE DE RECUPERAÇÃO (12 PALAVRAS)",
+    wordPlaceholder: "palavra",
+    importButton: "Importar carteira",
+    importing: "Importando...",
+    errorFillAll: "Preencha todas as 12 palavras.",
+    errorInvalidMnemonic:
+      "Frase de recuperação inválida. Verifique as palavras e a ordem.",
+    errorRegister:
+      "Carteira importada localmente, mas não foi possível registrá-la no servidor. Verifique sua internet.",
+    errorImport: "Não foi possível importar a carteira. Tente novamente.",
+    successImport: "Carteira importada com sucesso!",
+  },
+
+  walletPinSetup: {
+    labelCreate: "CRIAR PIN",
+    labelReset: "REDEFINIR PIN",
+    titleEnter: "Escolha seu PIN",
+    titleConfirm: "Confirme o PIN",
+    subtitleEnter:
+      "Este PIN de 6 dígitos será pedido antes de qualquer movimentação da carteira.",
+    subtitleConfirm: "Digite o PIN novamente para confirmar.",
+    errorMismatch: "Os PINs não coincidem.",
+    errorMismatchToast: "Os PINs não coincidem. Tente novamente.",
+    errorSave: "Não foi possível salvar o PIN. Tente novamente.",
+    successCreate: "PIN criado com sucesso!",
+    successReset: "PIN redefinido com sucesso!",
+  },
+
+  walletExport: {
+    title: "Frase de recuperação",
+    lockedTitle: "Conteúdo protegido",
+    lockedSubtitle:
+      "Sua frase de recuperação de 12 palavras só pode ser visualizada após confirmar seu PIN de segurança.",
+    unlockButton: "Confirmar PIN para ver",
+    warningNeverShare: "Nunca compartilhe",
+    warningText:
+      " estas palavras com ninguém. Qualquer pessoa com elas pode mover todo o saldo da sua carteira sem reversão possível.",
+    revealButton: "Toque para revelar",
+    hideButton: "Ocultar palavras",
+    copyButton: "Copiar todas as palavras",
+    copiedSuccess: "Frase copiada! Guarde em local seguro.",
+    errorNotFound:
+      "Nenhuma seed phrase encontrada. Esta wallet pode ser externa.",
+    errorRecover: "Não foi possível recuperar a seed phrase.",
+    pinTitle: "Confirme seu PIN",
+    pinSubtitle:
+      "Autenticação necessária para exibir sua frase de recuperação.",
+  },
+
+  walletWithdraw: {
+    title: "Sacar USDT",
+    networkLabel: "REDE",
+    addressLabel: "ENDEREÇO DE DESTINO",
+    addressPlaceholder: "0x...",
+    amountLabel: "VALOR",
+    amountPlaceholder: "0.00",
+    available: "Disponível: {{amount}} USDT",
+    maxButton: "MÁX.",
+    lowGas:
+      "Saldo de {{symbol}} baixo — pode não ser suficiente para pagar a taxa da rede.",
+    submitButton: "Revisar e sacar",
+    invalidAddress: "Endereço de destino inválido.",
+    invalidAmount: "Informe um valor válido.",
+    insufficientBalance: "Saldo insuficiente nesta rede.",
+    successToast: "Saque enviado com sucesso!",
+    errorToast: "Não foi possível concluir o saque.",
+    cameraPermission: "Permissão de câmera necessária para ler QR codes.",
+    qrSuccess: "Endereço lido com sucesso!",
+    qrInvalid: "QR code não contém um endereço válido.",
+    clipboardError: "Não foi possível acessar a área de transferência",
+    pinTitle: "Confirme o saque",
+    pinSubtitle:
+      "Você está enviando {{amount}} USDT. Confirme o PIN para prosseguir.",
+  },
+
+  walletWithdrawSuccess: {
+    title: "Saque enviado!",
+    subtitle:
+      "A transação foi assinada e enviada à blockchain. A confirmação pode levar alguns segundos dependendo da rede.",
+    txidLabel: "TXID",
+    explorerButton: "Ver no Explorer",
+    shareButton: "Compartilhar",
+    shareMessage: "Transação confirmada:\n{{url}}",
+  },
+
+  walletWithdrawPix: {
+    title: "Saque PIX",
+    networkLabel: "REDE",
+    quoteLabel: "COTAÇÃO ATUAL",
+    usdtValue: "1 USDT vale",
+    markup: "Markup da rede ({{network}})",
+    quoteExpires: "Cotação expira em {{time}}",
+    refresh: "Atualizar",
+    quoteError: "Não foi possível carregar a cotação. Toque em Atualizar.",
+    pixCodeLabel: "TEM UM CÓDIGO PIX?",
+    pixCodeTitle: "COLAR CÓDIGO OU ESCANEAR QR",
+    pasteButton: "Colar código",
+    decoding: "Decodificando...",
+    scanButton: "Escanear QR",
+    pixDetected: "PIX identificado",
+    beneficiary: "Beneficiário",
+    city: "Cidade",
+    fixedAmount: "✓ Valor fixo de R$ {{amount}} preenchido automaticamente",
+    clearPix: "Limpar",
+    amountLabel: "QUANTO QUER RECEBER?",
+    amountPlaceholder: "0,00",
+    fixedNote: "Valor fixo definido pelo QR Code",
+    youSend: "Você vai enviar",
+    yourBalance: "Seu saldo ({{network}})",
+    insufficient: "Saldo insuficiente — faltam {{amount}} USDT.",
+    expiredWarning: "Cotação expirada. Atualize antes de continuar.",
+    continueButton: "Continuar",
+    quoteLoadError: "Não foi possível carregar a cotação.",
+    cameraPermission: "Permissão de câmera necessária.",
+    qrInvalid: "Código PIX inválido ou não reconhecido.",
+    clipboardEmpty: "Área de transferência vazia.",
+    clipboardError: "Não foi possível acessar a área de transferência.",
+    qrHint: "Aponte para o QR Code do PIX",
+    pixIdentified: "PIX identificado: {{name}}",
+  },
+
+  walletWithdrawPixForm: {
+    title: "Dados do PIX",
+    summaryLabel: "RESUMO",
+    youReceive: "Você recebe",
+    youSend: "Você envia",
+    network: "Rede",
+    keyTypeLabel: "TIPO DE CHAVE PIX",
+    pixKeyLabel: "CHAVE PIX",
+    copyPastePlaceholder: "Cole o código ou escaneie",
+    emailLabel: "E-MAIL PARA COMPROVANTE",
+    emailPlaceholder: "email@exemplo.com",
+    saveEmail: "Salvar e-mail para próximas transações",
+    beneficiary: "Beneficiário",
+    proceedButton: "Revisar e confirmar",
+    errorNoKey: "Informe a chave PIX.",
+    errorNoEmail: "Informe um e-mail válido para o comprovante.",
+    cameraPermission: "Permissão de câmera necessária.",
+    qrInvalid: "QR Code inválido ou não reconhecido.",
+    qrSuccess: "QR lido: {{name}}",
+    fixedAmount: "QR com valor fixo: R$ {{amount}}",
+  },
+
+  walletWithdrawPixConfirm: {
+    title: "Confirmar PIX",
+    detailsLabel: "DETALHES DA OPERAÇÃO",
+    network: "Rede",
+    keyType: "Tipo de chave",
+    pixKey: "Chave PIX",
+    beneficiary: "Beneficiário",
+    emailReceipt: "E-mail comprovante",
+    youSend: "Você envia",
+    quote: "Cotação",
+    receiveLabel: "Você recebe via PIX",
+    blockchainNote: "Sujeito a confirmação da rede blockchain",
+    confirmButton: "Confirmar com PIN",
+    pinTitle: "Confirme o PIX",
+    pinSubtitle: "Você vai enviar {{usdt}} USDT e receber R$ {{brl}} via PIX.",
+    errorGeneric: "Não foi possível processar o saque PIX.",
+  },
+
+  walletWithdrawPixStatus: {
+    title: "Aguardando confirmação",
+    subtitle:
+      "O USDT foi enviado. Estamos aguardando a confirmação na blockchain para processar o PIX.",
+    network: "Rede",
+    pixKey: "Chave PIX",
+    type: "Tipo",
+    amountBrl: "Valor BRL",
+    txid: "TXID",
+    txidCopied: "TXID copiado!",
+    errorExpired:
+      "A transação expirou antes de ser confirmada. Verifique seu saldo e tente novamente.",
+    errorFailed:
+      "A transação falhou. O USDT pode ter sido devolvido — verifique seu saldo e entre em contato com o suporte informando o TXID.",
+    errorGeneric:
+      "Ocorreu um erro na transação. Entre em contato com o suporte informando o TXID.",
+    errorTimeout: "Tempo de espera esgotado. Verifique o status em breve.",
+  },
+
+  walletWithdrawPixSuccess: {
+    title: "PIX enviado!",
+    subtitle:
+      "O pagamento foi processado com sucesso. O beneficiário deve receber em instantes.",
+    valueLabel: "Valor recebido via PIX",
+    receiptTitle: "COMPROVANTE",
+    beneficiary: "Beneficiário",
+    pixKey: "Chave PIX",
+    type: "Tipo",
+    usdtSent: "USDT enviado",
+    totalBrl: "Total BRL",
+    endToEnd: "End-to-End",
+    txidBlockchain: "TXID Blockchain",
+    newTransaction: "Realizar nova transação",
+    viewBlockchain: "Ver na blockchain",
+    shareReceipt: "Compartilhar comprovante",
+    shareMessage:
+      "✅ PIX enviado com sucesso!\n\nBeneficiário: {{name}}\nChave PIX: {{key}} ({{type}})\nValor: R$ {{brl}}\nEnd-to-End: {{endtoend}}\nUSDT enviado: {{usdt}}\n\nBlockchain: {{url}}",
   },
 };

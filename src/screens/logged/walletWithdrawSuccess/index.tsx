@@ -18,12 +18,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { useTranslation } from "react-i18next";
 import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
-
 const Container = styled.View`
   flex: 1;
   background-color: ${colors.bgDark};
@@ -60,6 +60,11 @@ const BackButton = styled.TouchableOpacity`
   background-color: ${colors.surface};
   border-width: 1px;
   border-color: ${colors.surfaceBorder};
+`;
+const CardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
 `;
 const Content = styled.View`
   flex: 1;
@@ -150,12 +155,6 @@ const SecondaryButtonText = styled.Text`
   font-weight: 600;
 `;
 
-export const CardLogo = styled.View`
-  align-items: center;
-  margin-top: ${hp(0.5)}px;
-  margin-bottom: ${hp(1)}px;
-`;
-
 interface RouteParams {
   txid: string;
   explorerUrl: string;
@@ -164,23 +163,21 @@ interface RouteParams {
 export default function WalletWithdrawSuccess() {
   const navigation = useNavigation();
   const route = useRoute();
+  const { t } = useTranslation();
   const { txid, explorerUrl } = route.params as RouteParams;
 
   const handleOpenExplorer = useCallback(() => {
     Linking.openURL(explorerUrl).catch(() => {});
   }, [explorerUrl]);
-
   const handleShare = useCallback(async () => {
     try {
-      await Share.share({ message: `Transação confirmada:\n${explorerUrl}` });
+      await Share.share({
+        message: t("walletWithdrawSuccess.shareMessage", { url: explorerUrl }),
+      });
     } catch {}
-  }, [explorerUrl]);
-
+  }, [explorerUrl, t]);
   const handleGoHome = useCallback(() => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: "WalletHome" as never }],
-    });
+    navigation.reset({ index: 0, routes: [{ name: "WalletHome" as never }] });
   }, [navigation]);
 
   return (
@@ -201,36 +198,32 @@ export default function WalletWithdrawSuccess() {
           <CardLogo>
             <LogoSvg width={wp(28)} height={hp(7)} />
           </CardLogo>
-
           <Content>
             <IconWrapper>
               <CheckCircle size={48} color={colors.success} strokeWidth={1.8} />
             </IconWrapper>
-
-            <Title>Saque enviado!</Title>
-            <Subtitle>
-              A transação foi assinada e enviada à blockchain. A confirmação
-              pode levar alguns segundos dependendo da rede.
-            </Subtitle>
-
+            <Title>{t("walletWithdrawSuccess.title")}</Title>
+            <Subtitle>{t("walletWithdrawSuccess.subtitle")}</Subtitle>
             <TxCard>
-              <TxLabel>TXID</TxLabel>
+              <TxLabel>{t("walletWithdrawSuccess.txidLabel")}</TxLabel>
               <TxValue numberOfLines={2}>{txid}</TxValue>
             </TxCard>
-
             <ActionsColumn>
               <PrimaryButton onPress={handleOpenExplorer} activeOpacity={0.85}>
                 <ExternalLink size={18} color="#FFFFFF" strokeWidth={2.2} />
-                <PrimaryButtonText>Ver no Explorer</PrimaryButtonText>
+                <PrimaryButtonText>
+                  {t("walletWithdrawSuccess.explorerButton")}
+                </PrimaryButtonText>
               </PrimaryButton>
-
               <SecondaryButton onPress={handleShare} activeOpacity={0.75}>
                 <Share2
                   size={16}
                   color={colors.textPrimary}
                   strokeWidth={2.2}
                 />
-                <SecondaryButtonText>Compartilhar</SecondaryButtonText>
+                <SecondaryButtonText>
+                  {t("walletWithdrawSuccess.shareButton")}
+                </SecondaryButtonText>
               </SecondaryButton>
             </ActionsColumn>
           </Content>

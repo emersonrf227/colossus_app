@@ -20,6 +20,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Platform, StatusBar as RNStatusBar } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/hook/Toast";
 import {
   decodeBrCode,
@@ -30,16 +31,15 @@ import {
 import { ApiWalletRecord } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
+
 export const CardLogo = styled.View`
   align-items: center;
   margin-top: ${hp(0.5)}px;
   margin-bottom: ${hp(1)}px;
 `;
-
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
 const SAVED_EMAIL_KEY = "pix_saved_email";
-
 const Container = styled.View`
   flex: 1;
   background-color: ${colors.bgDark};
@@ -114,8 +114,6 @@ const SummaryValue = styled.Text`
   font-size: 13px;
   font-weight: 700;
 `;
-
-// Seletor de tipo de chave
 const TypeSelectorButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
@@ -153,8 +151,6 @@ const TypeOptionText = styled.Text`
   color: ${colors.textPrimary};
   font-size: 15px;
 `;
-
-// Input
 const InputWrapper = styled.View`
   flex-direction: row;
   align-items: center;
@@ -172,8 +168,6 @@ const StyledInput = styled.TextInput`
   font-size: 14px;
   height: 100%;
 `;
-
-// Email toggle
 const EmailToggleRow = styled.View`
   flex-direction: row;
   align-items: center;
@@ -189,7 +183,6 @@ const EmailToggleLabel = styled.Text`
   color: ${colors.textMuted};
   font-size: 13px;
 `;
-
 const PrimaryButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
@@ -209,28 +202,6 @@ const PrimaryButtonText = styled.Text`
   font-weight: 700;
 `;
 
-const KEY_TYPES: {
-  value: PixKeyType;
-  label: string;
-  mask?: string;
-  placeholder: string;
-}[] = [
-  { value: "CPF", label: "CPF", placeholder: "000.000.000-00" },
-  { value: "CNPJ", label: "CNPJ", placeholder: "00.000.000/0000-00" },
-  { value: "PHONE", label: "Telefone", placeholder: "+55 (00) 00000-0000" },
-  { value: "EMAIL", label: "E-mail", placeholder: "email@exemplo.com" },
-  {
-    value: "EVP",
-    label: "Chave aleatória",
-    placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-  },
-  {
-    value: "COPYPASTE",
-    label: "Copia e Cola (QR)",
-    placeholder: "Cole o código aqui ou escaneie o QR",
-  },
-];
-
 interface RouteParams {
   record: ApiWalletRecord;
   network: WalletNetwork;
@@ -249,12 +220,37 @@ export default function WalletWithdrawPixForm() {
   const { navigate, goBack } = navigation;
   const route = useRoute();
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const params = route.params as RouteParams;
   const { record, network, amountBrl, usdtNeeded, quote, prefilledPix } =
     params;
 
-  // Se veio com PIX pré-decodificado (copia e cola ou QR da tela anterior),
-  // inicializa os campos já preenchidos com COPYPASTE como tipo de chave.
+  const KEY_TYPES: { value: PixKeyType; label: string; placeholder: string }[] =
+    [
+      { value: "CPF", label: "CPF", placeholder: "000.000.000-00" },
+      { value: "CNPJ", label: "CNPJ", placeholder: "00.000.000/0000-00" },
+      {
+        value: "PHONE",
+        label: t("walletWithdrawPixForm.typePhone"),
+        placeholder: "+55 (00) 00000-0000",
+      },
+      {
+        value: "EMAIL",
+        label: "E-mail",
+        placeholder: t("walletWithdrawPixForm.emailPlaceholder"),
+      },
+      {
+        value: "EVP",
+        label: t("walletWithdrawPixForm.typeEvp"),
+        placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      },
+      {
+        value: "COPYPASTE",
+        label: t("walletWithdrawPixForm.typeCopyPaste"),
+        placeholder: t("walletWithdrawPixForm.copyPastePlaceholder"),
+      },
+    ];
+
   const [keyType, setKeyType] = useState<PixKeyType>(
     prefilledPix?.keyType ?? "CPF",
   );
@@ -270,11 +266,9 @@ export default function WalletWithdrawPixForm() {
     prefilledPix?.merchantName ?? null,
   );
   const [lockedAmount, setLockedAmount] = useState<number | null>(null);
-
-  // Campo de chave bloqueado se veio pré-preenchido via QR/copia e cola
   const pixKeyLocked = !!prefilledPix;
+  const selectedType = KEY_TYPES.find((k) => k.value === keyType)!;
 
-  // Carrega email salvo
   React.useEffect(() => {
     AsyncStorage.getItem(SAVED_EMAIL_KEY).then((saved) => {
       if (saved) {
@@ -284,14 +278,12 @@ export default function WalletWithdrawPixForm() {
     });
   }, []);
 
-  const selectedType = KEY_TYPES.find((k) => k.value === keyType)!;
-
   const handleOpenQr = useCallback(async () => {
     if (!permission?.granted) {
       const result = await requestPermission();
       if (!result.granted) {
         showToast({
-          message: "Permissão de câmera necessária.",
+          message: t("walletWithdrawPixForm.cameraPermission"),
           type: "error",
         });
         return;
@@ -299,7 +291,7 @@ export default function WalletWithdrawPixForm() {
     }
     setScanned(false);
     setQrModalVisible(true);
-  }, [permission, requestPermission, showToast]);
+  }, [permission, requestPermission, showToast, t]);
 
   const handleQrScanned = useCallback(
     async ({ data }: { data: string }) => {
@@ -307,30 +299,31 @@ export default function WalletWithdrawPixForm() {
       setScanned(true);
       setQrModalVisible(false);
       setDecoding(true);
-
       try {
         const decoded = await decodeBrCode(data);
         setPixKey(decoded.pixKey);
         setKeyType("EVP");
         setDecodedName(decoded.merchantName ?? null);
-
-        // Se o QR já tem valor fixo, usa ele e bloqueia o campo
         if (decoded.transactionAmount && decoded.transactionAmount > 0) {
           setLockedAmount(decoded.transactionAmount);
           showToast({
-            message: `QR com valor fixo: R$ ${decoded.transactionAmount.toFixed(2)}`,
+            message: t("walletWithdrawPixForm.fixedAmount", {
+              amount: decoded.transactionAmount.toFixed(2),
+            }),
             type: "success",
           });
         } else {
           setLockedAmount(null);
           showToast({
-            message: `QR lido: ${decoded.merchantName ?? decoded.pixKey}`,
+            message: t("walletWithdrawPixForm.qrSuccess", {
+              name: decoded.merchantName ?? decoded.pixKey,
+            }),
             type: "success",
           });
         }
       } catch {
         showToast({
-          message: "QR Code inválido ou não reconhecido.",
+          message: t("walletWithdrawPixForm.qrInvalid"),
           type: "error",
         });
         setScanned(false);
@@ -338,28 +331,29 @@ export default function WalletWithdrawPixForm() {
         setDecoding(false);
       }
     },
-    [scanned, decoding, showToast],
+    [scanned, decoding, showToast, t],
   );
 
   const handleProceed = useCallback(async () => {
     if (!pixKey.trim()) {
-      showToast({ message: "Informe a chave PIX.", type: "error" });
-      return;
-    }
-    if (!email.trim() || !email.includes("@")) {
       showToast({
-        message: "Informe um e-mail válido para o comprovante.",
+        message: t("walletWithdrawPixForm.errorNoKey"),
         type: "error",
       });
       return;
     }
-
+    if (!email.trim() || !email.includes("@")) {
+      showToast({
+        message: t("walletWithdrawPixForm.errorNoEmail"),
+        type: "error",
+      });
+      return;
+    }
     if (saveEmail) {
       await AsyncStorage.setItem(SAVED_EMAIL_KEY, email.trim());
     } else {
       await AsyncStorage.removeItem(SAVED_EMAIL_KEY);
     }
-
     navigate(
       "Walletwithdrawpixconfirm" as never,
       {
@@ -388,6 +382,7 @@ export default function WalletWithdrawPixForm() {
     decodedName,
     navigate,
     showToast,
+    t,
   ]);
 
   const canProceed = pixKey.trim().length > 0 && email.trim().length > 0;
@@ -406,9 +401,8 @@ export default function WalletWithdrawPixForm() {
             <BackButton onPress={() => goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </BackButton>
-            <HeaderTitle>Dados do PIX</HeaderTitle>
+            <HeaderTitle>{t("walletWithdrawPixForm.title")}</HeaderTitle>
           </Header>
-
           <CardLogo>
             <LogoSvg width={wp(28)} height={hp(7)} />
           </CardLogo>
@@ -418,27 +412,35 @@ export default function WalletWithdrawPixForm() {
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{ paddingBottom: 24 }}
           >
-            {/* Resumo da operação */}
-            <SectionLabel>RESUMO</SectionLabel>
+            <SectionLabel>
+              {t("walletWithdrawPixForm.summaryLabel")}
+            </SectionLabel>
             <SummaryCard>
               <SummaryRow>
-                <SummaryLabel>Você recebe</SummaryLabel>
+                <SummaryLabel>
+                  {t("walletWithdrawPixForm.youReceive")}
+                </SummaryLabel>
                 <SummaryValue>
                   R$ {(lockedAmount ?? amountBrl).toFixed(2)}
                 </SummaryValue>
               </SummaryRow>
               <SummaryRow>
-                <SummaryLabel>Você envia</SummaryLabel>
+                <SummaryLabel>
+                  {t("walletWithdrawPixForm.youSend")}
+                </SummaryLabel>
                 <SummaryValue>{usdtNeeded.toFixed(2)} USDT</SummaryValue>
               </SummaryRow>
               <SummaryRow>
-                <SummaryLabel>Rede</SummaryLabel>
+                <SummaryLabel>
+                  {t("walletWithdrawPixForm.network")}
+                </SummaryLabel>
                 <SummaryValue>{network}</SummaryValue>
               </SummaryRow>
             </SummaryCard>
 
-            {/* Tipo de chave */}
-            <SectionLabel>TIPO DE CHAVE PIX</SectionLabel>
+            <SectionLabel>
+              {t("walletWithdrawPixForm.keyTypeLabel")}
+            </SectionLabel>
             <TypeSelectorButton
               onPress={() => !pixKeyLocked && setTypeModalVisible(true)}
               activeOpacity={pixKeyLocked ? 1 : 0.75}
@@ -454,13 +456,14 @@ export default function WalletWithdrawPixForm() {
               )}
             </TypeSelectorButton>
 
-            {/* Chave PIX */}
-            <SectionLabel>CHAVE PIX</SectionLabel>
+            <SectionLabel>
+              {t("walletWithdrawPixForm.pixKeyLabel")}
+            </SectionLabel>
             <InputWrapper>
               <StyledInput
                 placeholder={
                   keyType === "COPYPASTE"
-                    ? "Cole o código ou escaneie"
+                    ? t("walletWithdrawPixForm.copyPastePlaceholder")
                     : selectedType.placeholder
                 }
                 placeholderTextColor="rgba(255,255,255,0.3)"
@@ -468,8 +471,8 @@ export default function WalletWithdrawPixForm() {
                 onChangeText={
                   pixKeyLocked
                     ? undefined
-                    : (t) => {
-                        setPixKey(t);
+                    : (v) => {
+                        setPixKey(v);
                         setDecodedName(null);
                       }
                 }
@@ -496,21 +499,21 @@ export default function WalletWithdrawPixForm() {
               )}
             </InputWrapper>
 
-            {/* Nome decodificado do QR */}
             {decodedName && (
               <SummaryCard style={{ marginBottom: hp(1) }}>
                 <SummaryRow>
-                  <SummaryLabel>Beneficiário</SummaryLabel>
+                  <SummaryLabel>
+                    {t("walletWithdrawPixForm.beneficiary")}
+                  </SummaryLabel>
                   <SummaryValue>{decodedName}</SummaryValue>
                 </SummaryRow>
               </SummaryCard>
             )}
 
-            {/* E-mail para comprovante */}
-            <SectionLabel>E-MAIL PARA COMPROVANTE</SectionLabel>
+            <SectionLabel>{t("walletWithdrawPixForm.emailLabel")}</SectionLabel>
             <InputWrapper>
               <StyledInput
-                placeholder="email@exemplo.com"
+                placeholder={t("walletWithdrawPixForm.emailPlaceholder")}
                 placeholderTextColor="rgba(255,255,255,0.3)"
                 value={email}
                 onChangeText={setEmail}
@@ -522,7 +525,7 @@ export default function WalletWithdrawPixForm() {
 
             <EmailToggleRow>
               <EmailToggleLabel>
-                Salvar e-mail para próximas transações
+                {t("walletWithdrawPixForm.saveEmail")}
               </EmailToggleLabel>
               <Switch
                 value={saveEmail}
@@ -540,13 +543,14 @@ export default function WalletWithdrawPixForm() {
               disabled={!canProceed}
               activeOpacity={0.85}
             >
-              <PrimaryButtonText>Revisar e confirmar</PrimaryButtonText>
+              <PrimaryButtonText>
+                {t("walletWithdrawPixForm.proceedButton")}
+              </PrimaryButtonText>
             </PrimaryButton>
           </ScrollView>
         </SafeArea>
       </Background>
 
-      {/* Modal seletor de tipo de chave */}
       <Modal
         visible={typeModalVisible}
         transparent
@@ -578,7 +582,6 @@ export default function WalletWithdrawPixForm() {
         </TypeModalOverlay>
       </Modal>
 
-      {/* Modal câmera QR */}
       <Modal
         visible={qrModalVisible}
         animationType="slide"
@@ -604,7 +607,7 @@ export default function WalletWithdrawPixForm() {
               <View style={styles.overlaySide} />
             </View>
             <View style={styles.overlayBottom}>
-              <Text style={styles.hint}>Aponte para o QR Code do PIX</Text>
+              <Text style={styles.hint}>{t("walletWithdrawPix.qrHint")}</Text>
             </View>
           </View>
           <TouchableOpacity

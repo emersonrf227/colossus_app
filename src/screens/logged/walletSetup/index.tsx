@@ -10,6 +10,7 @@ import {
   ShieldAlert,
   KeyRound,
 } from "lucide-react-native";
+import { useTranslation } from "react-i18next";
 
 import * as S from "./styles";
 import { useToast } from "@/hook/Toast";
@@ -27,7 +28,7 @@ export default function WalletSetup() {
   const navigation = useNavigation();
   const { navigate } = navigation;
   const { showToast } = useToast();
-
+  const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>("choice");
   const [externalAddress, setExternalAddress] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -37,37 +38,30 @@ export default function WalletSetup() {
       const text = await Clipboard.getString();
       setExternalAddress(text.trim());
     } catch {
-      showToast({
-        message: "Não foi possível acessar a área de transferência",
-        type: "error",
-      });
+      showToast({ message: t("walletSetup.clipboardError"), type: "error" });
     }
-  }, [showToast]);
+  }, [showToast, t]);
 
   const handleConfirmExternal = useCallback(async () => {
     if (!isAddress(externalAddress)) {
-      showToast({ message: "Endereço inválido.", type: "error" });
+      showToast({ message: t("walletSetup.invalidAddress"), type: "error" });
       return;
     }
     setSubmitting(true);
     try {
       await persistExternalWallet(externalAddress);
-      showToast({ message: "Wallet externa conectada!", type: "success" });
+      showToast({ message: t("walletSetup.connectSuccess"), type: "success" });
       navigate("WalletHome" as never);
     } catch {
-      showToast({
-        message: "Não foi possível salvar a wallet. Tente novamente.",
-        type: "error",
-      });
+      showToast({ message: t("walletSetup.connectError"), type: "error" });
     } finally {
       setSubmitting(false);
     }
-  }, [externalAddress, showToast, navigate]);
+  }, [externalAddress, showToast, navigate, t]);
 
   const handleCreateNew = useCallback(() => {
     navigate("WalletBackup" as never);
   }, [navigate]);
-
   const handleImport = useCallback(() => {
     navigate("WalletImport" as never);
   }, [navigate]);
@@ -81,7 +75,6 @@ export default function WalletSetup() {
           backgroundColor="transparent"
           translucent
         />
-
         <S.SafeArea>
           <S.Header>
             <S.BackButton
@@ -90,9 +83,8 @@ export default function WalletSetup() {
             >
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </S.BackButton>
-            <S.HeaderTitle>Configurar carteira</S.HeaderTitle>
+            <S.HeaderTitle>{t("walletSetup.title")}</S.HeaderTitle>
           </S.Header>
-
           <S.CardLogo>
             <LogoSvg width={wp(38)} height={hp(11)} />
           </S.CardLogo>
@@ -101,46 +93,39 @@ export default function WalletSetup() {
             <S.IntroIconWrapper>
               <Wallet size={30} color={colors.primary} strokeWidth={2} />
             </S.IntroIconWrapper>
-            <S.IntroTitle>Como você quer configurar?</S.IntroTitle>
-            <S.IntroSubtitle>
-              Crie uma nova carteira, importe uma existente ou conecte um
-              endereço externo para visualização.
-            </S.IntroSubtitle>
+            <S.IntroTitle>{t("walletSetup.subtitle")}</S.IntroTitle>
+            <S.IntroSubtitle>{t("walletSetup.description")}</S.IntroSubtitle>
           </S.IntroWrapper>
 
-          {/* Opção 1: Criar nova */}
           <S.OptionCard onPress={handleCreateNew} activeOpacity={0.8}>
             <S.OptionHeaderRow>
               <S.OptionIconWrapper accentColor={colors.primary}>
                 <Sparkles size={20} color={colors.primary} strokeWidth={2.2} />
               </S.OptionIconWrapper>
-              <S.OptionTitle>Criar nova carteira</S.OptionTitle>
+              <S.OptionTitle>{t("walletSetup.createNew")}</S.OptionTitle>
               <S.RecommendedBadge>
-                <S.RecommendedBadgeText>RECOMENDADO</S.RecommendedBadgeText>
+                <S.RecommendedBadgeText>
+                  {t("walletSetup.recommended")}
+                </S.RecommendedBadgeText>
               </S.RecommendedBadge>
             </S.OptionHeaderRow>
             <S.OptionDescription>
-              O app gera uma carteira só sua, com saldo, saque e PIX integrados.
-              Você guarda a frase de recuperação de 12 palavras.
+              {t("walletSetup.createDescription")}
             </S.OptionDescription>
           </S.OptionCard>
 
-          {/* Opção 2: Importar via seed phrase */}
           <S.OptionCard onPress={handleImport} activeOpacity={0.8}>
             <S.OptionHeaderRow>
               <S.OptionIconWrapper accentColor={colors.accent}>
                 <KeyRound size={20} color={colors.accent} strokeWidth={2.2} />
               </S.OptionIconWrapper>
-              <S.OptionTitle>Importar carteira existente</S.OptionTitle>
+              <S.OptionTitle>{t("walletSetup.import")}</S.OptionTitle>
             </S.OptionHeaderRow>
             <S.OptionDescription>
-              Já tem uma carteira com frase de 12 palavras (MetaMask, Trust
-              Wallet, SafePal)? Importe aqui para ter acesso completo a saldo,
-              saque e PIX.
+              {t("walletSetup.importDescription")}
             </S.OptionDescription>
           </S.OptionCard>
 
-          {/* Opção 3: Endereço externo (só visualização) */}
           <S.OptionCard
             onPress={() => setMode(mode === "external" ? "choice" : "external")}
             activeOpacity={0.8}
@@ -149,14 +134,11 @@ export default function WalletSetup() {
               <S.OptionIconWrapper accentColor={colors.textMuted}>
                 <Wallet size={20} color={colors.textMuted} strokeWidth={2.2} />
               </S.OptionIconWrapper>
-              <S.OptionTitle>Só visualizar saldo</S.OptionTitle>
+              <S.OptionTitle>{t("walletSetup.viewOnly")}</S.OptionTitle>
             </S.OptionHeaderRow>
             <S.OptionDescription>
-              Informe apenas o endereço público. Você verá o saldo mas não
-              poderá sacar pelo app — movimentações ficam na sua wallet
-              original.
+              {t("walletSetup.viewOnlyDescription")}
             </S.OptionDescription>
-
             {mode === "external" && (
               <S.ExternalFormWrapper>
                 <S.InputWrapper>
@@ -176,22 +158,22 @@ export default function WalletSetup() {
                     />
                   </S.PasteButton>
                 </S.InputWrapper>
-
                 <S.ConfirmButton
                   onPress={handleConfirmExternal}
                   disabled={submitting || !externalAddress}
                   activeOpacity={0.85}
                 >
-                  <S.ConfirmButtonText>Conectar endereço</S.ConfirmButtonText>
+                  <S.ConfirmButtonText>
+                    {t("walletSetup.connectAddress")}
+                  </S.ConfirmButtonText>
                 </S.ConfirmButton>
               </S.ExternalFormWrapper>
             )}
           </S.OptionCard>
 
           <S.WarningNote>
-            <ShieldAlert size={11} color={colors.textMuted} /> Nunca compartilhe
-            sua frase de 12 palavras ou chave privada com ninguém. A Colossus
-            Crypto jamais vai pedir essas informações.
+            <ShieldAlert size={11} color={colors.textMuted} />{" "}
+            {t("walletSetup.warning")}
           </S.WarningNote>
         </S.SafeArea>
       </S.Background>

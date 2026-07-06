@@ -20,7 +20,7 @@ import {
   Copy,
   Network,
 } from "lucide-react-native";
-
+import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import { useToast } from "@/hook/Toast";
 import {
@@ -53,6 +53,7 @@ export default function WalletHome() {
   const { navigate, goBack } = navigation;
   const route = useRoute();
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const params = (route.params ?? {}) as Partial<RouteParams>;
   const [mode, setMode] = useState<WalletAccessMode>(params.mode ?? "none");
@@ -62,12 +63,10 @@ export default function WalletHome() {
   const [loadingStatus, setLoadingStatus] = useState(
     !params.mode || !params.record,
   );
-
   const [balances, setBalances] = useState<NetworkBalance[]>([]);
   const [loadingBalances, setLoadingBalances] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [hasBalanceError, setHasBalanceError] = useState(false);
-
   const isFullAccess = mode === "full";
 
   const loadBalances = useCallback(
@@ -76,15 +75,12 @@ export default function WalletHome() {
       if (isRefresh) setRefreshing(true);
       else setLoadingBalances(true);
       setHasBalanceError(false);
-
       try {
         const { balances: fetched, errors } = await fetchAllNetworkBalances(
           record.address,
         );
         setBalances(fetched);
-        if (errors.length > 0 && fetched.length === 0) {
-          setHasBalanceError(true);
-        }
+        if (errors.length > 0 && fetched.length === 0) setHasBalanceError(true);
       } catch {
         setHasBalanceError(true);
       } finally {
@@ -96,8 +92,6 @@ export default function WalletHome() {
   );
 
   useEffect(() => {
-    // Se veio sem params (ex: fluxo pós-criação de wallet), busca o
-    // status real da API antes de carregar os saldos.
     if (loadingStatus) {
       getWalletStatus()
         .then((status) => {
@@ -111,10 +105,6 @@ export default function WalletHome() {
     loadBalances();
   }, [loadingStatus, loadBalances]);
 
-  // Sempre que a tela ganha foco de novo (ex: voltando de um saque
-  // concluído), revalida o status — o modo pode ter mudado (improvável,
-  // mas se o usuário trocar de wallet em outra aba/fluxo) e os saldos
-  // certamente devem ser atualizados.
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -127,7 +117,6 @@ export default function WalletHome() {
       return () => {
         isActive = false;
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 
@@ -140,8 +129,8 @@ export default function WalletHome() {
   const copyAddress = useCallback(async () => {
     if (!record?.address) return;
     await Clipboard.setString(record.address);
-    showToast({ message: "Endereço copiado!", type: "success" });
-  }, [record?.address, showToast]);
+    showToast({ message: t("wallet.addressCopied"), type: "success" });
+  }, [record?.address, showToast, t]);
 
   const goToWithdraw = useCallback(() => {
     if (!record) return;
@@ -150,21 +139,15 @@ export default function WalletHome() {
 
   const goToPix = useCallback(() => {
     if (!record) return;
-
-    // Passa o saldo de cada rede separadamente para que a tela de PIX
-    // consiga mostrar e validar o saldo correto ao trocar de rede.
     const polygonBalance = parseFloat(
       balances.find((b) => b.network === "polygon")?.usdtBalance ?? "0",
     );
     const plasmaBalance = parseFloat(
       balances.find((b) => b.network === "plasma")?.usdtBalance ?? "0",
     );
-
-    // Usa Polygon como rede padrão se tiver saldo, senão Plasma
     const defaultNetwork = polygonBalance > 0 ? "POLYGON" : "PLASMA";
     const defaultBalance =
       defaultNetwork === "POLYGON" ? polygonBalance : plasmaBalance;
-
     navigate(
       "Walletwithdrawpix" as never,
       {
@@ -189,23 +172,20 @@ export default function WalletHome() {
           backgroundColor="transparent"
           translucent
         />
-
         <S.SafeArea>
           <S.Header>
             <S.HeaderLeft>
               <S.BackButton onPress={() => goBack()} activeOpacity={0.7}>
                 <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
               </S.BackButton>
-              <S.HeaderTitle>Carteira</S.HeaderTitle>
+              <S.HeaderTitle>{t("wallet.title")}</S.HeaderTitle>
             </S.HeaderLeft>
-
             {isFullAccess && (
               <S.IconButton onPress={goToExport} activeOpacity={0.7}>
                 <KeyRound size={18} color="#FFFFFF" strokeWidth={2.2} />
               </S.IconButton>
             )}
           </S.Header>
-
           <S.cardLogo>
             <LogoSvg width={wp(38)} height={hp(11)} />
           </S.cardLogo>
@@ -231,32 +211,29 @@ export default function WalletHome() {
                   <S.ViewOnlyBanner>
                     <Eye size={16} color="#F7B731" strokeWidth={2.2} />
                     <S.ViewOnlyBannerText>
-                      Você está vendo esta carteira apenas para consulta. A
-                      chave de acesso está associada a outro dispositivo —
-                      saques só podem ser feitos a partir dele.
+                      {t("wallet.viewOnly")}
                     </S.ViewOnlyBannerText>
                   </S.ViewOnlyBanner>
                 )}
-
                 <S.TotalCard>
-                  <S.TotalLabel>SALDO TOTAL EM USDT</S.TotalLabel>
+                  <S.TotalLabel>{t("wallet.totalBalance")}</S.TotalLabel>
                   {loadingBalances ? (
                     <ActivityIndicator color={colors.primary} />
                   ) : (
                     <>
                       <S.TotalValue>{totalUsdt.toFixed(2)}</S.TotalValue>
-                      <S.TotalSubvalue>Somando todas as redes</S.TotalSubvalue>
+                      <S.TotalSubvalue>
+                        {t("wallet.allNetworks")}
+                      </S.TotalSubvalue>
                     </>
                   )}
                 </S.TotalCard>
-
                 <S.AddressCard onPress={copyAddress} activeOpacity={0.7}>
                   <S.AddressText numberOfLines={1}>
                     {record?.address ?? ""}
                   </S.AddressText>
                   <Copy size={16} color={colors.primary} strokeWidth={2.2} />
                 </S.AddressCard>
-
                 {isFullAccess && (
                   <S.ActionsRow>
                     <S.ActionButton
@@ -272,10 +249,9 @@ export default function WalletHome() {
                         />
                       </S.ActionIconWrapper>
                       <S.ActionButtonText accentColor={colors.primary}>
-                        Sacar
+                        {t("wallet.withdraw")}
                       </S.ActionButtonText>
                     </S.ActionButton>
-
                     <S.ActionButton
                       accentColor={colors.success}
                       onPress={goToPix}
@@ -289,14 +265,12 @@ export default function WalletHome() {
                         />
                       </S.ActionIconWrapper>
                       <S.ActionButtonText accentColor={colors.success}>
-                        PIX
+                        {t("wallet.pix")}
                       </S.ActionButtonText>
                     </S.ActionButton>
                   </S.ActionsRow>
                 )}
-
-                <S.SectionLabel>SALDO POR REDE</S.SectionLabel>
-
+                <S.SectionLabel>{t("wallet.balanceByNetwork")}</S.SectionLabel>
                 {hasBalanceError ? (
                   <S.CenteredState>
                     <AlertTriangle
@@ -304,10 +278,7 @@ export default function WalletHome() {
                       color={colors.textMuted}
                       strokeWidth={1.8}
                     />
-                    <S.StateText>
-                      Não foi possível consultar os saldos agora. Arraste para
-                      baixo para tentar de novo.
-                    </S.StateText>
+                    <S.StateText>{t("wallet.balanceError")}</S.StateText>
                   </S.CenteredState>
                 ) : (
                   balances.map((balance) => {
@@ -325,8 +296,9 @@ export default function WalletHome() {
                           <S.NetworkName>{config.label}</S.NetworkName>
                           {balance.lowGasWarning && isFullAccess && (
                             <S.NetworkGasWarning>
-                              Saldo de {config.nativeCurrencySymbol} baixo para
-                              taxas
+                              {t("wallet.lowGas", {
+                                symbol: config.nativeCurrencySymbol,
+                              })}
                             </S.NetworkGasWarning>
                           )}
                         </S.NetworkInfo>

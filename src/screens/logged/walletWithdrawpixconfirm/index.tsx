@@ -1,13 +1,14 @@
 import React, { useState, useCallback } from "react";
 import { StatusBar } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { ArrowLeft, ShieldCheck, Send } from "lucide-react-native";
+import { ArrowLeft, ShieldCheck } from "lucide-react-native";
 import styled from "styled-components/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Platform, StatusBar as RNStatusBar } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useToast } from "@/hook/Toast";
 import Loader from "@/components/loader";
 import PinConfirmModal from "../PinConfirmModal";
@@ -17,7 +18,6 @@ import {
   WalletNetwork,
   SwapQuote,
 } from "../../../components/pix/pixService";
-
 import {
   withdrawCrypto,
   WithdrawError,
@@ -29,7 +29,6 @@ import LogoSvg from "@/assets/logov2.svg";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
-
 const Container = styled.View`
   flex: 1;
   background-color: ${colors.bgDark};
@@ -77,7 +76,6 @@ const HeaderTitle = styled.Text`
 const ScrollContent = styled.ScrollView`
   flex: 1;
 `;
-
 const SectionLabel = styled.Text`
   color: ${colors.textMuted};
   font-size: 12px;
@@ -120,7 +118,6 @@ const DetailValue = styled.Text`
   flex: 1.5;
   text-align: right;
 `;
-
 const TotalCard = styled.View`
   border-radius: 16px;
   padding: 16px;
@@ -148,7 +145,6 @@ const TotalSub = styled.Text`
   font-size: 12px;
   margin-top: 4px;
 `;
-
 const PrimaryButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
@@ -166,8 +162,7 @@ const PrimaryButtonText = styled.Text`
   font-size: 15px;
   font-weight: 700;
 `;
-
-export const CardLogo = styled.View`
+const CardLogo = styled.View`
   align-items: center;
   margin-top: ${hp(0.5)}px;
   margin-bottom: ${hp(1)}px;
@@ -190,6 +185,7 @@ export default function WalletWithdrawPixConfirm() {
   const { navigate, goBack } = navigation;
   const route = useRoute();
   const { showToast } = useToast();
+  const { t } = useTranslation();
   const params = route.params as RouteParams;
   const {
     record,
@@ -201,20 +197,15 @@ export default function WalletWithdrawPixConfirm() {
     email,
     decodedName,
   } = params;
-
   const [pinVisible, setPinVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleConfirmed = useCallback(async () => {
     setPinVisible(false);
     setSubmitting(true);
-
     try {
-      // 1. Obtém endereço da wallet local para enviar como walletRet
       const walletRet =
         record?.address ?? (await getStoredWalletAddress()) ?? "";
-
-      // 2. Cria a transação PIX no backend
       const pixTx = await createPixTransaction({
         network,
         key: pixKey,
@@ -223,15 +214,11 @@ export default function WalletWithdrawPixConfirm() {
         email,
         amount: amountBrl,
       });
-
-      // 3. Envia o USDT on-chain para o origemAddress retornado
       const { txid, explorerUrl } = await withdrawCrypto({
         network: network.toLowerCase() as any,
         toAddress: pixTx.origemAddress,
-        amount: pixTx.amount_usd, // valor exato retornado pela API
+        amount: pixTx.amount_usd,
       });
-
-      // 4. Vai para tela de polling de status
       navigate(
         "Walletwithdrawpixstatus" as never,
         {
@@ -248,12 +235,12 @@ export default function WalletWithdrawPixConfirm() {
       const message =
         error instanceof WithdrawError
           ? error.message
-          : (error?.message ?? "Não foi possível processar o saque PIX.");
+          : t("walletWithdrawPixConfirm.errorGeneric");
       showToast({ message, type: "error" });
     } finally {
       setSubmitting(false);
     }
-  }, [params, record, navigate, showToast]);
+  }, [params, record, navigate, showToast, t]);
 
   return (
     <Container>
@@ -270,77 +257,95 @@ export default function WalletWithdrawPixConfirm() {
             <BackButton onPress={() => goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </BackButton>
-            <HeaderTitle>Confirmar PIX</HeaderTitle>
+            <HeaderTitle>{t("walletWithdrawPixConfirm.title")}</HeaderTitle>
           </Header>
-
           <CardLogo>
             <LogoSvg width={wp(28)} height={hp(7)} />
           </CardLogo>
-
           <ScrollContent
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 24 }}
           >
-            <SectionLabel>DETALHES DA OPERAÇÃO</SectionLabel>
+            <SectionLabel>
+              {t("walletWithdrawPixConfirm.detailsLabel")}
+            </SectionLabel>
             <DetailCard>
               <DetailRow>
-                <DetailLabel>Rede</DetailLabel>
+                <DetailLabel>
+                  {t("walletWithdrawPixConfirm.network")}
+                </DetailLabel>
                 <DetailValue>{network}</DetailValue>
               </DetailRow>
               <DetailRow>
-                <DetailLabel>Tipo de chave</DetailLabel>
+                <DetailLabel>
+                  {t("walletWithdrawPixConfirm.keyType")}
+                </DetailLabel>
                 <DetailValue>{keyType}</DetailValue>
               </DetailRow>
               <DetailRow>
-                <DetailLabel>Chave PIX</DetailLabel>
+                <DetailLabel>
+                  {t("walletWithdrawPixConfirm.pixKey")}
+                </DetailLabel>
                 <DetailValue numberOfLines={2}>{pixKey}</DetailValue>
               </DetailRow>
               {decodedName && (
                 <DetailRow>
-                  <DetailLabel>Beneficiário</DetailLabel>
+                  <DetailLabel>
+                    {t("walletWithdrawPixConfirm.beneficiary")}
+                  </DetailLabel>
                   <DetailValue>{decodedName}</DetailValue>
                 </DetailRow>
               )}
               <DetailRow>
-                <DetailLabel>E-mail comprovante</DetailLabel>
+                <DetailLabel>
+                  {t("walletWithdrawPixConfirm.emailReceipt")}
+                </DetailLabel>
                 <DetailValue>{email}</DetailValue>
               </DetailRow>
               <DetailRow>
-                <DetailLabel>Você envia</DetailLabel>
+                <DetailLabel>
+                  {t("walletWithdrawPixConfirm.youSend")}
+                </DetailLabel>
                 <DetailValue>{usdtNeeded.toFixed(2)} USDT</DetailValue>
               </DetailRow>
               <LastDetailRow>
-                <DetailLabel>Cotação</DetailLabel>
+                <DetailLabel>{t("walletWithdrawPixConfirm.quote")}</DetailLabel>
                 <DetailValue>
                   R$ {parseFloat(params.quote.price_usd).toFixed(4)} / USDT
                 </DetailValue>
               </LastDetailRow>
             </DetailCard>
-
             <TotalCard>
               <TotalRow>
-                <TotalLabel>Você recebe via PIX</TotalLabel>
+                <TotalLabel>
+                  {t("walletWithdrawPixConfirm.receiveLabel")}
+                </TotalLabel>
                 <TotalValue>R$ {amountBrl.toFixed(2)}</TotalValue>
               </TotalRow>
-              <TotalSub>Sujeito a confirmação da rede blockchain</TotalSub>
+              <TotalSub>
+                {t("walletWithdrawPixConfirm.blockchainNote")}
+              </TotalSub>
             </TotalCard>
-
             <PrimaryButton
               onPress={() => setPinVisible(true)}
               disabled={submitting}
               activeOpacity={0.85}
             >
               <ShieldCheck size={18} color="#FFFFFF" strokeWidth={2.2} />
-              <PrimaryButtonText>Confirmar com PIN</PrimaryButtonText>
+              <PrimaryButtonText>
+                {t("walletWithdrawPixConfirm.confirmButton")}
+              </PrimaryButtonText>
             </PrimaryButton>
           </ScrollContent>
         </SafeArea>
       </Background>
-
       <PinConfirmModal
         visible={pinVisible}
-        title="Confirme o PIX"
-        subtitle={`Você vai enviar ${usdtNeeded.toFixed(2)} USDT e receber R$ ${amountBrl.toFixed(2)} via PIX.`}
+        title={t("walletWithdrawPixConfirm.pinTitle")}
+        subtitle={t("walletWithdrawPixConfirm.pinSubtitle", {
+          usdt: usdtNeeded.toFixed(2),
+          brl: amountBrl.toFixed(2),
+        })}
         onCancel={() => setPinVisible(false)}
         onConfirmed={handleConfirmed}
       />
