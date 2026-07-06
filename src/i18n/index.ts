@@ -5,6 +5,8 @@ import pt from "./pt";
 import en from "./en";
 import es from "./es";
 import zh from "./zh";
+import ar from "./ar";
+import ru from "./ru";
 
 i18n.use(initReactI18next).init({
   compatibilityJSON: "v4",
@@ -25,6 +27,12 @@ i18n.use(initReactI18next).init({
     },
     zh: {
       translation: zh,
+    },
+    ar: {
+      translation: ar,
+    },
+    ru: {
+      translation: ru,
     },
   },
 

@@ -4,7 +4,7 @@
 // DEFAULT_LANGUAGE/resolveLanguage pela integração real, mas a estrutura
 // abaixo (LANGUAGES) não precisa mudar.
 
-export type LanguageCode = "pt" | "en" | "es" | "zh";
+export type LanguageCode = "pt" | "en" | "es" | "zh" | "ar" | "ru";
 
 export interface LanguageConfig {
   code: LanguageCode;
@@ -17,6 +17,8 @@ export const LANGUAGES: Record<LanguageCode, LanguageConfig> = {
   en: { code: "en", label: "English", flagEmoji: "🇺🇸" },
   es: { code: "es", label: "Español", flagEmoji: "🇪🇸" },
   zh: { code: "zh", label: "中文", flagEmoji: "🇨🇳" },
+  ru: { code: "ru", label: "Русский", flagEmoji: "🇷🇺" },
+  ar: { code: "ar", label: "العربية", flagEmoji: "🇸🇦" },
 };
 
 // 👉 Configuração fixa do app por enquanto.
