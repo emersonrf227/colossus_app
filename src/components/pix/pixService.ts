@@ -1,4 +1,4 @@
-import swapxApi from "@/infraestructure/http/swapixApi";
+import rstruther from "@/infraestructure/http/nodeApi";
 import axios from "axios";
 
 // ---------------------------------------------------------------------------
@@ -54,7 +54,7 @@ export interface PixTransaction {
   total_brl: string;
   send_brl: string;
   life: number; // segundos de vida da transação
-  status: "OPEN" | "SUCCESS" | "EXPIRED" | "ERROR" | string;
+  status: "OPEN" | "SUCCESS" | "FAILED" | "EXPIRED" | "ERROR" | string;
   displayDestination: string | null;
   cryptoNetwork: WalletNetwork;
   endtoend: string | null;
@@ -95,7 +95,7 @@ export async function fetchSwapQuote(amountBrl: number): Promise<SwapQuote> {
  * Usado para calcular o valor real de USDT que o usuário precisa enviar.
  */
 export async function fetchNetworkTicker(): Promise<NetworkTicker> {
-  const response = await swapxApi.get("sell/ticker");
+  const response = await rstruther.get("sell/ticker");
   const res = response.data?.data?.res;
 
   if (!res) throw new Error("Não foi possível obter o ticker de rede.");
@@ -126,7 +126,7 @@ export function calculateUsdtNeeded(params: {
 }): number {
   const { amountBrl, priceUsd, tickerPercent } = params;
   const markup = 1 - tickerPercent / 100;
-  const bruto = (amountBrl + 0.17) / markup;
+  const bruto = amountBrl / markup;
   const usdt = bruto / priceUsd;
   return Math.ceil(usdt * 100) / 100; // arredonda pra cima em 2 casas
 }
@@ -136,8 +136,8 @@ export function calculateUsdtNeeded(params: {
 // ---------------------------------------------------------------------------
 
 export async function decodeBrCode(emv: string): Promise<DecodedBrCode> {
-  const response = await swapxApi.post("sell/decode-brcode", { emv });
-  console.log(response.data);
+  const response = await rstruther.post("sell/decode-brcode", { emv });
+
   if (response.data?.statusCode !== 200) {
     throw new Error("QR Code inválido ou não reconhecido.");
   }
@@ -156,21 +156,33 @@ export interface CreatePixParams {
   walletRet: string; // endereço da wallet do usuário
   email: string;
   amount: number; // valor em BRL
+  proofKey: string; // 12 iniciais + 8 finais da chave privada
 }
 
 export async function createPixTransaction(
   params: CreatePixParams,
 ): Promise<PixTransaction> {
-  const response = await swapxApi.post("sell/create-crypto-to-pix", {
+  console.log({
     network: params.network,
     key: params.key,
     typeKey: params.typeKey,
     walletRet: params.walletRet,
     email: params.email,
     amount: params.amount,
+    proofKey: params.proofKey,
   });
-
+  const response = await rstruther.post("sell/create-crypto-to-pix", {
+    network: params.network,
+    key: params.key,
+    typeKey: params.typeKey,
+    walletRet: params.walletRet,
+    email: params.email,
+    amount: params.amount,
+    proofKey: params.proofKey,
+  });
+  console.log("res ===>", response);
   const res = response.data?.data?.res;
+
   if (!res || response.data?.data?.status !== "SUCCESS") {
     const msg =
       response.data?.data?.msg ?? "Não foi possível criar a transação PIX.";
@@ -187,7 +199,7 @@ export async function createPixTransaction(
 export async function getPixTransactionStatus(
   uuid: string,
 ): Promise<PixTransaction> {
-  const response = await swapxApi.get("sell/get-status-crypto-to-pix", {
+  const response = await rstruther.get("sell/get-status-crypto-to-pix", {
     params: { uuid },
   });
 
@@ -196,4 +208,62 @@ export async function getPixTransactionStatus(
     throw new Error("Não foi possível consultar o status da transação.");
 
   return res as PixTransaction;
+}
+
+// ---------------------------------------------------------------------------
+// 7. Enviar TXID após confirmar envio on-chain
+// ---------------------------------------------------------------------------
+
+/**
+ * Chamado após withdrawCrypto — registra o txid da transação on-chain
+ * na transação PIX correspondente.
+ *
+ * POST sell/send-txid
+ */
+export async function sendPixTxid(params: {
+  proofKey: string;
+  txid: string;
+  id: number;
+}): Promise<void> {
+  await rstruther.post("sell/send-txid", {
+    proofKey: params.proofKey,
+    txid: params.txid,
+    id: params.id,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// 8. Consultar comprovante PIX pelo proofKey + txid
+// ---------------------------------------------------------------------------
+
+export interface PixProofResult {
+  success: boolean;
+  data: PixTransaction | null;
+}
+
+/**
+ * Verifica se uma transação on-chain sainte (USDT out) corresponde a
+ * um PIX off-ramp processado.
+ *
+ * POST sell/proof
+ * Usado na tela de histórico para enriquecer transações de saída com
+ * dados do PIX (beneficiário, valor BRL, end-to-end etc.).
+ */
+export async function getPixProof(params: {
+  proofKey: string;
+  txid: string;
+}): Promise<PixTransaction | null> {
+  try {
+    const response = await rstruther.post("sell/proof", {
+      proofKey: params.proofKey,
+      txid: params.txid,
+    });
+
+    const res = response.data?.data?.res;
+    if (!res || response.data?.data?.status !== "SUCCESS") return null;
+
+    return res as PixTransaction;
+  } catch {
+    return null;
+  }
 }

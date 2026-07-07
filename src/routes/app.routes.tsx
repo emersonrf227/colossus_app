@@ -35,6 +35,9 @@ import WalletExport from "@/screens/logged/walletExport";
 
 import WalletImport from "@/screens/logged/walletImport";
 
+import WalletHistory from "@/screens/logged/walletHistory";
+import Walletpixreceipt from "@/screens/logged/walletPixreceipt";
+
 const { Navigator, Screen } = createNativeStackNavigator();
 
 export function AppRoutes() {
@@ -82,6 +85,8 @@ export function AppRoutes() {
         component={Walletwithdrawpixsuccess}
       />
       <Screen name="WalletExport" component={WalletExport} />
+      <Screen name="WalletHistory" component={WalletHistory} />
+      <Screen name="Walletpixreceipt" component={Walletpixreceipt} />
     </Navigator>
   );
 }

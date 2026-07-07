@@ -157,3 +157,25 @@ export async function clearStoredWallet(): Promise<void> {
     STORAGE_KEY_WALLET_SOURCE,
   ]);
 }
+
+/**
+ * Monta a proofKey para autenticar transações PIX off-ramp.
+ * Padrão: 12 caracteres iniciais da chave privada + 8 caracteres finais
+ * (sem o prefixo "0x").
+ *
+ * Exemplo:
+ *   privateKey = "0xabcdef123456789012345678901234567890abcdef1234567890abcdef123456"
+ *   proofKey   = "abcdef123456" + "ef123456" = "abcdef123456ef123456"
+ */
+export async function getProofKey(): Promise<string | null> {
+  const wallet = await getSigningWallet();
+  if (!wallet) return null;
+  try {
+    const pk = wallet.privateKey.replace(/^0x/, "");
+    const prefix = pk.slice(0, 12);
+    const suffix = pk.slice(-8);
+    return `${prefix}${suffix}`;
+  } catch {
+    return null;
+  }
+}
