@@ -14,6 +14,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { Platform, StatusBar as RNStatusBar } from "react-native";
+import { useTranslation } from "react-i18next";
 import {
   getPixProof,
   PixTransaction,
@@ -75,7 +76,6 @@ const CardLogo = styled.View`
 const ScrollContent = styled.ScrollView`
   flex: 1;
 `;
-
 const StatusBadge = styled.View`
   flex-direction: row;
   align-items: center;
@@ -93,7 +93,6 @@ const StatusText = styled.Text`
   font-size: 14px;
   font-weight: 700;
 `;
-
 const SectionLabel = styled.Text`
   color: ${colors.textMuted};
   font-size: 11px;
@@ -102,7 +101,6 @@ const SectionLabel = styled.Text`
   margin-bottom: ${hp(1)}px;
   margin-top: ${hp(2)}px;
 `;
-
 const ReceiptCard = styled.View`
   border-radius: 16px;
   padding: 16px;
@@ -137,7 +135,6 @@ const ReceiptValue = styled.Text`
   flex: 1.5;
   text-align: right;
 `;
-
 const HighlightCard = styled.View`
   border-radius: 16px;
   padding: 16px;
@@ -160,7 +157,6 @@ const HighlightValue = styled.Text`
   font-size: 22px;
   font-weight: 800;
 `;
-
 const ActionsRow = styled.View`
   gap: 10px;
   margin-bottom: ${hp(4)}px;
@@ -181,7 +177,6 @@ const SecondaryButtonText = styled.Text`
   font-size: 14px;
   font-weight: 600;
 `;
-
 const CenteredState = styled.View`
   flex: 1;
   align-items: center;
@@ -206,6 +201,7 @@ export default function WalletPixReceipt() {
   const navigation = useNavigation();
   const { goBack } = navigation;
   const route = useRoute();
+  const { t } = useTranslation();
   const {
     pixTransaction: initialTx,
     txid,
@@ -217,7 +213,6 @@ export default function WalletPixReceipt() {
   const [loading, setLoading] = useState(!initialTx && !!proofKey);
   const [error, setError] = useState(false);
 
-  // Se não veio com os dados completos, consulta via sell/proof
   useEffect(() => {
     if (initialTx || !proofKey || !txid) return;
     setLoading(true);
@@ -235,18 +230,16 @@ export default function WalletPixReceipt() {
     try {
       await Share.share({
         message:
-          `✅ Comprovante PIX\n\n` +
-          `Beneficiário: ${tx.displayDestination ?? tx.destinarionAddress}\n` +
-          `Chave: ${tx.destinarionAddress} (${tx.typeDestinationKey})\n` +
-          `Valor: R$ ${tx.send_brl}\n` +
-          `Taxa: R$ ${tx.fee_brl}\n` +
-          `Total: R$ ${tx.total_brl}\n` +
+          `${t("walletPixReceipt.shareHeader")}\n\n` +
+          `${t("walletPixReceipt.beneficiary")}: ${tx.displayDestination ?? tx.destinarionAddress}\n` +
+          `${t("walletPixReceipt.pixKey")}: ${tx.destinarionAddress} (${tx.typeDestinationKey})\n` +
+          `${t("walletPixReceipt.valueSent")}: R$ ${tx.send_brl}\n` +
           `E2E: ${tx.endtoend ?? "-"}\n` +
-          `Data: ${moment(tx.updatedAt).format("DD/MM/YYYY HH:mm")}\n` +
+          `${t("walletPixReceipt.date")}: ${moment(tx.updatedAt).format("DD/MM/YYYY HH:mm")}\n` +
           (explorerUrl ? `\nBlockchain: ${explorerUrl}` : ""),
       });
     } catch {}
-  }, [tx, explorerUrl]);
+  }, [tx, explorerUrl, t]);
 
   const handleOpenExplorer = useCallback(() => {
     if (!explorerUrl) return;
@@ -267,7 +260,7 @@ export default function WalletPixReceipt() {
             <BackButton onPress={() => goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </BackButton>
-            <HeaderTitle>Comprovante PIX</HeaderTitle>
+            <HeaderTitle>{t("walletPixReceipt.title")}</HeaderTitle>
           </Header>
           <CardLogo>
             <LogoSvg width={wp(28)} height={hp(7)} />
@@ -276,7 +269,7 @@ export default function WalletPixReceipt() {
           {loading ? (
             <CenteredState>
               <ActivityIndicator color={colors.primary} size="large" />
-              <StateText>Consultando comprovante...</StateText>
+              <StateText>{t("walletPixReceipt.loading")}</StateText>
             </CenteredState>
           ) : error || !tx ? (
             <CenteredState>
@@ -285,78 +278,66 @@ export default function WalletPixReceipt() {
                 color={colors.textMuted}
                 strokeWidth={1.8}
               />
-              <StateText>
-                Não foi possível carregar o comprovante. A transação pode ainda
-                estar sendo processada.
-              </StateText>
+              <StateText>{t("walletPixReceipt.error")}</StateText>
             </CenteredState>
           ) : (
             <ScrollContent
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 24 }}
             >
-              {/* Badge de status */}
               <StatusBadge>
                 <CheckCircle
                   size={16}
                   color={colors.success}
                   strokeWidth={2.2}
                 />
-                <StatusText>PIX CONFIRMADO</StatusText>
+                <StatusText>{t("walletPixReceipt.confirmed")}</StatusText>
               </StatusBadge>
 
-              {/* Valor em destaque */}
               <HighlightCard>
                 <HighlightRow>
-                  <HighlightLabel>Valor recebido via PIX</HighlightLabel>
+                  <HighlightLabel>
+                    {t("walletPixReceipt.valueLabel")}
+                  </HighlightLabel>
                   <HighlightValue>R$ {tx.send_brl}</HighlightValue>
                 </HighlightRow>
               </HighlightCard>
 
-              {/* Dados do destinatário */}
-              <SectionLabel>DESTINATÁRIO</SectionLabel>
+              <SectionLabel>
+                {t("walletPixReceipt.sectionRecipient")}
+              </SectionLabel>
               <ReceiptCard>
                 {tx.displayDestination && (
                   <ReceiptRow>
-                    <ReceiptLabel>Nome</ReceiptLabel>
+                    <ReceiptLabel>{t("walletPixReceipt.name")}</ReceiptLabel>
                     <ReceiptValue>{tx.displayDestination}</ReceiptValue>
                   </ReceiptRow>
                 )}
                 <ReceiptRow>
-                  <ReceiptLabel>Chave PIX</ReceiptLabel>
+                  <ReceiptLabel>{t("walletPixReceipt.pixKey")}</ReceiptLabel>
                   <ReceiptValue numberOfLines={2}>
                     {tx.destinarionAddress}
                   </ReceiptValue>
                 </ReceiptRow>
                 <LastReceiptRow>
-                  <ReceiptLabel>Tipo de chave</ReceiptLabel>
+                  <ReceiptLabel>{t("walletPixReceipt.keyType")}</ReceiptLabel>
                   <ReceiptValue>{tx.typeDestinationKey}</ReceiptValue>
                 </LastReceiptRow>
               </ReceiptCard>
 
-              {/* Valores */}
-              <SectionLabel>VALORES</SectionLabel>
+              <SectionLabel>{t("walletPixReceipt.sectionValues")}</SectionLabel>
               <ReceiptCard>
                 <ReceiptRow>
-                  <ReceiptLabel>Valor enviado</ReceiptLabel>
+                  <ReceiptLabel>{t("walletPixReceipt.valueSent")}</ReceiptLabel>
                   <ReceiptValue>R$ {tx.send_brl}</ReceiptValue>
                 </ReceiptRow>
-                {/* <ReceiptRow>
-                  <ReceiptLabel>Taxa</ReceiptLabel>
-                  <ReceiptValue>R$ {tx.fee_brl}</ReceiptValue>
-                </ReceiptRow>
-                <ReceiptRow>
-                  <ReceiptLabel>Total BRL</ReceiptLabel>
-                  <ReceiptValue>R$ {tx.total_brl}</ReceiptValue>
-                </ReceiptRow> */}
                 <LastReceiptRow>
-                  <ReceiptLabel>USDT utilizado</ReceiptLabel>
+                  <ReceiptLabel>{t("walletPixReceipt.usdtUsed")}</ReceiptLabel>
                   <ReceiptValue>{tx.amount_usd} USDT</ReceiptValue>
                 </LastReceiptRow>
               </ReceiptCard>
 
-              {/* Identificadores */}
-              <SectionLabel>IDENTIFICAÇÃO</SectionLabel>
+              <SectionLabel>{t("walletPixReceipt.sectionId")}</SectionLabel>
               <ReceiptCard>
                 {tx.endtoend && (
                   <ReceiptRow>
@@ -367,24 +348,23 @@ export default function WalletPixReceipt() {
                   </ReceiptRow>
                 )}
                 <ReceiptRow>
-                  <ReceiptLabel>Rede</ReceiptLabel>
+                  <ReceiptLabel>{t("walletPixReceipt.network")}</ReceiptLabel>
                   <ReceiptValue>{tx.cryptoNetwork}</ReceiptValue>
                 </ReceiptRow>
                 <ReceiptRow>
-                  <ReceiptLabel>TXID Blockchain</ReceiptLabel>
+                  <ReceiptLabel>{t("walletPixReceipt.txid")}</ReceiptLabel>
                   <ReceiptValue numberOfLines={2} style={{ fontSize: 10 }}>
                     {txid}
                   </ReceiptValue>
                 </ReceiptRow>
                 <LastReceiptRow>
-                  <ReceiptLabel>Data</ReceiptLabel>
+                  <ReceiptLabel>{t("walletPixReceipt.date")}</ReceiptLabel>
                   <ReceiptValue>
                     {moment(tx.updatedAt).format("DD/MM/YYYY HH:mm")}
                   </ReceiptValue>
                 </LastReceiptRow>
               </ReceiptCard>
 
-              {/* Ações */}
               <ActionsRow>
                 <SecondaryButton onPress={handleShare} activeOpacity={0.75}>
                   <Share2
@@ -393,7 +373,7 @@ export default function WalletPixReceipt() {
                     strokeWidth={2.2}
                   />
                   <SecondaryButtonText>
-                    Compartilhar comprovante
+                    {t("walletPixReceipt.share")}
                   </SecondaryButtonText>
                 </SecondaryButton>
                 {explorerUrl && (
@@ -406,7 +386,9 @@ export default function WalletPixReceipt() {
                       color={colors.textPrimary}
                       strokeWidth={2.2}
                     />
-                    <SecondaryButtonText>Ver na blockchain</SecondaryButtonText>
+                    <SecondaryButtonText>
+                      {t("walletPixReceipt.viewBlockchain")}
+                    </SecondaryButtonText>
                   </SecondaryButton>
                 )}
               </ActionsRow>

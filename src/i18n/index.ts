@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import pt from "./pt";
 import en from "./en";
@@ -8,37 +9,27 @@ import zh from "./zh";
 import ar from "./ar";
 import ru from "./ru";
 
-i18n.use(initReactI18next).init({
-  compatibilityJSON: "v4",
+const resources = {
+  pt: { translation: pt },
+  en: { translation: en },
+  es: { translation: es },
+  zh: { translation: zh },
+  ar: { translation: ar },
+  ru: { translation: ru },
+};
 
-  lng: "pt",
+// Carrega o idioma salvo pelo usuário em AsyncStorage antes de inicializar.
+// A chave "appLanguage" é a mesma usada em src/config/language.ts.
+AsyncStorage.getItem("appLanguage").then((savedLang) => {
+  const lng = savedLang && savedLang in resources ? savedLang : "pt";
 
-  fallbackLng: "pt",
-
-  resources: {
-    pt: {
-      translation: pt,
-    },
-    en: {
-      translation: en,
-    },
-    es: {
-      translation: es,
-    },
-    zh: {
-      translation: zh,
-    },
-    ar: {
-      translation: ar,
-    },
-    ru: {
-      translation: ru,
-    },
-  },
-
-  interpolation: {
-    escapeValue: false,
-  },
+  i18n.use(initReactI18next).init({
+    compatibilityJSON: "v4",
+    lng,
+    fallbackLng: "pt",
+    resources,
+    interpolation: { escapeValue: false },
+  });
 });
 
 export default i18n;

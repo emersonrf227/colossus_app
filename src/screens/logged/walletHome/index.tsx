@@ -4,6 +4,9 @@ import {
   ActivityIndicator,
   StatusBar,
   RefreshControl,
+  View,
+  Text,
+  Image,
 } from "react-native";
 import {
   useNavigation,
@@ -15,12 +18,23 @@ import {
   Eye,
   AlertTriangle,
   Send,
-  Banknote,
+  QrCode,
   KeyRound,
   Copy,
   Network,
   History,
 } from "lucide-react-native";
+import styled from "styled-components/native";
+import { useTranslation } from "react-i18next";
+
+// SubTexto dos botões de ação (Blockchain / via PIX)
+const ActionButtonSubText = styled.Text<{ accentColor?: string }>`
+  color: ${({ accentColor }) => accentColor ?? colors.textMuted};
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-top: 1px;
+`;
 
 import * as S from "./styles";
 import { useToast } from "@/hook/Toast";
@@ -39,6 +53,50 @@ import {
 } from "../../../components/wallet/walletProviders";
 import { colors } from "../dashboard/styles";
 import { fetchWalletChains } from "@/components/wallet/chainSerives";
+import LogoSvg from "@/assets/logov2.svg";
+import TetherLogo from "@/assets/networks/tether.png";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+
+const TetherBadge = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  background-color: rgba(38, 161, 123, 0.15);
+  border-width: 1px;
+  border-color: rgba(38, 161, 123, 0.4);
+  border-radius: 8px;
+  padding: 3px 8px;
+`;
+const TetherLabel = styled.Text`
+  color: #26a17b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+`;
+const CardLogoWrapper = styled.View`
+  align-items: center;
+  margin-bottom: 8px;
+`;
+
+function UsdtBadge({ size = "sm" }: { size?: "sm" | "md" }) {
+  const imgSize = size === "md" ? 20 : 14;
+  return (
+    <TetherBadge
+      style={size === "md" ? { paddingHorizontal: 10, paddingVertical: 5 } : {}}
+    >
+      <Image
+        source={TetherLogo}
+        style={{ width: imgSize, height: imgSize, resizeMode: "contain" }}
+      />
+      <TetherLabel style={size === "md" ? { fontSize: 13 } : {}}>
+        USDT
+      </TetherLabel>
+    </TetherBadge>
+  );
+}
 
 interface RouteParams {
   mode: WalletAccessMode;
@@ -50,6 +108,7 @@ export default function WalletHome() {
   const { navigate, goBack } = navigation;
   const route = useRoute();
   const { showToast } = useToast();
+  const { t } = useTranslation();
 
   const params = (route.params ?? {}) as Partial<RouteParams>;
   const [mode, setMode] = useState<WalletAccessMode>(params.mode ?? "none");
@@ -59,7 +118,6 @@ export default function WalletHome() {
   const [loadingStatus, setLoadingStatus] = useState(
     !params.mode || !params.record,
   );
-
   const [balances, setBalances] = useState<NetworkBalance[]>([]);
   const [loadingBalances, setLoadingBalances] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -69,7 +127,6 @@ export default function WalletHome() {
     "plasma",
   ]);
 
-  // Carrega redes habilitadas para wallet via API
   useEffect(() => {
     fetchWalletChains().then((chains) => {
       const nets: string[] = [];
@@ -87,15 +144,12 @@ export default function WalletHome() {
       if (isRefresh) setRefreshing(true);
       else setLoadingBalances(true);
       setHasBalanceError(false);
-
       try {
         const { balances: fetched, errors } = await fetchAllNetworkBalances(
           record.address,
         );
         setBalances(fetched);
-        if (errors.length > 0 && fetched.length === 0) {
-          setHasBalanceError(true);
-        }
+        if (errors.length > 0 && fetched.length === 0) setHasBalanceError(true);
       } catch {
         setHasBalanceError(true);
       } finally {
@@ -107,8 +161,6 @@ export default function WalletHome() {
   );
 
   useEffect(() => {
-    // Se veio sem params (ex: fluxo pós-criação de wallet), busca o
-    // status real da API antes de carregar os saldos.
     if (loadingStatus) {
       getWalletStatus()
         .then((status) => {
@@ -122,10 +174,6 @@ export default function WalletHome() {
     loadBalances();
   }, [loadingStatus, loadBalances]);
 
-  // Sempre que a tela ganha foco de novo (ex: voltando de um saque
-  // concluído), revalida o status — o modo pode ter mudado (improvável,
-  // mas se o usuário trocar de wallet em outra aba/fluxo) e os saldos
-  // certamente devem ser atualizados.
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
@@ -138,7 +186,6 @@ export default function WalletHome() {
       return () => {
         isActive = false;
       };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 
@@ -151,8 +198,8 @@ export default function WalletHome() {
   const copyAddress = useCallback(async () => {
     if (!record?.address) return;
     await Clipboard.setString(record.address);
-    showToast({ message: "Endereço copiado!", type: "success" });
-  }, [record?.address, showToast]);
+    showToast({ message: t("wallet.addressCopied"), type: "success" });
+  }, [record?.address, showToast, t]);
 
   const goToWithdraw = useCallback(() => {
     if (!record) return;
@@ -161,21 +208,15 @@ export default function WalletHome() {
 
   const goToPix = useCallback(() => {
     if (!record) return;
-
-    // Passa o saldo de cada rede separadamente para que a tela de PIX
-    // consiga mostrar e validar o saldo correto ao trocar de rede.
     const polygonBalance = parseFloat(
       balances.find((b) => b.network === "polygon")?.usdtBalance ?? "0",
     );
     const plasmaBalance = parseFloat(
       balances.find((b) => b.network === "plasma")?.usdtBalance ?? "0",
     );
-
-    // Usa Polygon como rede padrão se tiver saldo, senão Plasma
     const defaultNetwork = polygonBalance > 0 ? "POLYGON" : "PLASMA";
     const defaultBalance =
       defaultNetwork === "POLYGON" ? polygonBalance : plasmaBalance;
-
     navigate(
       "Walletwithdrawpix" as never,
       {
@@ -190,7 +231,6 @@ export default function WalletHome() {
   const goToExport = useCallback(() => {
     navigate("WalletExport" as never);
   }, [navigate]);
-
   const goToHistory = useCallback(() => {
     if (!record) return;
     navigate("WalletHistory" as never, { record } as never);
@@ -212,9 +252,8 @@ export default function WalletHome() {
               <S.BackButton onPress={() => goBack()} activeOpacity={0.7}>
                 <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
               </S.BackButton>
-              <S.HeaderTitle>Carteira</S.HeaderTitle>
+              <S.HeaderTitle>{t("wallet.title")}</S.HeaderTitle>
             </S.HeaderLeft>
-
             {isFullAccess && (
               <>
                 <S.IconButton onPress={goToHistory} activeOpacity={0.7}>
@@ -226,6 +265,10 @@ export default function WalletHome() {
               </>
             )}
           </S.Header>
+
+          <CardLogoWrapper>
+            <LogoSvg width={wp(38)} height={hp(11)} />
+          </CardLogoWrapper>
 
           <S.ScrollContent
             showsVerticalScrollIndicator={false}
@@ -248,21 +291,47 @@ export default function WalletHome() {
                   <S.ViewOnlyBanner>
                     <Eye size={16} color="#F7B731" strokeWidth={2.2} />
                     <S.ViewOnlyBannerText>
-                      Você está vendo esta carteira apenas para consulta. A
-                      chave de acesso está associada a outro dispositivo —
-                      saques só podem ser feitos a partir dele.
+                      {t("wallet.viewOnly")}
                     </S.ViewOnlyBannerText>
                   </S.ViewOnlyBanner>
                 )}
 
                 <S.TotalCard>
-                  <S.TotalLabel>SALDO TOTAL EM USDT</S.TotalLabel>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 8,
+                    }}
+                  >
+                    <S.TotalLabel>{t("wallet.totalBalance")}</S.TotalLabel>
+                    <UsdtBadge size="sm" />
+                  </View>
                   {loadingBalances ? (
                     <ActivityIndicator color={colors.primary} />
                   ) : (
                     <>
-                      <S.TotalValue>{totalUsdt.toFixed(2)}</S.TotalValue>
-                      <S.TotalSubvalue>Somando todas as redes</S.TotalSubvalue>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "baseline",
+                          gap: 8,
+                        }}
+                      >
+                        <S.TotalValue>{totalUsdt.toFixed(2)}</S.TotalValue>
+                        <Image
+                          source={TetherLogo}
+                          style={{
+                            width: 18,
+                            height: 18,
+                            resizeMode: "contain",
+                          }}
+                        />
+                      </View>
+                      <S.TotalSubvalue>
+                        {t("wallet.usdtSubtitle")}
+                      </S.TotalSubvalue>
                     </>
                   )}
                 </S.TotalCard>
@@ -289,30 +358,35 @@ export default function WalletHome() {
                         />
                       </S.ActionIconWrapper>
                       <S.ActionButtonText accentColor={colors.primary}>
-                        Sacar
+                        {t("wallet.sendButton")}
                       </S.ActionButtonText>
+                      <ActionButtonSubText accentColor={colors.primary}>
+                        {t("wallet.sendSubtitle")}
+                      </ActionButtonSubText>
                     </S.ActionButton>
-
                     <S.ActionButton
                       accentColor={colors.success}
                       onPress={goToPix}
                       activeOpacity={0.75}
                     >
                       <S.ActionIconWrapper accentColor={colors.success}>
-                        <Banknote
+                        <QrCode
                           size={18}
                           color={colors.success}
                           strokeWidth={2.2}
                         />
                       </S.ActionIconWrapper>
                       <S.ActionButtonText accentColor={colors.success}>
-                        PIX
+                        {t("wallet.pixButton")}
                       </S.ActionButtonText>
+                      <ActionButtonSubText accentColor={colors.success}>
+                        {t("wallet.pixSubtitle")}
+                      </ActionButtonSubText>
                     </S.ActionButton>
                   </S.ActionsRow>
                 )}
 
-                <S.SectionLabel>SALDO POR REDE</S.SectionLabel>
+                <S.SectionLabel>{t("wallet.balanceByNetwork")}</S.SectionLabel>
 
                 {hasBalanceError ? (
                   <S.CenteredState>
@@ -321,10 +395,7 @@ export default function WalletHome() {
                       color={colors.textMuted}
                       strokeWidth={1.8}
                     />
-                    <S.StateText>
-                      Não foi possível consultar os saldos agora. Arraste para
-                      baixo para tentar de novo.
-                    </S.StateText>
+                    <S.StateText>{t("wallet.balanceError")}</S.StateText>
                   </S.CenteredState>
                 ) : (
                   balances
@@ -344,14 +415,34 @@ export default function WalletHome() {
                             <S.NetworkName>{config.label}</S.NetworkName>
                             {balance.lowGasWarning && isFullAccess && (
                               <S.NetworkGasWarning>
-                                Saldo de {config.nativeCurrencySymbol} baixo
-                                para taxas
+                                {t("wallet.lowGas", {
+                                  symbol: config.nativeCurrencySymbol,
+                                })}
                               </S.NetworkGasWarning>
                             )}
                           </S.NetworkInfo>
-                          <S.NetworkBalanceValue>
-                            {parseFloat(balance.usdtBalance).toFixed(2)}
-                          </S.NetworkBalanceValue>
+                          <View style={{ alignItems: "flex-end", gap: 4 }}>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "baseline",
+                                gap: 4,
+                              }}
+                            >
+                              <S.NetworkBalanceValue>
+                                {parseFloat(balance.usdtBalance).toFixed(2)}
+                              </S.NetworkBalanceValue>
+                              <Image
+                                source={TetherLogo}
+                                style={{
+                                  width: 14,
+                                  height: 14,
+                                  resizeMode: "contain",
+                                }}
+                              />
+                            </View>
+                            <UsdtBadge size="sm" />
+                          </View>
                         </S.NetworkBalanceCard>
                       );
                     })

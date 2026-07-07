@@ -6,7 +6,6 @@ import {
   Linking,
   TouchableOpacity,
   RefreshControl,
-  View,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
@@ -112,7 +111,6 @@ const NetworkChipText = styled.Text<{ selected?: boolean }>`
   font-size: 13px;
   font-weight: 700;
 `;
-
 const TxCard = styled.View`
   border-radius: 16px;
   margin-bottom: 10px;
@@ -167,16 +165,14 @@ const TxSymbol = styled.Text`
   font-size: 11px;
   margin-top: 2px;
 `;
-
-// Área de botões do PIX — aparece só em transações OUT confirmadas como PIX
-const PixActionsRow = styled.View`
+const TxActionsRow = styled.View`
   flex-direction: row;
   gap: 8px;
   padding: 10px 14px;
   border-top-width: 1px;
   border-top-color: ${colors.surfaceBorder};
 `;
-const PixButton = styled.TouchableOpacity<{ accent?: boolean }>`
+const TxButton = styled.TouchableOpacity<{ accent?: boolean }>`
   flex: 1;
   flex-direction: row;
   align-items: center;
@@ -190,18 +186,17 @@ const PixButton = styled.TouchableOpacity<{ accent?: boolean }>`
   border-color: ${({ accent }) =>
     accent ? colors.primary : colors.surfaceBorder};
 `;
-const PixButtonText = styled.Text<{ accent?: boolean }>`
-  color: ${({ accent }) => (accent ? colors.primary : colors.textPrimary)};
+const TxButtonText = styled.Text<{ accent?: boolean }>`
+  color: ${({ accent }) => (accent ? colors.primary : colors.textMuted)};
   font-size: 11.5px;
   font-weight: 700;
 `;
 const PixBadge = styled.View`
   flex-direction: row;
   align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
+  padding: 3px 10px;
   border-radius: 6px;
-  margin: 0 14px 10px;
+  margin: 0 14px 8px;
   background-color: rgba(108, 92, 231, 0.12);
   align-self: flex-start;
 `;
@@ -209,8 +204,8 @@ const PixBadgeText = styled.Text`
   color: ${colors.primary};
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.5px;
 `;
-
 const CenteredState = styled.View`
   align-items: center;
   justify-content: center;
@@ -259,13 +254,17 @@ function groupByDate(
   return Object.entries(groups).map(([date, items]) => ({ date, items }));
 }
 
-// Cache de proofs consultados nesta sessão para não repetir requests
-const proofCache: Record<string, PixTransaction | null> = {};
+type ListItem =
+  | { type: "date"; date: string; key: string }
+  | { type: "tx"; tx: OnChainTransaction; key: string };
+
+const proofCache: Record<string, PixTransaction | "none"> = {};
 
 export default function WalletHistory() {
   const navigation = useNavigation();
   const { goBack } = navigation;
   const route = useRoute();
+  const { t } = useTranslation();
   const params = (route.params ?? {}) as RouteParams;
   const record = params.record;
 
@@ -279,61 +278,50 @@ export default function WalletHistory() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(false);
-
-  // Mapa de txid → PixTransaction (ou null se não for PIX)
-  const [pixProofs, setPixProofs] = useState<
-    Record<string, PixTransaction | null>
-  >({});
-
-  const [proofKey, setProofKey] = useState<string | null>(null);
-
+  const [pixMap, setPixMap] = useState<Record<string, PixTransaction | null>>(
+    {},
+  );
+  const proofKeyRef = useRef<string | null>(null);
   const isLeavingRef = useRef(false);
   const isMountedRef = useRef(true);
+  const [proofKeyReady, setProofKeyReady] = useState(false);
 
   useEffect(() => {
     isMountedRef.current = true;
-    // Carrega a proofKey uma vez
-    getProofKey().then(setProofKey);
+    getProofKey().then((key) => {
+      proofKeyRef.current = key;
+      if (isMountedRef.current) setProofKeyReady(true);
+    });
     return () => {
       isMountedRef.current = false;
     };
   }, []);
 
-  // Consulta sell/proof para transações OUT de USDT que ainda não foram verificadas
-  const checkPixProofs = useCallback(
-    async (txs: OnChainTransaction[]) => {
-      if (!proofKey) return;
-      const outUsdtTxs = txs.filter(
-        (tx) =>
-          !tx.isIncoming && tx.type === "usdt" && !(tx.hash in proofCache),
-      );
-      if (outUsdtTxs.length === 0) return;
-
-      // Consulta em paralelo com limite de 3 simultâneas para não sobrecarregar
-      const chunks = [];
-      for (let i = 0; i < outUsdtTxs.length; i += 3) {
-        chunks.push(outUsdtTxs.slice(i, i + 3));
-      }
-
-      for await (const chunk of chunks) {
-        if (!isMountedRef.current || isLeavingRef.current) return;
-        await Promise.all(
-          chunk.map(async (tx) => {
-            try {
-              const result = await getPixProof({ proofKey, txid: tx.hash });
-              proofCache[tx.hash] = result;
-              if (isMountedRef.current) {
-                setPixProofs((prev) => ({ ...prev, [tx.hash]: result }));
-              }
-            } catch {
-              proofCache[tx.hash] = null;
+  const lookupPixProofs = useCallback(async (txs: OnChainTransaction[]) => {
+    const outUsdt = txs.filter(
+      (tx) => !tx.isIncoming && tx.type === "usdt" && !(tx.hash in proofCache),
+    );
+    if (outUsdt.length === 0) return;
+    const pk = proofKeyRef.current;
+    if (!pk) return;
+    for (let i = 0; i < outUsdt.length; i += 3) {
+      const chunk = outUsdt.slice(i, i + 3);
+      if (!isMountedRef.current || isLeavingRef.current) return;
+      await Promise.all(
+        chunk.map(async (tx) => {
+          try {
+            const result = await getPixProof({ proofKey: pk, txid: tx.hash });
+            proofCache[tx.hash] = result ?? "none";
+            if (isMountedRef.current && !isLeavingRef.current) {
+              setPixMap((prev) => ({ ...prev, [tx.hash]: result }));
             }
-          }),
-        );
-      }
-    },
-    [proofKey],
-  );
+          } catch {
+            proofCache[tx.hash] = "none";
+          }
+        }),
+      );
+    }
+  }, []);
 
   const loadPage = useCallback(
     async (targetPage: number, reset = false) => {
@@ -341,7 +329,6 @@ export default function WalletHistory() {
       if (reset) setLoading(true);
       else setLoadingMore(true);
       setError(false);
-
       try {
         const result = await fetchOnChainHistory({
           address: record.address,
@@ -349,15 +336,12 @@ export default function WalletHistory() {
           page: targetPage,
         });
         if (!isMountedRef.current || isLeavingRef.current) return;
-
         setTransactions((prev) =>
           reset ? result.transactions : [...prev, ...result.transactions],
         );
         setHasMore(result.hasMore);
         setPage(result.nextPage);
-
-        // Consulta PIX proof para as novas transações OUT
-        checkPixProofs(result.transactions);
+        lookupPixProofs(result.transactions);
       } catch {
         if (isMountedRef.current) setError(true);
       } finally {
@@ -368,31 +352,24 @@ export default function WalletHistory() {
         }
       }
     },
-    [record?.address, network, checkPixProofs],
+    [record?.address, network, lookupPixProofs],
   );
 
+  // Aguarda a proofKey estar pronta antes de carregar para garantir
+  // que o lookupPixProofs consegue consultar sell/proof logo na 1ª carga
   useEffect(() => {
+    if (!proofKeyReady) return;
     setTransactions([]);
-    setPixProofs({});
+    setPixMap({});
     setPage(1);
     setHasMore(true);
     loadPage(1, true);
-  }, [network]);
-
-  // FIX: quando a proofKey chega depois das transações já terem sido
-  // carregadas (race condition), reprocessa as transações pendentes.
-  // checkPixProofs já filtra por proofCache, então não duplica requests.
-  useEffect(() => {
-    if (proofKey && transactions.length > 0) {
-      checkPixProofs(transactions);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proofKey]);
+  }, [network, proofKeyReady]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
     setTransactions([]);
-    setPixProofs({});
+    setPixMap({});
     setPage(1);
     setHasMore(true);
     loadPage(1, true);
@@ -408,25 +385,6 @@ export default function WalletHistory() {
     setTransactions([]);
     requestAnimationFrame(() => goBack());
   }, [goBack]);
-
-  const handleOpenPixReceipt = useCallback(
-    (tx: OnChainTransaction, pixTx: PixTransaction) => {
-      navigation.navigate(
-        "Walletpixreceipt" as never,
-        {
-          pixTransaction: pixTx,
-          txid: tx.hash,
-          proofKey,
-          explorerUrl: tx.explorerUrl,
-        } as never,
-      );
-    },
-    [navigation, proofKey],
-  );
-
-  type ListItem =
-    | { type: "date"; date: string; key: string }
-    | { type: "tx"; tx: OnChainTransaction; key: string };
 
   const listItems = React.useMemo<ListItem[]>(() => {
     const groups = groupByDate(transactions);
@@ -451,9 +409,9 @@ export default function WalletHistory() {
       }
 
       const { tx } = item;
-      const pixTx = pixProofs[tx.hash]; // undefined = ainda consultando, null = não é PIX, PixTransaction = é PIX
-      // FIX: `pixTx != null` já cobre undefined e null; removida checagem redundante
-      const isPixOut = !tx.isIncoming && tx.type === "usdt" && pixTx != null;
+      const isOutUsdt = !tx.isIncoming && tx.type === "usdt";
+      const pixTx = pixMap[tx.hash];
+      const isPixConfirmed = isOutUsdt && pixTx != null;
 
       return (
         <TxCard>
@@ -476,15 +434,16 @@ export default function WalletHistory() {
                 />
               )}
             </TxIconWrapper>
-
             <TxInfo>
               <TxTitle>
-                {tx.isIncoming ? "Recebido" : "Enviado"} · {tx.symbol}
+                {tx.isIncoming
+                  ? t("walletHistory.received")
+                  : t("walletHistory.sent")}{" "}
+                · {tx.symbol}
               </TxTitle>
               <TxDate>{moment.unix(tx.timestamp).format("HH:mm")}</TxDate>
               <TxHash>{truncateHash(tx.hash)}</TxHash>
             </TxInfo>
-
             <TxRight>
               <TxAmount incoming={tx.isIncoming}>
                 {tx.isIncoming ? "+" : "-"}
@@ -494,16 +453,31 @@ export default function WalletHistory() {
             </TxRight>
           </TxMain>
 
-          {/* Badge PIX + botões — aparece só quando confirmado como PIX off-ramp */}
-          {isPixOut && (
-            <>
-              <PixBadge>
-                <PixBadgeText>PIX OFF-RAMP</PixBadgeText>
-              </PixBadge>
-              <PixActionsRow>
-                <PixButton
+          {isPixConfirmed && (
+            <PixBadge>
+              <PixBadgeText>
+                {t("walletHistory.pixOffRamp")} · R${" "}
+                {(pixTx as PixTransaction).send_brl}
+              </PixBadgeText>
+            </PixBadge>
+          )}
+
+          {isOutUsdt ? (
+            <TxActionsRow>
+              {isPixConfirmed && (
+                <TxButton
                   accent
-                  onPress={() => handleOpenPixReceipt(tx, pixTx!)}
+                  onPress={() =>
+                    navigation.navigate(
+                      "Walletpixreceipt" as never,
+                      {
+                        pixTransaction: pixTx,
+                        txid: tx.hash,
+                        proofKey: proofKeyRef.current,
+                        explorerUrl: tx.explorerUrl,
+                      } as never,
+                    )
+                  }
                   activeOpacity={0.8}
                 >
                   <FileText
@@ -511,28 +485,42 @@ export default function WalletHistory() {
                     color={colors.primary}
                     strokeWidth={2.2}
                   />
-                  <PixButtonText accent>Comprovante PIX</PixButtonText>
-                </PixButton>
-                <PixButton
-                  onPress={() =>
-                    Linking.openURL(tx.explorerUrl).catch(() => {})
-                  }
-                  activeOpacity={0.8}
-                >
-                  <ExternalLink
-                    size={13}
-                    color={colors.textPrimary}
-                    strokeWidth={2.2}
-                  />
-                  <PixButtonText>Blockchain</PixButtonText>
-                </PixButton>
-              </PixActionsRow>
-            </>
+                  <TxButtonText accent>
+                    {t("walletHistory.pixReceipt")}
+                  </TxButtonText>
+                </TxButton>
+              )}
+              <TxButton
+                onPress={() => Linking.openURL(tx.explorerUrl).catch(() => {})}
+                activeOpacity={0.8}
+              >
+                <ExternalLink
+                  size={13}
+                  color={colors.textMuted}
+                  strokeWidth={2.2}
+                />
+                <TxButtonText>{t("walletHistory.blockchain")}</TxButtonText>
+              </TxButton>
+            </TxActionsRow>
+          ) : (
+            <TxActionsRow>
+              <TxButton
+                onPress={() => Linking.openURL(tx.explorerUrl).catch(() => {})}
+                activeOpacity={0.8}
+              >
+                <ExternalLink
+                  size={13}
+                  color={colors.textMuted}
+                  strokeWidth={2.2}
+                />
+                <TxButtonText>{t("walletHistory.blockchain")}</TxButtonText>
+              </TxButton>
+            </TxActionsRow>
           )}
         </TxCard>
       );
     },
-    [pixProofs, handleOpenPixReceipt],
+    [pixMap, navigation, t],
   );
 
   return (
@@ -549,7 +537,7 @@ export default function WalletHistory() {
             <BackButton onPress={handleGoBack} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
             </BackButton>
-            <HeaderTitle>Extrato Blockchain</HeaderTitle>
+            <HeaderTitle>{t("walletHistory.title")}</HeaderTitle>
           </Header>
           <CardLogo>
             <LogoSvg width={wp(28)} height={hp(7)} />
@@ -573,7 +561,7 @@ export default function WalletHistory() {
           {loading ? (
             <CenteredState>
               <ActivityIndicator color={colors.primary} size="large" />
-              <StateText>Buscando transações na blockchain...</StateText>
+              <StateText>{t("walletHistory.loading")}</StateText>
             </CenteredState>
           ) : error ? (
             <CenteredState>
@@ -582,17 +570,14 @@ export default function WalletHistory() {
                 color={colors.textMuted}
                 strokeWidth={1.8}
               />
-              <StateText>
-                Não foi possível carregar o extrato. Verifique sua conexão e
-                tente novamente.
-              </StateText>
+              <StateText>{t("walletHistory.error")}</StateText>
               <TouchableOpacity
                 onPress={handleRefresh}
                 activeOpacity={0.7}
                 style={{ marginTop: 8, padding: 12 }}
               >
                 <StateText style={{ color: colors.primary }}>
-                  Tentar novamente
+                  {t("walletHistory.retry")}
                 </StateText>
               </TouchableOpacity>
             </CenteredState>
@@ -604,8 +589,9 @@ export default function WalletHistory() {
                 strokeWidth={1.8}
               />
               <StateText>
-                Nenhuma transação encontrada para este endereço na rede{" "}
-                {network === "polygon" ? "Polygon" : "Plasma"}.
+                {t("walletHistory.empty", {
+                  network: network === "polygon" ? "Polygon" : "Plasma",
+                })}
               </StateText>
             </CenteredState>
           ) : (

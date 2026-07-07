@@ -13,8 +13,7 @@ export default {
   },
   forget: {
     title: "¿Olvidaste tu contraseña?",
-    subtitle:
-      "Ingresa tu correo registrado y te enviaremos un código para restablecer tu contraseña.",
+    subtitle: "Ingresa tu correo registrado y te enviaremos un código para restablecer tu contraseña.",
     iemail: "Tu correo electrónico",
     send: "Enviar",
     know: "¿Recordaste tu contraseña?",
@@ -34,8 +33,7 @@ export default {
     configured: "Billetera configurada",
     network: "RED",
     addressLabel: "DIRECCIÓN DE LA BILLETERA",
-    addressDescription:
-      "Los pagos recibidos serán enviados automáticamente a esta dirección en la red seleccionada.",
+    addressDescription: "Los pagos recibidos serán enviados automáticamente a esta dirección en la red seleccionada.",
     addressPlaceholder: "0x...",
     registerWallet: "Registrar billetera",
     copySuccess: "¡Dirección copiada!",
@@ -55,17 +53,8 @@ export default {
     title: "Cobros",
     period: "PERÍODO",
     status: "ESTADO",
-    periods: {
-      today: "Hoy",
-      sevenDays: "7 días",
-      thirtyDays: "30 días",
-      custom: "Personalizado",
-    },
-    statusOptions: {
-      open: "Abierto",
-      confirmed: "Confirmado",
-      cancelled: "Cancelado",
-    },
+    periods: { today: "Hoy", sevenDays: "7 días", thirtyDays: "30 días", custom: "Personalizado" },
+    statusOptions: { open: "Abierto", confirmed: "Confirmado", cancelled: "Cancelado" },
     noConfirmationDate: "Sin fecha de confirmación",
     loading: "Cargando cobros...",
     empty: "No se encontraron cobros para este período y estado.",
@@ -77,8 +66,7 @@ export default {
     brazilTitle: "Tecnología 100% brasileña",
     brazilDescriptionBefore: "Colossus Crypto es desarrollada y mantenida ",
     brazilDescriptionHighlight: "en Brasil, por brasileños",
-    brazilDescriptionAfter:
-      ", combinando tecnología de vanguardia en criptomonedas con el soporte y la confianza de una empresa nacional.",
+    brazilDescriptionAfter: ", combinando tecnología de vanguardia en criptomonedas con el soporte y la confianza de una empresa nacional.",
     developedBy: "DESARROLLADO POR",
     companyLabel: "EMPRESA",
     cnpjLabel: "CNPJ",
@@ -175,8 +163,7 @@ export default {
     conversionHint: "El monto se convertirá a USDT según la cotización actual",
     proceed: "Continuar",
     createInvoiceError: "No se pudo crear el cobro. Inténtalo de nuevo.",
-    noForwardWallet:
-      "Billetera de recepción no encontrada. Registra una billetera para continuar.",
+    noForwardWallet: "Billetera de recepción no encontrada. Registra una billetera para continuar.",
   },
   settingsLanguage: {
     title: "Idioma y moneda",
@@ -184,11 +171,7 @@ export default {
     currencyForBilling: "MONEDA PARA COBROS",
     toastLanguageError: "No se pudo guardar el idioma.",
     toastCurrencyError: "No se pudo guardar la moneda.",
-    currencySubLabel: {
-      BRL: "Real brasileño",
-      USD: "Dólar estadounidense",
-      PYG: "Guaraní paraguayo",
-    },
+    currencySubLabel: { BRL: "Real brasileño", USD: "Dólar estadounidense", PYG: "Guaraní paraguayo" },
   },
   support: {
     title: "Soporte",
@@ -199,115 +182,31 @@ export default {
     telegramError: "No se pudo abrir Telegram",
     faqSectionTitle: "PREGUNTAS FRECUENTES",
     faq: {
-      q1: {
-        question: "1. ¿Qué es Colossus Crypto?",
-        answer:
-          "Colossus Crypto es una solución de pagos digitales desarrollada por I Like Technology que permite a comercios de todos los tamaños aceptar pagos en USDT (Tether), una de las criptomonedas más estables y utilizadas del mundo, mediante aplicación, sistema web y terminal de pago.",
-      },
-      q2: {
-        question: "2. ¿Quién puede usar Colossus Crypto?",
-        answer:
-          "La plataforma está orientada a comerciantes (personas físicas o jurídicas) que desean ofrecer una alternativa de pago moderna y segura, con tarifas más atractivas y liquidez inmediata.",
-      },
-      q3: {
-        question: "3. ¿Cómo funciona la recepción en USDT?",
-        answer:
-          "Al realizar una venta, el comerciante genera un código QR o enlace de pago. El cliente paga en USDT y el monto es recibido instantáneamente en la billetera digital del comerciante.",
-      },
-      q4: {
-        question: "4. ¿Qué tarifas cobra Colossus Crypto?",
-        answer:
-          "Colossus Crypto cobra una tarifa fija del 1.95% por transacción, inferior al promedio de las operadoras tradicionales de tarjetas de crédito.",
-      },
-      q5: {
-        question:
-          "5. ¿Necesito entender de criptomonedas para usar la plataforma?",
-        answer:
-          "No. La plataforma fue diseñada para ser intuitiva y sencilla, con interfaz amigable y soporte dedicado, incluso para quienes nunca usaron criptomonedas.",
-      },
-      q6: {
-        question: "6. ¿Dónde puedo usar Colossus Crypto?",
-        answer:
-          "La solución puede utilizarse en tiendas físicas, e-commerce, servicios de entrega o autónomos, mediante aplicación móvil, sistema web o terminal de pago compatible.",
-      },
-      q7: {
-        question: "7. ¿Es seguro recibir pagos en USDT?",
-        answer:
-          "Sí. El USDT es una stablecoin respaldada en dólares, con alta estabilidad y liquidez. Además, Colossus Crypto adopta tecnologías de seguridad, cifrado y autenticación.",
-      },
-      q8: {
-        question: "8. ¿Cuáles son los beneficios de aceptar criptomonedas?",
-        answer:
-          "Además de visibilidad como empresa moderna, los comerciantes se benefician de tarifas menores, liquidación instantánea, acceso a un nuevo perfil de consumidores y exención de burocracias bancarias.",
-      },
-      q9: {
-        question: "9. ¿Necesito registrarme para usar la plataforma?",
-        answer:
-          "Descarga la app, regístrate con un consultor de Colossus Crypto y, tras la verificación, tu empresa estará lista para aceptar pagos en USDT.",
-      },
+      q1: { question: "1. ¿Qué es Colossus Crypto?", answer: "Colossus Crypto es una solución de pagos digitales desarrollada por I Like Technology que permite a comercios de todos los tamaños aceptar pagos en USDT (Tether), una de las criptomonedas más estables y utilizadas del mundo, mediante aplicación, sistema web y terminal de pago." },
+      q2: { question: "2. ¿Quién puede usar Colossus Crypto?", answer: "La plataforma está orientada a comerciantes (personas físicas o jurídicas) que desean ofrecer una alternativa de pago moderna y segura, con tarifas más atractivas y liquidez inmediata." },
+      q3: { question: "3. ¿Cómo funciona la recepción en USDT?", answer: "Al realizar una venta, el comerciante genera un código QR o enlace de pago. El cliente paga en USDT y el monto es recibido instantáneamente en la billetera digital del comerciante." },
+      q4: { question: "4. ¿Qué tarifas cobra Colossus Crypto?", answer: "Colossus Crypto cobra una tarifa fija del 1.95% por transacción, inferior al promedio de las operadoras tradicionales de tarjetas de crédito." },
+      q5: { question: "5. ¿Necesito entender de criptomonedas para usar la plataforma?", answer: "No. La plataforma fue diseñada para ser intuitiva y sencilla, con interfaz amigable y soporte dedicado, incluso para quienes nunca usaron criptomonedas." },
+      q6: { question: "6. ¿Dónde puedo usar Colossus Crypto?", answer: "La solución puede utilizarse en tiendas físicas, e-commerce, servicios de entrega o autónomos, mediante aplicación móvil, sistema web o terminal de pago compatible." },
+      q7: { question: "7. ¿Es seguro recibir pagos en USDT?", answer: "Sí. El USDT es una stablecoin respaldada en dólares, con alta estabilidad y liquidez. Además, Colossus Crypto adopta tecnologías de seguridad, cifrado y autenticación." },
+      q8: { question: "8. ¿Cuáles son los beneficios de aceptar criptomonedas?", answer: "Además de visibilidad como empresa moderna, los comerciantes se benefician de tarifas menores, liquidación instantánea, acceso a un nuevo perfil de consumidores y exención de burocracias bancarias." },
+      q9: { question: "9. ¿Necesito registrarme para usar la plataforma?", answer: "Descarga la app, regístrate con un consultor de Colossus Crypto y, tras la verificación, tu empresa estará lista para aceptar pagos en USDT." },
     },
   },
   terms: {
     title: "Términos de uso",
     docTitle: "Términos de Uso – Colossus Crypto",
     lastUpdated: "Última actualización: {{date}}",
-    intro:
-      'Estos Términos de Uso regulan el uso de la plataforma Colossus Crypto, en adelante denominada "Plataforma", de titularidad de I Like Technology, inscrita bajo el CNPJ No. 45.123.168/0001-22.',
+    intro: "Estos Términos de Uso regulan el uso de la plataforma Colossus Crypto, en adelante denominada \"Plataforma\", de titularidad de I Like Technology, inscrita bajo el CNPJ No. 45.123.168/0001-22.",
     footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
-      s1: {
-        title: "Objeto",
-        paragraphs: [
-          "Esta plataforma tiene por finalidad ofrecer soluciones tecnológicas para que comerciantes y usuarios acepten y realicen pagos mediante activos digitales, especialmente la stablecoin USDT (Tether).",
-        ],
-      },
-      s2: {
-        title: "Registro y elegibilidad",
-        paragraphs: [
-          "2.1. Para usar los servicios, el Usuario deberá registrarse previamente con información veraz y actualizada.",
-          "2.2. I Like Technology se reserva el derecho de verificar la información y rechazar o suspender registros en caso de inconsistencias.",
-        ],
-      },
-      s3: {
-        title: "Condiciones de uso",
-        paragraphs: [
-          "3.1. El Usuario se compromete a utilizar la Plataforma exclusivamente para fines lícitos.",
-          "3.2. Está prohibido usar la Plataforma para:",
-        ],
-        bullets: [
-          "Transacciones fraudulentas o que involucren actividades ilegales",
-          "Lavado de dinero o financiamiento al terrorismo",
-          "Comercio de productos o servicios prohibidos por ley",
-        ],
-      },
-      s4: {
-        title: "Tarifas",
-        paragraphs: [
-          "4.1. El uso de la Plataforma puede implicar tarifas, actualmente fijadas en 2% por transacción.",
-          "4.2. I Like Technology se reserva el derecho de modificar los valores con aviso previo mínimo de 15 días.",
-        ],
-      },
-      s5: {
-        title: "Propiedad intelectual",
-        paragraphs: [
-          "Todos los elementos de Colossus Crypto son propiedad exclusiva de I Like Technology. Queda prohibida cualquier reproducción o uso no autorizado.",
-        ],
-      },
-      s6: {
-        title: "Responsabilidades",
-        paragraphs: ["6.1. I Like Technology no se responsabiliza por:"],
-        bullets: [
-          "Errores causados por mal uso de la plataforma",
-          "Fallas derivadas de terceros",
-          "Pérdidas financieras por transacciones indebidas de terceros con acceso a la cuenta del usuario",
-        ],
-      },
-      s7: {
-        title: "Modificaciones",
-        paragraphs: [
-          "Estos Términos pueden modificarse en cualquier momento. El uso continuado implica aceptación de los nuevos términos.",
-        ],
-      },
+      s1: { title: "Objeto", paragraphs: ["Esta plataforma tiene por finalidad ofrecer soluciones tecnológicas para que comerciantes y usuarios acepten y realicen pagos mediante activos digitales, especialmente la stablecoin USDT (Tether)."] },
+      s2: { title: "Registro y elegibilidad", paragraphs: ["2.1. Para usar los servicios, el Usuario deberá registrarse previamente con información veraz y actualizada.", "2.2. I Like Technology se reserva el derecho de verificar la información y rechazar o suspender registros en caso de inconsistencias."] },
+      s3: { title: "Condiciones de uso", paragraphs: ["3.1. El Usuario se compromete a utilizar la Plataforma exclusivamente para fines lícitos.", "3.2. Está prohibido usar la Plataforma para:"], bullets: ["Transacciones fraudulentas o que involucren actividades ilegales", "Lavado de dinero o financiamiento al terrorismo", "Comercio de productos o servicios prohibidos por ley"] },
+      s4: { title: "Tarifas", paragraphs: ["4.1. El uso de la Plataforma puede implicar tarifas, actualmente fijadas en 2% por transacción.", "4.2. I Like Technology se reserva el derecho de modificar los valores con aviso previo mínimo de 15 días."] },
+      s5: { title: "Propiedad intelectual", paragraphs: ["Todos los elementos de Colossus Crypto son propiedad exclusiva de I Like Technology. Queda prohibida cualquier reproducción o uso no autorizado."] },
+      s6: { title: "Responsabilidades", paragraphs: ["6.1. I Like Technology no se responsabiliza por:"], bullets: ["Errores causados por mal uso de la plataforma", "Fallas derivadas de terceros", "Pérdidas financieras por transacciones indebidas de terceros con acceso a la cuenta del usuario"] },
+      s7: { title: "Modificaciones", paragraphs: ["Estos Términos pueden modificarse en cualquier momento. El uso continuado implica aceptación de los nuevos términos."] },
     },
   },
   communityMap: {
@@ -316,11 +215,7 @@ export default {
     loading: "Cargando comunidad Colossus...",
     errorLoad: "No se pudieron cargar los lugares.",
     retry: "Intentar de nuevo",
-    errors: {
-      call: "No se pudo abrir el marcador.",
-      telegram: "No se pudo abrir Telegram.",
-      website: "No se pudo abrir el sitio web.",
-    },
+    errors: { call: "No se pudo abrir el marcador.", telegram: "No se pudo abrir Telegram.", website: "No se pudo abrir el sitio web." },
     verified: "Verificado",
     actions: { call: "Llamar", telegram: "Telegram", website: "Sitio web" },
     address: "DIRECCIÓN",
@@ -330,36 +225,30 @@ export default {
   },
   wallet: {
     title: "Billetera",
-    totalBalance: "SALDO TOTAL EN USDT",
+    totalBalance: "SALDO TOTAL",
+    usdtSubtitle: "Tether USD (USDT) · Sumando todas las redes",
     allNetworks: "Sumando todas las redes",
     addressCopied: "¡Dirección copiada!",
-    withdraw: "Retirar",
+    withdraw:: "Retirar",
     pix: "PIX",
     balanceByNetwork: "SALDO POR RED",
-    balanceError:
-      "No se pudo consultar el saldo. Desliza hacia abajo para reintentar.",
+    balanceError: "No se pudo consultar el saldo. Desliza hacia abajo para reintentar.",
     lowGas: "Saldo bajo de {{symbol}} para tarifas",
-    viewOnly:
-      "Estás viendo esta billetera solo en modo consulta. La clave de acceso está asociada a otro dispositivo.",
+    viewOnly: "Estás viendo esta billetera solo en modo consulta. La clave de acceso está asociada a otro dispositivo.",
   },
   walletSetup: {
     title: "Configurar billetera",
     subtitle: "¿Cómo quieres configurarla?",
-    description:
-      "Crea una nueva billetera, importa una existente o conecta una dirección externa para visualización.",
+    description: "Crea una nueva billetera, importa una existente o conecta una dirección externa para visualización.",
     createNew: "Crear nueva billetera",
-    createDescription:
-      "La app genera una billetera solo para ti, con saldo, retiro y PIX integrados.",
+    createDescription: "La app genera una billetera solo para ti, con saldo, retiro y PIX integrados.",
     recommended: "RECOMENDADO",
     import: "Importar billetera existente",
-    importDescription:
-      "¿Ya tienes una billetera con frase de 12 palabras? Impórtala aquí para acceso completo.",
+    importDescription: "¿Ya tienes una billetera con frase de 12 palabras? Impórtala aquí para acceso completo.",
     viewOnly: "Solo ver saldo",
-    viewOnlyDescription:
-      "Ingresa solo la dirección pública. Verás el saldo pero no podrás retirar desde la app.",
+    viewOnlyDescription: "Ingresa solo la dirección pública. Verás el saldo pero no podrás retirar desde la app.",
     connectAddress: "Conectar dirección",
-    warning:
-      "Nunca compartas tu frase de 12 palabras o clave privada con nadie. Colossus Crypto jamás pedirá esta información.",
+    warning: "Nunca compartas tu frase de 12 palabras o clave privada con nadie. Colossus Crypto jamás pedirá esta información.",
     clipboardError: "No se pudo acceder al portapapeles",
     invalidAddress: "Dirección inválida.",
     connectSuccess: "¡Billetera externa conectada!",
@@ -369,38 +258,32 @@ export default {
     titleReveal: "Frase de recuperación",
     titleConfirm: "Confirmar respaldo",
     warningNeverShare: "Nunca compartas",
-    warningText:
-      " estas 12 palabras con nadie. Cualquier persona con ellas puede acceder y mover todo el saldo de tu billetera.",
+    warningText: " estas 12 palabras con nadie. Cualquier persona con ellas puede acceder y mover todo el saldo de tu billetera.",
     revealButton: "Toca para revelar las palabras",
     continueButton: "Ya las anoté, continuar",
     stepLabel: "ÚLTIMO PASO",
     stepTitle: "Confirma que anotaste correctamente",
-    stepSubtitle:
-      "Ingresa las palabras solicitadas para confirmar tu respaldo.",
+    stepSubtitle: "Ingresa las palabras solicitadas para confirmar tu respaldo.",
     wordLabel: "PALABRA #{{number}}",
     wordPlaceholder: "Ingresa la palabra",
     confirmButton: "Confirmar y crear billetera",
     errorWordMismatch: "Una palabra no coincide. Verifica tu respaldo.",
     errorGenerate: "No se pudo generar la billetera. Inténtalo de nuevo.",
     errorSave: "No se pudo guardar la billetera. Inténtalo de nuevo.",
-    errorRegister:
-      "Billetera creada localmente, pero no se pudo registrar en el servidor.",
+    errorRegister: "Billetera creada localmente, pero no se pudo registrar en el servidor.",
     revealFirst: "Toca 'Revelar palabras' antes de continuar.",
   },
   walletImport: {
     title: "Importar billetera",
     warningNeverShare: "Nunca compartas",
-    warningText:
-      " tu frase de recuperación. Colossus Crypto nunca pedirá estas palabras.",
+    warningText: " tu frase de recuperación. Colossus Crypto nunca pedirá estas palabras.",
     sectionLabel: "FRASE DE RECUPERACIÓN (12 PALABRAS)",
     wordPlaceholder: "palabra",
     importButton: "Importar billetera",
     importing: "Importando...",
     errorFillAll: "Completa las 12 palabras.",
-    errorInvalidMnemonic:
-      "Frase de recuperación inválida. Verifica las palabras y el orden.",
-    errorRegister:
-      "Billetera importada localmente, pero no se pudo registrar en el servidor.",
+    errorInvalidMnemonic: "Frase de recuperación inválida. Verifica las palabras y el orden.",
+    errorRegister: "Billetera importada localmente, pero no se pudo registrar en el servidor.",
     errorImport: "No se pudo importar la billetera. Inténtalo de nuevo.",
     successImport: "¡Billetera importada exitosamente!",
   },
@@ -409,8 +292,7 @@ export default {
     labelReset: "RESTABLECER PIN",
     titleEnter: "Elige tu PIN",
     titleConfirm: "Confirmar PIN",
-    subtitleEnter:
-      "Este PIN de 6 dígitos se solicitará antes de cualquier movimiento de billetera.",
+    subtitleEnter: "Este PIN de 6 dígitos se solicitará antes de cualquier movimiento de billetera.",
     subtitleConfirm: "Ingresa el PIN nuevamente para confirmar.",
     errorMismatch: "Los PIN no coinciden.",
     errorMismatchToast: "Los PIN no coinciden. Inténtalo de nuevo.",
@@ -421,22 +303,18 @@ export default {
   walletExport: {
     title: "Frase de recuperación",
     lockedTitle: "Contenido protegido",
-    lockedSubtitle:
-      "Tu frase de recuperación de 12 palabras solo puede verse después de confirmar tu PIN de seguridad.",
+    lockedSubtitle: "Tu frase de recuperación de 12 palabras solo puede verse después de confirmar tu PIN de seguridad.",
     unlockButton: "Confirmar PIN para ver",
     warningNeverShare: "Nunca compartas",
-    warningText:
-      " estas palabras con nadie. Cualquier persona con ellas puede mover todo el saldo.",
+    warningText: " estas palabras con nadie. Cualquier persona con ellas puede mover todo el saldo.",
     revealButton: "Toca para revelar",
     hideButton: "Ocultar palabras",
     copyButton: "Copiar todas las palabras",
     copiedSuccess: "¡Frase copiada! Guárdala en un lugar seguro.",
-    errorNotFound:
-      "No se encontró frase semilla. Esta billetera puede ser externa.",
+    errorNotFound: "No se encontró frase semilla. Esta billetera puede ser externa.",
     errorRecover: "No se pudo recuperar la frase semilla.",
     pinTitle: "Confirma tu PIN",
-    pinSubtitle:
-      "Se requiere autenticación para mostrar tu frase de recuperación.",
+    pinSubtitle: "Se requiere autenticación para mostrar tu frase de recuperación.",
   },
   walletWithdraw: {
     title: "Retirar USDT",
@@ -447,8 +325,7 @@ export default {
     amountPlaceholder: "0.00",
     available: "Disponible: {{amount}} USDT",
     maxButton: "MÁX.",
-    lowGas:
-      "Saldo bajo de {{symbol}} — puede no ser suficiente para pagar la tarifa de red.",
+    lowGas: "Saldo bajo de {{symbol}} — puede no ser suficiente para pagar la tarifa de red.",
     submitButton: "Revisar y retirar",
     invalidAddress: "Dirección de destino inválida.",
     invalidAmount: "Ingresa un monto válido.",
@@ -460,13 +337,11 @@ export default {
     qrInvalid: "El código QR no contiene una dirección válida.",
     clipboardError: "No se pudo acceder al portapapeles",
     pinTitle: "Confirmar retiro",
-    pinSubtitle:
-      "Estás enviando {{amount}} USDT. Confirma el PIN para continuar.",
+    pinSubtitle: "Estás enviando {{amount}} USDT. Confirma el PIN para continuar.",
   },
   walletWithdrawSuccess: {
     title: "¡Retiro enviado!",
-    subtitle:
-      "La transacción fue firmada y enviada a la blockchain. La confirmación puede tardar unos segundos.",
+    subtitle: "La transacción fue firmada y enviada a la blockchain. La confirmación puede tardar unos segundos.",
     txidLabel: "TXID",
     explorerButton: "Ver en Explorer",
     shareButton: "Compartir",
@@ -550,25 +425,21 @@ export default {
   },
   walletWithdrawPixStatus: {
     title: "Esperando confirmación",
-    subtitle:
-      "El USDT fue enviado. Esperamos la confirmación en blockchain para procesar el PIX.",
+    subtitle: "El USDT fue enviado. Esperamos la confirmación en blockchain para procesar el PIX.",
     network: "Red",
     pixKey: "Clave PIX",
     type: "Tipo",
     amountBrl: "Monto BRL",
     txid: "TXID",
     txidCopied: "¡TXID copiado!",
-    errorExpired:
-      "La transacción expiró antes de ser confirmada. Verifica tu saldo e inténtalo de nuevo.",
-    errorFailed:
-      "La transacción falló. El USDT puede haber sido devuelto — verifica tu saldo y contacta soporte con el TXID.",
+    errorExpired: "La transacción expiró antes de ser confirmada. Verifica tu saldo e inténtalo de nuevo.",
+    errorFailed: "La transacción falló. El USDT puede haber sido devuelto — verifica tu saldo y contacta soporte con el TXID.",
     errorGeneric: "Ocurrió un error. Contacta soporte con el TXID.",
     errorTimeout: "Tiempo de espera agotado. Verifica el estado pronto.",
   },
   walletWithdrawPixSuccess: {
     title: "¡PIX enviado!",
-    subtitle:
-      "El pago fue procesado exitosamente. El beneficiario debería recibirlo en instantes.",
+    subtitle: "El pago fue procesado exitosamente. El beneficiario debería recibirlo en instantes.",
     valueLabel: "Monto recibido via PIX",
     receiptTitle: "COMPROBANTE",
     beneficiary: "Beneficiario",
@@ -581,7 +452,42 @@ export default {
     newTransaction: "Realizar nueva transacción",
     viewBlockchain: "Ver en blockchain",
     shareReceipt: "Compartir comprobante",
-    shareMessage:
-      "✅ ¡PIX enviado exitosamente!\n\nBeneficiario: {{name}}\nClave PIX: {{key}} ({{type}})\nMonto: R$ {{brl}}\nEnd-to-End: {{endtoend}}\nUSDT enviado: {{usdt}}\n\nBlockchain: {{url}}",
+    shareMessage: "✅ ¡PIX enviado exitosamente!\n\nBeneficiario: {{name}}\nClave PIX: {{key}} ({{type}})\nMonto: R$ {{brl}}\nEnd-to-End: {{endtoend}}\nUSDT enviado: {{usdt}}\n\nBlockchain: {{url}}",
+  },
+
+  walletPixReceipt: {
+    title: "Comprobante PIX",
+    loading: "Consultando comprobante...",
+    error: "No se pudo cargar el comprobante. La transacción puede estar siendo procesada.",
+    confirmed: "PIX CONFIRMADO",
+    valueLabel: "Monto recibido via PIX",
+    sectionRecipient: "DESTINATARIO",
+    name: "Nombre",
+    pixKey: "Clave PIX",
+    keyType: "Tipo de clave",
+    sectionValues: "VALORES",
+    valueSent: "Monto enviado",
+    usdtUsed: "USDT utilizado",
+    sectionId: "IDENTIFICACIÓN",
+    network: "Red",
+    txid: "TXID Blockchain",
+    date: "Fecha",
+    share: "Compartir comprobante",
+    viewBlockchain: "Ver en blockchain",
+    shareHeader: "✅ Comprobante PIX",
+    beneficiary: "Beneficiario",
+  },
+
+  walletHistory: {
+    title: "Historial Blockchain",
+    loading: "Buscando transacciones en blockchain...",
+    error: "No se pudo cargar el historial. Verifica tu conexión e intenta de nuevo.",
+    retry: "Intentar de nuevo",
+    empty: "No se encontraron transacciones para esta dirección en la red {{network}}.",
+    received: "Recibido",
+    sent: "Enviado",
+    pixOffRamp: "PIX OFF-RAMP",
+    pixReceipt: "Comprobante PIX",
+    blockchain: "Blockchain",
   },
 };

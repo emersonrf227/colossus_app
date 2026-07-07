@@ -579,4 +579,42 @@ export default {
     shareMessage:
       "✅ PIX успешно отправлен!\n\nПолучатель: {{name}}\nКлюч PIX: {{key}} ({{type}})\nСумма: R$ {{brl}}\nEnd-to-End: {{endtoend}}\nUSDT отправлено: {{usdt}}\n\nБлокчейн: {{url}}",
   },
+
+  walletPixReceipt: {
+    title: "Квитанция PIX",
+    loading: "Загрузка квитанции...",
+    error:
+      "Не удалось загрузить квитанцию. Транзакция может ещё обрабатываться.",
+    confirmed: "PIX ПОДТВЕРЖДЁН",
+    valueLabel: "Сумма получена через PIX",
+    sectionRecipient: "ПОЛУЧАТЕЛЬ",
+    name: "Имя",
+    pixKey: "Ключ PIX",
+    keyType: "Тип ключа",
+    sectionValues: "СУММЫ",
+    valueSent: "Отправленная сумма",
+    usdtUsed: "Использовано USDT",
+    sectionId: "ИДЕНТИФИКАЦИЯ",
+    network: "Сеть",
+    txid: "TXID Блокчейн",
+    date: "Дата",
+    share: "Поделиться квитанцией",
+    viewBlockchain: "Посмотреть в блокчейне",
+    shareHeader: "✅ Квитанция PIX",
+    beneficiary: "Получатель",
+  },
+
+  walletHistory: {
+    title: "История блокчейна",
+    loading: "Поиск транзакций в блокчейне...",
+    error:
+      "Не удалось загрузить историю. Проверьте подключение и попробуйте снова.",
+    retry: "Повторить",
+    empty: "Транзакции для этого адреса в сети {{network}} не найдены.",
+    received: "Получено",
+    sent: "Отправлено",
+    pixOffRamp: "PIX OFF-RAMP",
+    pixReceipt: "Квитанция PIX",
+    blockchain: "Блокчейн",
+  },
 };

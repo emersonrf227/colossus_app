@@ -334,9 +334,14 @@ export default {
   // ─── Wallet ───────────────────────────────────────────────────────────────
   wallet: {
     title: "Carteira",
-    totalBalance: "SALDO TOTAL EM USDT",
+    totalBalance: "SALDO TOTAL",
+    usdtSubtitle: "Tether USD (USDT) · Somando todas as redes",
     allNetworks: "Somando todas as redes",
     addressCopied: "Endereço copiado!",
+    sendButton: "Enviar",
+    sendSubtitle: "Blockchain",
+    pixButton: "Sacar",
+    pixSubtitle: "com PIX",
     withdraw: "Sacar",
     pix: "PIX",
     balanceByNetwork: "SALDO POR REDE",
@@ -597,5 +602,44 @@ export default {
     shareReceipt: "Compartilhar comprovante",
     shareMessage:
       "✅ PIX enviado com sucesso!\n\nBeneficiário: {{name}}\nChave PIX: {{key}} ({{type}})\nValor: R$ {{brl}}\nEnd-to-End: {{endtoend}}\nUSDT enviado: {{usdt}}\n\nBlockchain: {{url}}",
+  },
+
+  walletPixReceipt: {
+    title: "Comprovante PIX",
+    loading: "Consultando comprovante...",
+    error:
+      "Não foi possível carregar o comprovante. A transação pode ainda estar sendo processada.",
+    confirmed: "PIX CONFIRMADO",
+    valueLabel: "Valor recebido via PIX",
+    sectionRecipient: "DESTINATÁRIO",
+    name: "Nome",
+    pixKey: "Chave PIX",
+    keyType: "Tipo de chave",
+    sectionValues: "VALORES",
+    valueSent: "Valor enviado",
+    usdtUsed: "USDT utilizado",
+    sectionId: "IDENTIFICAÇÃO",
+    network: "Rede",
+    txid: "TXID Blockchain",
+    date: "Data",
+    share: "Compartilhar comprovante",
+    viewBlockchain: "Ver na blockchain",
+    shareHeader: "✅ Comprovante PIX",
+    beneficiary: "Beneficiário",
+  },
+
+  walletHistory: {
+    title: "Extrato Blockchain",
+    loading: "Buscando transações na blockchain...",
+    error:
+      "Não foi possível carregar o extrato. Verifique sua conexão e tente novamente.",
+    retry: "Tentar novamente",
+    empty:
+      "Nenhuma transação encontrada para este endereço na rede {{network}}.",
+    received: "Recebido",
+    sent: "Enviado",
+    pixOffRamp: "PIX OFF-RAMP",
+    pixReceipt: "Comprovante PIX",
+    blockchain: "Blockchain",
   },
 };
