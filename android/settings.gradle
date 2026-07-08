@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'Colossus Crypto'
+rootProject.name = 'Helm Wallet'
 
 dependencyResolutionManagement {
   versionCatalogs {

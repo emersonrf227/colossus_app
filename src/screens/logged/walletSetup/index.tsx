@@ -33,15 +33,6 @@ export default function WalletSetup() {
   const [externalAddress, setExternalAddress] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const handlePaste = useCallback(async () => {
-    try {
-      const text = await Clipboard.getString();
-      setExternalAddress(text.trim());
-    } catch {
-      showToast({ message: t("walletSetup.clipboardError"), type: "error" });
-    }
-  }, [showToast, t]);
-
   const handleConfirmExternal = useCallback(async () => {
     if (!isAddress(externalAddress)) {
       showToast({ message: t("walletSetup.invalidAddress"), type: "error" });
@@ -77,12 +68,6 @@ export default function WalletSetup() {
         />
         <S.SafeArea>
           <S.Header>
-            <S.BackButton
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-            >
-              <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
-            </S.BackButton>
             <S.HeaderTitle>{t("walletSetup.title")}</S.HeaderTitle>
           </S.Header>
 
