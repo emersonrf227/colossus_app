@@ -642,4 +642,34 @@ export default {
     pixReceipt: "Comprovante PIX",
     blockchain: "Blockchain",
   },
+  gasSponsor: {
+    idleTitle: "Gas patrocinado",
+    idleSubtitle:
+      "Seu saldo de {{symbol}} está baixo.\nSolicite gas patrocinado para continuar operando.",
+    network: "Rede",
+    gasSent: "Gas enviado",
+    cost: "Custo para você",
+    free: "0.1 USDT",
+    collateralNote1: "Ao solicitar, você autoriza um empenho de",
+    collateralNote2: "do seu saldo como taxa pelo gas patrocinado.",
+    requestButton: "Solicitar gas patrocinado",
+    notNow: "Agora não",
+    requestingTitle: "Enviando gas...",
+    requestingSubtitle:
+      "Verificando sua identidade e saldo.\nO gas está sendo enviado para sua carteira.",
+    approvingTitle: "Confirmando pagamento...",
+    approvingSubtitle:
+      "Gas recebido! Processando o pagamento\nde 0.1 USDT na blockchain.",
+    successTitle: "Gas recebido!",
+    successSubtitle:
+      "Tudo pronto. Você já pode realizar operações na rede {{network}}.",
+    gasReceived: "Gas recebido",
+    collateral: "Taxa paga",
+    continue: "Continuar",
+    errorTitle: "Não foi possível",
+    errorGeneric:
+      "Não foi possível solicitar gas patrocinado. Tente novamente.",
+    retry: "Tentar novamente",
+    close: "Fechar",
+  },
 };

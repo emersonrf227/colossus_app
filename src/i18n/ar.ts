@@ -598,4 +598,32 @@ export default {
     pixReceipt: "إيصال PIX",
     blockchain: "بلوكشين",
   },
+  gasSponsor: {
+    idleTitle: "غاز مدعوم",
+    idleSubtitle:
+      "رصيد {{symbol}} الخاص بك منخفض.\nاطلب غازًا مدعومًا لمتابعة العمليات.",
+    network: "الشبكة",
+    gasSent: "تم إرسال الغاز",
+    cost: "التكلفة بالنسبة لك",
+    free: "0.1 USDT",
+    collateralNote1: "عند الطلب، تصرح بخصم رسوم قدرها",
+    collateralNote2: "من رصيدك كرسوم للغاز المدعوم.",
+    requestButton: "طلب غاز مدعوم",
+    notNow: "ليس الآن",
+    requestingTitle: "جاري إرسال الغاز...",
+    requestingSubtitle:
+      "جاري التحقق من هويتك ورصيدك.\nيتم إرسال الغاز إلى محفظتك.",
+    approvingTitle: "تأكيد الدفع...",
+    approvingSubtitle:
+      "تم استلام الغاز! جاري معالجة\nدفع 0.1 USDT على البلوكشين.",
+    successTitle: "تم استلام الغاز!",
+    successSubtitle: "كل شيء جاهز. يمكنك الآن العمل على شبكة {{network}}.",
+    gasReceived: "الغاز المستلم",
+    collateral: "الرسوم المدفوعة",
+    continue: "متابعة",
+    errorTitle: "تعذّر الأمر",
+    errorGeneric: "تعذّر طلب الغاز المدعوم. حاول مجدداً.",
+    retry: "حاول مجدداً",
+    close: "إغلاق",
+  },
 };

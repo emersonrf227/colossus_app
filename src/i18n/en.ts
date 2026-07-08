@@ -622,4 +622,32 @@ export default {
     pixReceipt: "PIX Receipt",
     blockchain: "Blockchain",
   },
+  gasSponsor: {
+    idleTitle: "Sponsored gas",
+    idleSubtitle:
+      "Your {{symbol}} balance is low.\nRequest sponsored gas to keep operating.",
+    network: "Network",
+    gasSent: "Gas sent",
+    cost: "Cost to you",
+    free: "0.1 USDT",
+    collateralNote1: "By requesting, you authorize a fee of",
+    collateralNote2: "from your balance as payment for the sponsored gas.",
+    requestButton: "Request sponsored gas",
+    notNow: "Not now",
+    requestingTitle: "Sending gas...",
+    requestingSubtitle:
+      "Verifying your identity and balance.\nGas is being sent to your wallet.",
+    approvingTitle: "Confirming payment...",
+    approvingSubtitle:
+      "Gas received! Processing the payment\nof 0.1 USDT on the blockchain.",
+    successTitle: "Gas received!",
+    successSubtitle: "All set. You can now operate on the {{network}} network.",
+    gasReceived: "Gas received",
+    collateral: "Fee paid",
+    continue: "Continue",
+    errorTitle: "Not possible",
+    errorGeneric: "Could not request sponsored gas. Please try again.",
+    retry: "Try again",
+    close: "Close",
+  },
 };

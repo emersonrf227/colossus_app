@@ -617,4 +617,33 @@ export default {
     pixReceipt: "Квитанция PIX",
     blockchain: "Блокчейн",
   },
+  gasSponsor: {
+    idleTitle: "Спонсированный газ",
+    idleSubtitle:
+      "Ваш баланс {{symbol}} низкий.\nЗапросите спонсированный газ для продолжения работы.",
+    network: "Сеть",
+    gasSent: "Газ отправлен",
+    cost: "Стоимость для вас",
+    free: "0.1 USDT",
+    collateralNote1: "При запросе вы авторизуете комиссию в размере",
+    collateralNote2:
+      "с вашего баланса в качестве оплаты за спонсированный газ.",
+    requestButton: "Запросить спонсированный газ",
+    notNow: "Не сейчас",
+    requestingTitle: "Отправка газа...",
+    requestingSubtitle:
+      "Проверка вашей личности и баланса.\nГаз отправляется на ваш кошелёк.",
+    approvingTitle: "Подтверждение оплаты...",
+    approvingSubtitle: "Газ получен! Обработка платежа\n0.1 USDT в блокчейне.",
+    successTitle: "Газ получен!",
+    successSubtitle:
+      "Всё готово. Теперь вы можете работать в сети {{network}}.",
+    gasReceived: "Газ получен",
+    collateral: "Комиссия оплачена",
+    continue: "Продолжить",
+    errorTitle: "Не удалось",
+    errorGeneric: "Не удалось запросить спонсированный газ. Попробуйте снова.",
+    retry: "Повторить",
+    close: "Закрыть",
+  },
 };

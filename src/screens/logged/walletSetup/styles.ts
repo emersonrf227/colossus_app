@@ -17,7 +17,6 @@ export const Container = styled.View`
 export const Background = styled.ImageBackground`
   flex: 1;
   width: 100%;
-  height: 100%;
 `;
 
 export const BackgroundOverlay = styled.View`
@@ -61,8 +60,8 @@ export const HeaderTitle = styled.Text`
 
 export const IntroWrapper = styled.View`
   align-items: center;
-  margin-top: ${hp(4)}px;
-  margin-bottom: ${hp(5)}px;
+  margin-top: ${hp(2)}px;
+  margin-bottom: ${hp(2)}px;
 `;
 
 export const IntroIconWrapper = styled.View`
@@ -205,4 +204,8 @@ export const CardLogo = styled.View`
   align-items: center;
   margin-top: ${hp(0.5)}px;
   margin-bottom: ${hp(1)}px;
+`;
+
+export const ScrollContent = styled.ScrollView`
+  flex: 1;
 `;

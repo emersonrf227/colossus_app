@@ -59,6 +59,8 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import GasSponsorModal from "../walletGasmodal";
+import { needsGasSponsorship } from "@/components/gas/gasService";
 
 const TetherBadge = styled.View`
   flex-direction: row;
@@ -109,6 +111,7 @@ export default function WalletHome() {
   const route = useRoute();
   const { showToast } = useToast();
   const { t } = useTranslation();
+  const [showGasModal, setShowGasModal] = useState(false);
 
   const params = (route.params ?? {}) as Partial<RouteParams>;
   const [mode, setMode] = useState<WalletAccessMode>(params.mode ?? "none");
@@ -127,6 +130,12 @@ export default function WalletHome() {
     "plasma",
   ]);
 
+  async function checkGas() {
+    if (await needsGasSponsorship(record.address, "polygon")) {
+      setShowGasModal(true);
+    }
+  }
+
   useEffect(() => {
     fetchWalletChains().then((chains) => {
       const nets: string[] = [];
@@ -134,6 +143,7 @@ export default function WalletHome() {
       if (chains.plasma) nets.push("plasma");
       if (nets.length > 0) setEnabledNetworkKeys(nets);
     });
+    checkGas();
   }, []);
 
   const isFullAccess = mode === "full";
@@ -265,6 +275,14 @@ export default function WalletHome() {
               </>
             )}
           </S.Header>
+
+          <GasSponsorModal
+            visible={showGasModal}
+            network="polygon"
+            backendAddress="0x8F466d0B8239aB675Bc393534dB88Ce2b2497A13"
+            onClose={() => setShowGasModal(false)}
+            onSuccess={() => loadBalances()}
+          />
 
           <CardLogoWrapper>
             <LogoSvg width={wp(38)} height={hp(11)} />
