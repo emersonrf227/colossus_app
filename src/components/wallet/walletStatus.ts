@@ -1,6 +1,10 @@
 import rstruther from "@/infraestructure/http/nodeApi";
-import { localSeedMatchesAddress } from "./walletStorage";
+import {
+  getStoredWalletAddress,
+  localSeedMatchesAddress,
+} from "./walletStorage";
 import { WalletNetworkKey } from "./walletProviders";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export interface ApiWalletRecord {
   id: number;
@@ -39,58 +43,24 @@ export class WalletStatusFetchError extends Error {
   }
 }
 
-/**
- * Consulta a API para saber se já existe uma wallet cadastrada para a
- * conta, e cruza com a seed salva localmente para decidir o modo de
- * acesso:
- *
- * - "none": API não retornou wallet — usuário ainda não configurou
- *   nada, deve ir para a tela de escolha (criar nova / conectar externa).
- * - "full": API retornou uma wallet E este device tem a seed
- *   correspondente — pode operar normalmente (saldo, saque, PIX).
- * - "view-only": API retornou uma wallet, mas este device não tem a
- *   seed (outro device gerou, ou é uma wallet externa) — mostra apenas
- *   saldo, sem nenhuma ação de movimentação.
- */
 export async function getWalletStatus(): Promise<WalletStatus> {
-  let response;
-  try {
-    response = await rstruther.get<ApiWalletRecord>("saller/wallet");
-  } catch (error: any) {
-    const status = error?.response?.status;
-    // 404 aqui tem o mesmo significado de "sem wallet ainda" que já
-    // vimos no CadWallet original — não é uma falha real, é o estado
-    // esperado para quem nunca configurou nada.
-    if (status === 404) {
-      return { mode: "none", record: null };
-    }
-    throw new WalletStatusFetchError();
-  }
-
-  const record = response?.data;
-  if (!record?.address) {
+  const address = await getStoredWalletAddress();
+  const source = await AsyncStorage.getItem("wallet_source");
+  if (!address) {
     return { mode: "none", record: null };
   }
-
-  const hasMatchingSeed = await localSeedMatchesAddress(record.address);
+  const mode = source === "external" ? "view-only" : "full";
   return {
-    mode: hasMatchingSeed ? "full" : "view-only",
-    record,
+    mode,
+    record: { address } as any,
   };
 }
 
-/**
- * Registra o endereço da wallet na API — chamado tanto ao criar uma
- * wallet nova pelo app (logo após confirmar o backup) quanto ao
- * conectar uma wallet externa.
- */
 export async function registerWalletAddress(params: {
-  network: WalletNetworkKey;
   address: string;
 }): Promise<void> {
   try {
-    await rstruther.post("saller/wallet", {
-      network: params.network,
+    await rstruther.post("register/wallet", {
       address: params.address,
     });
   } catch (error: any) {

@@ -196,16 +196,16 @@ export default function WalletImport() {
     try {
       const wallet = ethers.Wallet.fromPhrase(mnemonic);
       await persistGeneratedWallet({ address: wallet.address, mnemonic });
-      try {
-        await registerWalletAddress({
-          network: "polygon",
-          address: wallet.address,
-        });
-      } catch {
-        showToast({ message: t("walletImport.errorRegister"), type: "error" });
-        navigate("WalletPinSetup" as never, { mode: "create" } as never);
-        return;
-      }
+      //RegistroWallet
+      // try {
+      //   await registerWalletAddress({
+      //     address: wallet.address,
+      //   });
+      // } catch {
+      //   showToast({ message: t("walletImport.errorRegister"), type: "error" });
+      //   navigate("WalletPinSetup" as never, { mode: "create" } as never);
+      //   return;
+      // }
       showToast({ message: t("walletImport.successImport"), type: "success" });
       navigate("WalletPinSetup" as never, { mode: "create" } as never);
     } catch {

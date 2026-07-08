@@ -1,79 +1,57 @@
 import React, { useEffect, useRef, useState } from "react";
 import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as S from "./styles";
-import { useAuth } from "@/hook/AuthContext";
-import rstruther from "@/infraestructure/http/nodeApi";
+import { getStoredMnemonic } from "../../../components/wallet/walletStorage";
+import { hasWalletPin } from "../../../components/wallet/walletPin";
 
-// Pequeno atraso mínimo só para a animação de loading não "piscar"
-// caso a validação termine quase instantaneamente.
-const MIN_SPLASH_DURATION_MS = 1200;
-
-export default function Splash() {
+/**
+ * Gate da wallet sem login — decisão 100% local:
+ *
+ * 1. Tem seed + PIN  → WalletHome (modo completo)
+ * 2. Tem seed, sem PIN → WalletPinSetup (fluxo interrompido)
+ * 3. Sem seed         → WalletSetup (criar ou importar)
+ */
+export default function WalletGate() {
   const navigation = useNavigation();
-  const { isRestoringSession } = useAuth();
-  const [statusText, setStatusText] = useState("Iniciando...");
   const hasNavigatedRef = useRef(false);
+  const [statusText, setStatusText] = useState("Iniciando...");
 
   useEffect(() => {
-    // Espera o AuthContext terminar de ler o token salvo no AsyncStorage
-    // antes de tentar qualquer validação — sem isso, token ainda seria
-    // null mesmo que exista uma sessão salva.
-    if (isRestoringSession || hasNavigatedRef.current) return;
+    let isActive = true;
+    setStatusText("Verificando sua sessão...");
 
-    const startedAt = Date.now();
+    (async () => {
+      if (!isActive || hasNavigatedRef.current) return;
+      hasNavigatedRef.current = true;
 
-    const decideRoute = async () => {
-      const token = await AsyncStorage.getItem("token");
+      const mnemonic = await getStoredMnemonic();
+      const pinConfigured = await hasWalletPin();
 
-      if (!token) {
-        goToLogin();
+      console.log("Menmoinc======>", mnemonic);
+
+      if (!isActive) return;
+
+      if (!mnemonic) {
+        // Sem seed — vai criar ou importar
+        (navigation as any).replace("WalletSetup");
         return;
       }
 
-      setStatusText("Verificando sua sessão...");
-
-      try {
-        // Chamada leve e real à API. Se o token estiver expirado, o
-        // interceptor de 401 do AuthContext já tenta renovar via refresh
-        // token automaticamente (e, em último caso, o fallback de
-        // re-login salvo) antes desta Promise rejeitar de fato. Se
-        // chegar aqui com sucesso, a sessão está genuinamente válida.
-        await rstruther.get("saller/account/information");
-        goToDashboard();
-      } catch {
-        // Token inválido e o refresh/fallback também não recuperaram a
-        // sessão — não há sessão válida, vai para o login.
-        goToLogin();
+      if (!pinConfigured) {
+        // Tem seed mas PIN não foi configurado (fluxo interrompido)
+        (navigation as any).replace("WalletPinSetup", { mode: "create" });
+        return;
       }
+
+      // Tudo pronto — abre a wallet
+      (navigation as any).replace("WalletHome");
+    })();
+
+    return () => {
+      isActive = false;
     };
-
-    const goToDashboard = () =>
-      navigateAfterMinDuration("Dashboard", startedAt);
-    const goToLogin = () => navigateAfterMinDuration("SingIn", startedAt);
-
-    decideRoute();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRestoringSession]);
-
-  const navigateAfterMinDuration = (
-    routeName: "Dashboard" | "SingIn",
-    startedAt: number,
-  ) => {
-    if (hasNavigatedRef.current) return;
-    hasNavigatedRef.current = true;
-
-    const elapsed = Date.now() - startedAt;
-    const remaining = Math.max(0, MIN_SPLASH_DURATION_MS - elapsed);
-
-    setTimeout(() => {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: routeName as never }],
-      });
-    }, remaining);
-  };
+  }, [navigation]);
 
   return (
     <S.Container>

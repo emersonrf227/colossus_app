@@ -1,4 +1,6 @@
 import React, { useState, useCallback } from "react";
+import { Modal } from "react-native";
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -7,15 +9,17 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import {
   Info,
   Wallet,
+  History,
   FileText,
   LifeBuoy,
   HelpCircle,
   ReceiptText,
-  Printer,
   LogOut,
   ArrowLeft,
   Languages,
   MapIcon,
+  KeyRound,
+  AlertTriangle,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import * as S from "./styles";
@@ -25,6 +29,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Loader from "@/components/loader";
 import { useToast } from "@/hook/Toast";
 import { colors } from "../dashboard/styles";
+import { useAuth } from "@/hook/AuthContext";
 import {
   loadSavedCurrency,
   resolveCurrency,
@@ -54,15 +59,15 @@ const MENU_ITEMS: MenuItem[] = [
   },
   {
     labelKey: "menu.items.wallet",
-    icon: Wallet,
+    icon: KeyRound,
     accentColor: "#00D2D3",
-    route: "WalletGate",
+    route: "WalletExport",
   },
   {
     labelKey: "menu.items.invoices",
-    icon: FileText,
+    icon: History,
     accentColor: "#F7B731",
-    route: "Extract",
+    route: "WalletHistory",
   },
   {
     labelKey: "menu.items.support",
@@ -82,12 +87,7 @@ const MENU_ITEMS: MenuItem[] = [
     accentColor: "#26DE81",
     route: "TermsOfUse",
   },
-  {
-    labelKey: "menu.items.printer",
-    icon: Printer,
-    accentColor: "#FD9644",
-    route: "SelectPrinterScreen",
-  },
+
   {
     labelKey: "menu.items.community",
     icon: MapIcon,
@@ -97,12 +97,13 @@ const MENU_ITEMS: MenuItem[] = [
 ];
 
 export default function MenuScreen() {
+  const auth = useAuth();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const { navigate, goBack, reset } = navigation;
   const { showToast } = useToast();
-
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   // Idioma e moeda salvos pelo usuário — começam com o default síncrono
   // e são atualizados sempre que a tela ganha foco (ex: usuário voltou
   // da tela "Idioma e Moeda" depois de trocar alguma preferência).
@@ -178,6 +179,54 @@ export default function MenuScreen() {
             <S.HeaderTitle>{t("menu.title")}</S.HeaderTitle>
           </S.Header>
 
+          <Modal
+            visible={showLogoutModal}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setShowLogoutModal(false)}
+          >
+            <S.ModalOverlay>
+              <S.ModalContainer>
+                <AlertTriangle size={60} color="#F44336" strokeWidth={2} />
+
+                <S.ModalTitle>{t("menu.modal.title")}</S.ModalTitle>
+
+                <S.ModalDescription>
+                  {t("menu.modal.description")}
+                </S.ModalDescription>
+
+                <S.ModalWarning>{t("menu.modal.warning")}</S.ModalWarning>
+
+                <S.ModalDescription>
+                  {t("menu.modal.warning_plus")}
+                </S.ModalDescription>
+
+                <S.ModalButtons>
+                  <S.CancelButton onPress={() => setShowLogoutModal(false)}>
+                    <S.CancelButtonText>
+                      {" "}
+                      {t("menu.modal.cancel")}
+                    </S.CancelButtonText>
+                  </S.CancelButton>
+
+                  <S.ConfirmButton
+                    onPress={async () => {
+                      setShowLogoutModal(false);
+
+                      await auth.clearSession();
+
+                      navigation.replace("SingIn" as never);
+                    }}
+                  >
+                    <S.ConfirmButtonText>
+                      {t("menu.modal.understood")}
+                    </S.ConfirmButtonText>
+                  </S.ConfirmButton>
+                </S.ModalButtons>
+              </S.ModalContainer>
+            </S.ModalOverlay>
+          </Modal>
+
           <S.cardLogo>
             <LogoSvg width={wp(38)} height={hp(11)} />
           </S.cardLogo>
@@ -220,7 +269,14 @@ export default function MenuScreen() {
                 ),
               )}
             </S.ButtonGrid>
-            <S.LogoutButton onPress={handleLogout} activeOpacity={0.7}>
+            <S.LogoutButton
+              // onPress={async () => {
+              //   // await auth.clearSession();
+              //   // navigation.replace("SingIn" as never);
+              // }}
+              onPress={() => setShowLogoutModal(true)}
+              activeOpacity={0.7}
+            >
               <LogOut size={18} color={colors.danger} strokeWidth={2.2} />
               <S.LogoutButtonText>{t("menu.logout")}</S.LogoutButtonText>
             </S.LogoutButton>

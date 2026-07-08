@@ -1,214 +1,266 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, Clipboard, Share } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { ArrowLeft, AlertCircle } from "lucide-react-native";
+import { ArrowLeft, Copy, Share2, AlertCircle } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import * as S from "./styles";
+import QRCode from "react-native-qrcode-svg";
+import styled from "styled-components/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import Loader from "@/components/loader";
+import { Platform, StatusBar as RNStatusBar } from "react-native";
+import { useToast } from "@/hook/Toast";
+import { getStoredWalletAddress } from "../../../components/wallet/walletStorage";
+import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
-import rstruther from "@/infraestructure/http/nodeApi";
 
-interface AddressData {
-  address?: string;
-  number?: string;
-  neighborhood?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-}
+const STATUSBAR_HEIGHT =
+  Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
 
-interface UserData {
-  name?: string;
-  socialName?: string;
-  document?: string;
-  typerson?: "F" | "J" | string;
-  Address?: AddressData[];
-  ContactEmail?: { email: string }[];
-  ContactPhone?: { phone: string }[];
-}
+const Container = styled.View`
+  flex: 1;
+  background-color: ${colors.bgDark};
+`;
+const Background = styled.ImageBackground`
+  flex: 1;
+  width: 100%;
+`;
+const Overlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(5, 4, 10, 0.65);
+`;
+const SafeArea = styled.SafeAreaView`
+  flex: 1;
+  padding-horizontal: ${wp(5)}px;
+  padding-top: ${STATUSBAR_HEIGHT}px;
+`;
+const Header = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${hp(1)}px;
+  margin-bottom: ${hp(3)}px;
+`;
+const BackButton = styled.TouchableOpacity`
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+const HeaderTitle = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 18px;
+  font-weight: 700;
+  margin-left: 14px;
+`;
+const CardLogo = styled.View`
+  align-items: center;
+  margin-bottom: ${hp(2)}px;
+`;
+const Content = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: ${hp(6)}px;
+`;
 
-function getInitials(name?: string): string {
-  if (!name) return "?";
-  const parts = name.trim().split(/\s+/);
-  const first = parts[0]?.[0] ?? "";
-  const last = parts.length > 1 ? (parts[parts.length - 1]?.[0] ?? "") : "";
-  return (first + last).toUpperCase();
-}
+// QR Code card
+const QRCard = styled.View`
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: ${hp(3)}px;
+  shadow-color: #000;
+  shadow-opacity: 0.25;
+  shadow-radius: 12px;
+  shadow-offset: 0px 6px;
+  elevation: 10;
+`;
+const NetworkBadge = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background-color: rgba(108, 92, 231, 0.12);
+  border-width: 1px;
+  border-color: rgba(108, 92, 231, 0.3);
+`;
+const NetworkBadgeText = styled.Text`
+  color: ${colors.primary};
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+`;
 
-function formatAddressLine(
-  address: AddressData | undefined,
-  empty: string,
-): string {
-  if (!address || !address.address) return empty;
-  const parts = [address.address, address.number, address.neighborhood].filter(
-    Boolean,
-  );
-  return parts.join(", ") || empty;
-}
+// Endereço
+const AddressCard = styled.View`
+  width: 100%;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: ${hp(2)}px;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+const AddressLabel = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+`;
+const AddressText = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 13px;
+  font-family: monospace;
+  line-height: 20px;
+`;
 
-function formatCityLine(
-  address: AddressData | undefined,
-  empty: string,
-): string {
-  if (!address || (!address.city && !address.state)) return empty;
-  return [address.city, address.state].filter(Boolean).join(" - ") || empty;
-}
+// Botões
+const ActionsRow = styled.View`
+  flex-direction: row;
+  gap: 12px;
+  width: 100%;
+`;
+const ActionButton = styled.TouchableOpacity<{ accent?: boolean }>`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: ${hp(6.2)}px;
+  border-radius: 16px;
+  background-color: ${({ accent }) =>
+    accent ? colors.primary : colors.surface};
+  border-width: ${({ accent }) => (accent ? 0 : 1)}px;
+  border-color: ${colors.surfaceBorder};
+  elevation: ${({ accent }) => (accent ? 6 : 0)};
+`;
+const ActionButtonText = styled.Text<{ accent?: boolean }>`
+  color: ${({ accent }) => (accent ? "#fff" : colors.textPrimary)};
+  font-size: 14px;
+  font-weight: 700;
+`;
 
-export default function GetInfo() {
-  const { t } = useTranslation();
+// Estado de erro
+const CenteredState = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+`;
+const ErrorText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 14px;
+  text-align: center;
+  padding-horizontal: 30px;
+`;
+
+export default function WalletReceive() {
   const navigation = useNavigation();
+  const { showToast } = useToast();
+  const { t } = useTranslation();
+
+  const [address, setAddress] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [hasError, setHasError] = useState(false);
-
-  const emptyValue = t("info.emptyValue");
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setHasError(false);
-    try {
-      const response = await rstruther.get("saller/account/information");
-      setUserData(response.data ?? null);
-    } catch (error) {
-      console.error("Erro ao buscar dados do usuário:", error);
-      setHasError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    getStoredWalletAddress()
+      .then(setAddress)
+      .finally(() => setLoading(false));
+  }, []);
 
-  // Acessos sempre seguros: o array pode vir ausente, vazio, ou com o
-  // primeiro item incompleto — nenhum desses casos deve quebrar a tela.
-  const address = userData?.Address?.[0];
-  const email = userData?.ContactEmail?.[0]?.email;
-  const phone = userData?.ContactPhone?.[0]?.phone;
-  const personTypeLabel =
-    userData?.typerson === "F"
-      ? t("info.personTypeIndividual")
-      : userData?.typerson === "J"
-        ? t("info.personTypeCompany")
-        : emptyValue;
+  const handleCopy = useCallback(() => {
+    if (!address) return;
+    Clipboard.setString(address);
+    showToast({ message: t("walletReceive.copied"), type: "success" });
+  }, [address, showToast, t]);
+
+  const handleShare = useCallback(async () => {
+    if (!address) return;
+    await Share.share({ message: address });
+  }, [address]);
 
   return (
-    <S.Container>
-      {loading && <Loader />}
-
-      <S.Background source={require("@/assets/background.png")}>
-        <S.BackgroundOverlay />
+    <Container>
+      <Background source={require("@/assets/background.png")}>
+        <Overlay />
         <StatusBar
           barStyle="light-content"
           backgroundColor="transparent"
           translucent
         />
-
-        <S.SafeArea>
-          <S.Header>
-            <S.BackButton
-              onPress={() => navigation.goBack()}
-              activeOpacity={0.7}
-            >
+        <SafeArea>
+          <Header>
+            <BackButton onPress={() => navigation.goBack()} activeOpacity={0.7}>
               <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
-            </S.BackButton>
-            <S.HeaderTitle>{t("info.title")}</S.HeaderTitle>
-          </S.Header>
+            </BackButton>
+            <HeaderTitle>{t("walletReceive.title")}</HeaderTitle>
+          </Header>
 
-          <S.cardLogo>
+          <CardLogo>
             <LogoSvg width={wp(36)} height={hp(10)} />
-          </S.cardLogo>
+          </CardLogo>
 
-          {!loading && hasError ? (
-            <S.CenteredState>
-              <S.ErrorIconWrapper>
-                <AlertCircle size={28} color="#FF6B6B" strokeWidth={2.2} />
-              </S.ErrorIconWrapper>
-              <S.ErrorText>{t("info.errorLoad")}</S.ErrorText>
-              <S.RetryButton onPress={fetchData} activeOpacity={0.7}>
-                <S.RetryButtonText>{t("info.retry")}</S.RetryButtonText>
-              </S.RetryButton>
-            </S.CenteredState>
-          ) : userData ? (
-            <S.ScrollContent
-              contentContainerStyle={{ paddingBottom: 32 }}
-              showsVerticalScrollIndicator={false}
-            >
-              <S.ProfileHeader>
-                <S.AvatarCircle>
-                  <S.AvatarInitials>
-                    {getInitials(userData.name)}
-                  </S.AvatarInitials>
-                </S.AvatarCircle>
-                <S.ProfileName>{userData.name || emptyValue}</S.ProfileName>
-                <S.ProfileTypeBadge>
-                  <S.ProfileTypeBadgeText>
-                    {personTypeLabel}
-                  </S.ProfileTypeBadgeText>
-                </S.ProfileTypeBadge>
-              </S.ProfileHeader>
+          {!loading && !address ? (
+            <CenteredState>
+              <AlertCircle size={28} color="#FF6B6B" strokeWidth={2.2} />
+              <ErrorText>{t("walletReceive.noAddress")}</ErrorText>
+            </CenteredState>
+          ) : address ? (
+            <Content>
+              {/* QR Code */}
+              <NetworkBadge>
+                <NetworkBadgeText>POLYGON · PLASMA</NetworkBadgeText>
+              </NetworkBadge>
+              <QRCard>
+                <QRCode
+                  value={address}
+                  size={wp(56)}
+                  color="#000000"
+                  backgroundColor="#FFFFFF"
+                />
+              </QRCard>
 
-              <S.SectionLabel>{t("info.registrationData")}</S.SectionLabel>
-              <S.SectionCard>
-                <S.FieldRow>
-                  <S.FieldLabel>{t("info.socialName")}</S.FieldLabel>
-                  <S.FieldValue>
-                    {userData.socialName || emptyValue}
-                  </S.FieldValue>
-                </S.FieldRow>
-                <S.FieldRow isLast>
-                  <S.FieldLabel>{t("info.document")}</S.FieldLabel>
-                  <S.FieldValue>{userData.document || emptyValue}</S.FieldValue>
-                </S.FieldRow>
-              </S.SectionCard>
+              {/* Endereço */}
+              <AddressCard>
+                <AddressLabel>{t("walletReceive.addressLabel")}</AddressLabel>
+                <AddressText>{address}</AddressText>
+              </AddressCard>
 
-              <S.SectionLabel>{t("info.contact")}</S.SectionLabel>
-              <S.SectionCard>
-                <S.FieldRow>
-                  <S.FieldLabel>{t("info.email")}</S.FieldLabel>
-                  <S.FieldValue>{email || emptyValue}</S.FieldValue>
-                </S.FieldRow>
-                <S.FieldRow isLast>
-                  <S.FieldLabel>{t("info.phone")}</S.FieldLabel>
-                  <S.FieldValue>{phone || emptyValue}</S.FieldValue>
-                </S.FieldRow>
-              </S.SectionCard>
-
-              <S.SectionLabel>{t("info.address")}</S.SectionLabel>
-              <S.SectionCard>
-                <S.FieldRow>
-                  <S.FieldLabel>{t("info.street")}</S.FieldLabel>
-                  <S.FieldValue>
-                    {formatAddressLine(address, emptyValue)}
-                  </S.FieldValue>
-                </S.FieldRow>
-                <S.FieldRow>
-                  <S.FieldLabel>{t("info.city")}</S.FieldLabel>
-                  <S.FieldValue>
-                    {formatCityLine(address, emptyValue)}
-                  </S.FieldValue>
-                </S.FieldRow>
-                <S.FieldRow isLast>
-                  <S.FieldLabel>{t("info.zipCode")}</S.FieldLabel>
-                  <S.FieldValue>{address?.zipCode || emptyValue}</S.FieldValue>
-                </S.FieldRow>
-              </S.SectionCard>
-            </S.ScrollContent>
-          ) : !loading ? (
-            <S.CenteredState>
-              <S.ErrorIconWrapper>
-                <AlertCircle size={28} color="#FF6B6B" strokeWidth={2.2} />
-              </S.ErrorIconWrapper>
-              <S.ErrorText>{t("info.errorEmpty")}</S.ErrorText>
-            </S.CenteredState>
+              {/* Botões */}
+              <ActionsRow>
+                <ActionButton onPress={handleCopy} activeOpacity={0.75}>
+                  <Copy
+                    size={16}
+                    color={colors.textPrimary}
+                    strokeWidth={2.2}
+                  />
+                  <ActionButtonText>{t("walletReceive.copy")}</ActionButtonText>
+                </ActionButton>
+                <ActionButton accent onPress={handleShare} activeOpacity={0.85}>
+                  <Share2 size={16} color="#FFF" strokeWidth={2.2} />
+                  <ActionButtonText accent>
+                    {t("walletReceive.share")}
+                  </ActionButtonText>
+                </ActionButton>
+              </ActionsRow>
+            </Content>
           ) : null}
-        </S.SafeArea>
-      </S.Background>
-    </S.Container>
+        </SafeArea>
+      </Background>
+    </Container>
   );
 }

@@ -5,7 +5,6 @@ import {
   StatusBar,
   RefreshControl,
   View,
-  Text,
   Image,
 } from "react-native";
 import {
@@ -23,6 +22,7 @@ import {
   Copy,
   Network,
   History,
+  Menu,
 } from "lucide-react-native";
 import styled from "styled-components/native";
 import { useTranslation } from "react-i18next";
@@ -170,6 +170,10 @@ export default function WalletHome() {
     [record?.address],
   );
 
+  const toggleMenu = useCallback(() => {
+    navigate("MenuScreen" as never);
+  }, [navigate]);
+
   useEffect(() => {
     if (loadingStatus) {
       getWalletStatus()
@@ -238,14 +242,6 @@ export default function WalletHome() {
     );
   }, [navigate, record, balances]);
 
-  const goToExport = useCallback(() => {
-    navigate("WalletExport" as never);
-  }, [navigate]);
-  const goToHistory = useCallback(() => {
-    if (!record) return;
-    navigate("WalletHistory" as never, { record } as never);
-  }, [navigate, record]);
-
   return (
     <S.Container>
       <S.Background source={require("@/assets/background.png")}>
@@ -259,21 +255,14 @@ export default function WalletHome() {
         <S.SafeArea>
           <S.Header>
             <S.HeaderLeft>
-              <S.BackButton onPress={() => goBack()} activeOpacity={0.7}>
-                <ArrowLeft size={22} color="#FFFFFF" strokeWidth={2.2} />
-              </S.BackButton>
               <S.HeaderTitle>{t("wallet.title")}</S.HeaderTitle>
             </S.HeaderLeft>
-            {isFullAccess && (
-              <>
-                <S.IconButton onPress={goToHistory} activeOpacity={0.7}>
-                  <History size={18} color="#FFFFFF" strokeWidth={2.2} />
-                </S.IconButton>
-                <S.IconButton onPress={goToExport} activeOpacity={0.7}>
-                  <KeyRound size={18} color="#FFFFFF" strokeWidth={2.2} />
-                </S.IconButton>
-              </>
-            )}
+
+            <>
+              <S.MenuButton onPress={toggleMenu} activeOpacity={0.7}>
+                <Menu size={24} color="#FFFFFF" strokeWidth={2.2} />
+              </S.MenuButton>
+            </>
           </S.Header>
 
           <GasSponsorModal
@@ -361,48 +350,46 @@ export default function WalletHome() {
                   <Copy size={16} color={colors.primary} strokeWidth={2.2} />
                 </S.AddressCard>
 
-                {isFullAccess && (
-                  <S.ActionsRow>
-                    <S.ActionButton
-                      accentColor={colors.primary}
-                      onPress={goToWithdraw}
-                      activeOpacity={0.75}
-                    >
-                      <S.ActionIconWrapper accentColor={colors.primary}>
-                        <Send
-                          size={18}
-                          color={colors.primary}
-                          strokeWidth={2.2}
-                        />
-                      </S.ActionIconWrapper>
-                      <S.ActionButtonText accentColor={colors.primary}>
-                        {t("wallet.sendButton")}
-                      </S.ActionButtonText>
-                      <ActionButtonSubText accentColor={colors.primary}>
-                        {t("wallet.sendSubtitle")}
-                      </ActionButtonSubText>
-                    </S.ActionButton>
-                    <S.ActionButton
-                      accentColor={colors.success}
-                      onPress={goToPix}
-                      activeOpacity={0.75}
-                    >
-                      <S.ActionIconWrapper accentColor={colors.success}>
-                        <QrCode
-                          size={18}
-                          color={colors.success}
-                          strokeWidth={2.2}
-                        />
-                      </S.ActionIconWrapper>
-                      <S.ActionButtonText accentColor={colors.success}>
-                        {t("wallet.pixButton")}
-                      </S.ActionButtonText>
-                      <ActionButtonSubText accentColor={colors.success}>
-                        {t("wallet.pixSubtitle")}
-                      </ActionButtonSubText>
-                    </S.ActionButton>
-                  </S.ActionsRow>
-                )}
+                <S.ActionsRow>
+                  <S.ActionButton
+                    accentColor={colors.primary}
+                    onPress={goToWithdraw}
+                    activeOpacity={0.75}
+                  >
+                    <S.ActionIconWrapper accentColor={colors.primary}>
+                      <Send
+                        size={18}
+                        color={colors.primary}
+                        strokeWidth={2.2}
+                      />
+                    </S.ActionIconWrapper>
+                    <S.ActionButtonText accentColor={colors.primary}>
+                      {t("wallet.sendButton")}
+                    </S.ActionButtonText>
+                    <ActionButtonSubText accentColor={colors.primary}>
+                      {t("wallet.sendSubtitle")}
+                    </ActionButtonSubText>
+                  </S.ActionButton>
+                  <S.ActionButton
+                    accentColor={colors.success}
+                    onPress={goToPix}
+                    activeOpacity={0.75}
+                  >
+                    <S.ActionIconWrapper accentColor={colors.success}>
+                      <QrCode
+                        size={18}
+                        color={colors.success}
+                        strokeWidth={2.2}
+                      />
+                    </S.ActionIconWrapper>
+                    <S.ActionButtonText accentColor={colors.success}>
+                      {t("wallet.pixButton")}
+                    </S.ActionButtonText>
+                    <ActionButtonSubText accentColor={colors.success}>
+                      {t("wallet.pixSubtitle")}
+                    </ActionButtonSubText>
+                  </S.ActionButton>
+                </S.ActionsRow>
 
                 <S.SectionLabel>{t("wallet.balanceByNetwork")}</S.SectionLabel>
 

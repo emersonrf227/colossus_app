@@ -14,6 +14,17 @@ export const Container = styled.View`
   background-color: ${colors.bgDark};
 `;
 
+export const MenuButton = styled.TouchableOpacity`
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${colors.surface};
+  border-width: 1px;
+  border-color: ${colors.surfaceBorder};
+`;
+
 export const Background = styled.ImageBackground`
   flex: 1;
   width: 100%;

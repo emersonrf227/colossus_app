@@ -65,8 +65,8 @@ export const IntroWrapper = styled.View`
 `;
 
 export const IntroIconWrapper = styled.View`
-  width: 72px;
-  height: 72px;
+  width: 30px;
+  height: 30px;
   border-radius: 36px;
   align-items: center;
   justify-content: center;
@@ -76,14 +76,14 @@ export const IntroIconWrapper = styled.View`
 
 export const IntroTitle = styled.Text`
   color: ${colors.textPrimary};
-  font-size: 21px;
+  font-size: 16px;
   font-weight: 700;
   text-align: center;
 `;
 
 export const IntroSubtitle = styled.Text`
   color: ${colors.textMuted};
-  font-size: 13.5px;
+  font-size: 12px;
   text-align: center;
   margin-top: 8px;
   line-height: 19px;
@@ -118,7 +118,7 @@ export const OptionIconWrapper = styled.View<{ accentColor?: string }>`
 
 export const OptionTitle = styled.Text`
   color: ${colors.textPrimary};
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 700;
   flex: 1;
 `;
@@ -138,7 +138,7 @@ export const RecommendedBadgeText = styled.Text`
 
 export const OptionDescription = styled.Text`
   color: ${colors.textMuted};
-  font-size: 13px;
+  font-size: 11px;
   line-height: 19px;
 `;
 

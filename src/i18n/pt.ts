@@ -1,15 +1,14 @@
 export default {
   login: {
     welcome: "Bem-vindo de volta",
-    subtitle: "Entre com sua conta para continuar",
+    subtitle: "Blockchain fácil na palma da sua mão.",
     user: "Usuário",
     password: "Senha",
     login: "Entrar",
     forgotPassword: "Esqueci minha senha",
-    register: "Quero me cadastrar",
+    register: "Comunidade do Telegram",
     chooseLanguage: "Escolha o idioma",
     changeLanguage: "Isso muda o idioma exibido no aplicativo",
-    or: "OU",
   },
   forget: {
     title: "Esqueceu sua senha?",
@@ -115,21 +114,31 @@ export default {
     cancelInvoice: "Cancelar cobrança",
   },
   menu: {
-    title: "Configurações",
+    title: "Menu",
     preferences: "PREFERÊNCIAS",
     general: "GERAL",
     languageAndCurrency: "Idioma e Moeda",
     logout: "Sair da conta",
     logoutError: "Não foi possível sair. Tente novamente.",
     items: {
-      info: "Informações",
-      wallet: "Carteira",
-      invoices: "Cobranças",
+      info: "Receber",
+      wallet: "Mnemônico",
+      invoices: "Histórico",
       support: "Suporte",
       about: "Sobre",
       termsOfUse: "Termos de uso",
       printer: "Impressora",
       community: "Comunidade",
+    },
+    modal: {
+      title: "Atenção",
+      description:
+        " Ao sair da sua conta, todas as chaves da carteira serão removidas deste dispositivo.",
+      warning:
+        "Se você NÃO salvou suas 12 palavras de recuperação, poderá perder o acesso à sua carteira e aos seus fundos permanentemente.",
+      warning_plus: "Esta ação é irreversível.",
+      cancel: "Cancelar",
+      understood: "Entendi, sair da conta",
     },
   },
   printer: {
@@ -351,12 +360,17 @@ export default {
     viewOnly:
       "Você está vendo esta carteira apenas para consulta. A chave de acesso está associada a outro dispositivo — saques só podem ser feitos a partir dele.",
   },
+  walletReceive: {
+    addressLabel: "Endereço",
+    copy: "Copiar",
+    share: "Compartilhar",
+    title: "Receber",
+  },
 
   walletSetup: {
     title: "Configurar carteira",
     subtitle: "Como você quer configurar?",
-    description:
-      "Crie uma nova carteira, importe uma existente ou conecte um endereço externo para visualização.",
+    description: "Crie uma nova carteira ou importe uma existente.",
     createNew: "Criar nova carteira",
     createDescription:
       "O app gera uma carteira só sua, com saldo, saque e PIX integrados. Você guarda a frase de recuperação de 12 palavras.",

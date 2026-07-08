@@ -1,5 +1,9 @@
 import styled from "styled-components/native";
-import { Platform, StatusBar as RNStatusBar } from "react-native";
+import {
+  Platform,
+  StatusBar as RNStatusBar,
+  TouchableOpacity,
+} from "react-native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -180,4 +184,93 @@ export const LogoutButtonText = styled.Text`
   color: ${colors.danger};
   font-size: 15px;
   font-weight: 700;
+`;
+
+export const ModalOverlay = styled.View`
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+`;
+
+export const ModalContainer = styled.View`
+  width: 100%;
+  max-width: 380px;
+  background-color: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  align-items: center;
+`;
+
+export const ModalTitle = styled.Text`
+  font-size: 22px;
+  font-family: ${({ theme }) => theme.fonts.bold};
+  color: #1b1b1b;
+  margin-top: 18px;
+  margin-bottom: 12px;
+  text-align: center;
+`;
+
+export const ModalDescription = styled.Text`
+  font-size: 15px;
+  line-height: 23px;
+  color: #555;
+  text-align: center;
+  margin-bottom: 14px;
+`;
+
+export const ModalWarning = styled.Text`
+  width: 100%;
+  background-color: #fff4e5;
+  color: #000;
+  border-width: 1px;
+  border-color: #ffb74d;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+`;
+
+export const ModalWarningText = styled.Text`
+  color: #c62828;
+  font-size: 15px;
+  line-height: 22px;
+  font-family: ${({ theme }) => theme.fonts.bold};
+  text-align: center;
+`;
+
+export const ModalButtons = styled.View`
+  width: 100%;
+  margin-top: 8px;
+`;
+
+export const CancelButton = styled(TouchableOpacity)`
+  width: 100%;
+  height: 52px;
+  border-radius: 14px;
+  justify-content: center;
+  align-items: center;
+  background-color: #eceff1;
+  margin-bottom: 12px;
+`;
+
+export const CancelButtonText = styled.Text`
+  color: #555;
+  font-size: 16px;
+  font-family: ${({ theme }) => theme.fonts.medium};
+`;
+
+export const ConfirmButton = styled(TouchableOpacity)`
+  width: 100%;
+  height: 52px;
+  border-radius: 14px;
+  justify-content: center;
+  align-items: center;
+  background-color: #e53935;
+`;
+
+export const ConfirmButtonText = styled.Text`
+  color: #fff;
+  font-size: 16px;
+  font-family: ${({ theme }) => theme.fonts.bold};
 `;
