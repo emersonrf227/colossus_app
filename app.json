@@ -30,20 +30,26 @@
           "apiKey": "AIzaSyAxUkK4ZGIZwZJiQ7kJBXU7iYNMTo7VD2I"
         }
       },
-
       "package": "br.com.colossuscrypto.helmapp",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "7c563bba-71e1-4d58-aa66-43ddd675fec0"
+        "projectId": "333ce8c9-689f-4dfc-9586-91a660040404"
       }
     },
-
     "plugins": [
       [
         "expo-camera",
