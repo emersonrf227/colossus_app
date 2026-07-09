@@ -19,6 +19,7 @@ interface WithdrawCryptoParams {
   network: WalletNetworkKey;
   toAddress: string;
   amount: string; // valor em USDT, ex: "150.00"
+  memo?: string; // opcional — concatenado no data da tx, visível no explorer
 }
 
 interface WithdrawResult {
@@ -27,15 +28,39 @@ interface WithdrawResult {
 }
 
 /**
- * Envia USDT da wallet do usuário para um endereço externo qualquer,
- * na rede especificada. A wallet assinante (com a chave privada) é
- * obtida, usada apenas dentro desta função, e não retorna para fora
- * deste módulo.
+ * Converte string UTF-8 → hex sem usar Buffer (não existe no React Native).
+ */
+function utf8ToHex(str: string): string {
+  const bytes = Array.from(str).flatMap((char) => {
+    const code = char.codePointAt(0) ?? 0;
+    if (code < 0x80) return [code];
+    if (code < 0x800) return [0xc0 | (code >> 6), 0x80 | (code & 0x3f)];
+    if (code < 0x10000)
+      return [
+        0xe0 | (code >> 12),
+        0x80 | ((code >> 6) & 0x3f),
+        0x80 | (code & 0x3f),
+      ];
+    return [
+      0xf0 | (code >> 18),
+      0x80 | ((code >> 12) & 0x3f),
+      0x80 | ((code >> 6) & 0x3f),
+      0x80 | (code & 0x3f),
+    ];
+  });
+  return bytes.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/**
+ * Envia USDT da wallet do usuário para um endereço externo.
+ * Se memo for informado, é concatenado como sufixo hex no data da tx —
+ * mesma técnica usada no backend. Visível no "Input Data" do Polygonscan.
  */
 export async function withdrawCrypto({
   network,
   toAddress,
   amount,
+  memo,
 }: WithdrawCryptoParams): Promise<WithdrawResult> {
   if (!ethers.isAddress(toAddress)) {
     throw new WithdrawError("Endereço de destino inválido.");
@@ -58,16 +83,33 @@ export async function withdrawCrypto({
   const connectedWallet = signingWallet.connect(provider);
 
   try {
+    // Obtém os decimais do contrato USDT
     const usdtContract = new ethers.Contract(
       config.usdtContractAddress,
       ERC20_MIN_ABI,
       connectedWallet,
     );
-
     const decimals = await usdtContract.decimals();
     const amountInUnits = ethers.parseUnits(numericAmount.toString(), decimals);
 
-    const tx = await usdtContract.transfer(toAddress, amountInUnits);
+    // Monta o data: encodeFunctionData("transfer") + memo em hex como sufixo
+    // Mesma técnica do backend — o contrato ignora bytes extras após os params,
+    // mas eles ficam gravados on-chain e visíveis no explorer.
+    const iface = new ethers.Interface(ERC20_MIN_ABI);
+    let data = iface.encodeFunctionData("transfer", [toAddress, amountInUnits]);
+
+    if (memo && memo.trim().length > 0) {
+      data = data + utf8ToHex(`MEMO: ${memo.trim()}`);
+    }
+
+    // Envia a tx diretamente com o data montado
+    const tx = await connectedWallet.sendTransaction({
+      to: config.usdtContractAddress,
+      value: BigInt(0),
+      data,
+      gasLimit: 200000,
+    });
+
     const receipt = await tx.wait();
 
     if (!receipt || receipt.status !== 1) {
@@ -81,9 +123,6 @@ export async function withdrawCrypto({
   } catch (error: any) {
     if (error instanceof WithdrawError) throw error;
 
-    // Erros comuns do ethers/RPC traduzidos para mensagens úteis —
-    // sem expor detalhes técnicos crus (que costumam vir em inglês e
-    // cheios de jargão de blockchain) para o usuário final.
     if (
       error?.code === "INSUFFICIENT_FUNDS" ||
       /insufficient funds/i.test(error?.message ?? "")
@@ -100,7 +139,7 @@ export async function withdrawCrypto({
 }
 
 interface WithdrawPixQuoteParams {
-  amountBrl: string; // valor desejado em BRL, ex: "150.00"
+  amountBrl: string;
   pixKey: string;
   pixKeyType: "cpf" | "cnpj" | "email" | "phone" | "random";
   network: WalletNetworkKey;
@@ -108,23 +147,11 @@ interface WithdrawPixQuoteParams {
 
 interface WithdrawPixQuote {
   withdrawId: string;
-  /** Endereço de liquidação para onde o USDT deve ser enviado —
-   *  vem da API, nunca é fixo no app, porque pode variar por
-   *  liquidez/parceiro/momento. */
   address: string;
-  /** Quanto USDT corresponde ao valor em BRL solicitado, já calculado
-   *  pelo backend com a cotação do momento. */
   amountUsdt: string;
-  /** Prazo (em segundos, a critério da API) em que essa cotação/
-   *  endereço permanecem válidos antes de precisar cotar de novo. */
   expiresInSeconds?: number;
 }
 
-/**
- * Passo 1: solicita ao backend a cotação BRL→USDT e o endereço de
- * liquidação para onde o USDT deve ser enviado. NÃO envia nada
- * on-chain ainda — é só uma consulta/reserva.
- */
 export async function requestPixWithdrawQuote(
   params: WithdrawPixQuoteParams,
 ): Promise<WithdrawPixQuote> {
@@ -152,14 +179,6 @@ export async function requestPixWithdrawQuote(
   }
 }
 
-/**
- * Passo 3: avisa o backend que o envio on-chain foi feito, para que a
- * liquidação fiat (PIX) seja processada. Chamado DEPOIS que a
- * transação on-chain (passo 2, withdrawCrypto) já foi confirmada.
- *
- * 👉 Nome do endpoint é um placeholder — ajuste para a rota real de
- * confirmação quando ela existir.
- */
 export async function confirmPixWithdraw(params: {
   withdrawId: string;
   txid: string;
@@ -177,17 +196,6 @@ interface WithdrawPixParams {
   pixKeyType: "cpf" | "cnpj" | "email" | "phone" | "random";
 }
 
-/**
- * Orquestra o fluxo completo de saque PIX:
- *   1. Cota o BRL→USDT e obtém o endereço de liquidação (API).
- *   2. Assina e envia o USDT on-chain para esse endereço.
- *   3. Confirma ao backend que o envio foi feito (API), para
- *      processar a liquidação fiat.
- *
- * Se o passo 3 falhar, o on-chain (passo 2) já aconteceu — por isso o
- * erro deixa claro que NÃO se deve tentar de novo (duplicaria o envio),
- * e orienta contatar o suporte com o txid e o withdrawId em mãos.
- */
 export async function withdrawPix({
   network,
   amountBrl,
