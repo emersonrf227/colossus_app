@@ -1,184 +1,45 @@
 export default {
   login: {
     welcome: "Welcome back",
-    subtitle: "Sign in to your account to continue",
+    subtitle: "Blockchain made easy in the palm of your hand.",
     user: "Username",
     password: "Password",
     login: "Sign In",
     forgotPassword: "Forgot my password",
-    register: "I want to register",
+    register: "Telegram Community",
     chooseLanguage: "Choose language",
     changeLanguage: "This changes the language displayed in the app",
-    or: "OR",
   },
-  forget: {
-    title: "Forgot your password?",
-    subtitle:
-      "Enter your registered email and we'll send a code to reset your password.",
-    iemail: "Your Email",
-    send: "Send",
-    know: "Remember your password?",
-    open: "Sign In",
-  },
-  pinforger: {
-    title: "Enter the code received",
-    subtitle: " We sent a 6-digit code to",
-    label_new_pass: "NEW PASSWORD",
-    inew: "New Password",
-    cnew: "Confirm New Password",
-    bconfirm: "Confirm",
-    breturn: "Back",
-  },
-  cadwallet: {
-    title: "Receiving Wallet",
-    configured: "Wallet configured",
-    network: "NETWORK",
-    addressLabel: "WALLET ADDRESS",
-    addressDescription:
-      "Received payments will be automatically forwarded to this address on the selected network.",
-    addressPlaceholder: "0x...",
-    registerWallet: "Register wallet",
-    copySuccess: "Address copied!",
-    registerSuccess: "Receiving wallet registered!",
-    invalidAddress: "Invalid address for the {{network}} network.",
-    clipboardError: "Could not access clipboard",
-    walletCheckError: "Could not verify your wallet. Please try again.",
-    comingSoon: "Coming soon!",
-    token: "USDT",
-  },
-  dashboard: {
-    generateCharge: "Generate charge",
-    keypad: { clear: "C", backspace: "⌫" },
-    validation: { invalidAmount: "Enter a valid amount." },
-  },
-  extract: {
-    title: "Charges",
-    period: "PERIOD",
-    status: "STATUS",
-    periods: {
-      today: "Today",
-      sevenDays: "7 days",
-      thirtyDays: "30 days",
-      custom: "Custom",
-    },
-    statusOptions: {
-      open: "Open",
-      confirmed: "Confirmed",
-      cancelled: "Cancelled",
-    },
-    noConfirmationDate: "No confirmation date",
-    loading: "Loading charges...",
-    empty: "No charges found for this period and status.",
-    errors: { loadInvoices: "Error fetching charges." },
-  },
-  about: {
-    title: "About",
-    versionLabel: "VERSION {{version}}",
-    brazilTitle: "100% Brazilian technology",
-    brazilDescriptionBefore: "Colossus Crypto is developed and maintained ",
-    brazilDescriptionHighlight: "in Brazil, by Brazilians",
-    brazilDescriptionAfter:
-      ", combining cutting-edge cryptocurrency technology with the support and trust of a national company.",
-    developedBy: "DEVELOPED BY",
-    companyLabel: "COMPANY",
-    cnpjLabel: "CNPJ",
-    footerNote: "Made with 💜 in 🇧🇷 for the whole world.",
-  },
-  info: {
-    title: "My Information",
-    personTypeIndividual: "Individual",
-    personTypeCompany: "Company",
-    errorLoad: "Could not load your information.",
-    retry: "Try again",
-    errorEmpty: "No information found.",
-    registrationData: "REGISTRATION DATA",
-    socialName: "SOCIAL NAME",
-    document: "DOCUMENT",
-    contact: "CONTACT",
-    email: "EMAIL",
-    phone: "PHONE",
-    address: "ADDRESS",
-    street: "STREET",
-    city: "CITY",
-    zipCode: "ZIP CODE",
-    emptyValue: "-",
-  },
-  invoice: {
-    title: "Charge",
-    loadingInvoice: "Loading charge...",
-    toastExpired: "Charge expired",
-    toastTimeUp: "Time's up. Going back...",
-    toastAddressCopied: "Address copied!",
-    amountLabel: "AMOUNT TO PAY",
-    expiresIn: "Expires in {{time}}",
-    cancelInvoice: "Cancel charge",
-  },
+
   menu: {
-    title: "Settings",
+    title: "Menu",
     preferences: "PREFERENCES",
     general: "GENERAL",
     languageAndCurrency: "Language & Currency",
-    logout: "Sign out",
+    logout: "Delete Wallet",
     logoutError: "Could not sign out. Please try again.",
     items: {
-      info: "Information",
-      wallet: "Wallet",
-      invoices: "Charges",
+      info: "Receive",
+      wallet: "Mnemonic",
+      invoices: "History",
       support: "Support",
       about: "About",
       termsOfUse: "Terms of Use",
       printer: "Printer",
       community: "Community",
     },
-  },
-  printer: {
-    title: "Printer",
-    labelSizeTitle: "Label size",
-    labelSizeSubtitle: "Choose the model compatible with your thermal printer",
-    toastSaved: "Printer {{model}} saved!",
-    toastSaveError: "Could not save configuration.",
-    options: { compact: "Compact", standard: "Standard" },
-  },
-  receipt: {
-    toastNoPrinter: "No printer configured. Go to settings.",
-    toastPrintSuccess: "Receipt printed!",
-    toastPrintError: "Could not print. Check your printer.",
-    notFound: "Receipt not found.",
-    paymentConfirmed: "Payment confirmed",
-    validatedOnBlockchain: "Transaction validated on blockchain",
-    receiptSubtitle: "Payment receipt",
-    amountReceived: "AMOUNT RECEIVED",
-    confirmationDate: "CONFIRMATION DATE",
-    recipient: "RECIPIENT",
-    reference: "REFERENCE",
-    txid: "TXID",
-    printButton: "Print receipt",
-    backButton: "Back to home",
-    print: {
-      headerTitle: "Proof Colossus Crypto",
-      statusConfirmed: "PAYMENT CONFIRMED",
-      amountLabel: "Amount",
-      dateTimeLabel: "Date/Time",
-      recipientLabel: "Recipient:",
-      referenceLabel: "Reference:",
-      txidLabel: "TXID:",
-      scanHint: "Scan to view on Polygonscan",
+    modal: {
+      title: "Warning",
+      description:
+        "By leaving your account, all wallet keys will be removed from this device.",
+      warning:
+        "If you have NOT saved your 12 recovery words, you may permanently lose access to your wallet and funds.",
+      warning_plus: "This action is irreversible.",
+      cancel: "Cancel",
+      understood: "I understand, delete wallet",
     },
   },
-  selectNetwork: {
-    title: "Choose network",
-    amountSummaryLabel: "CHARGE AMOUNT",
-    availableNetworks: "AVAILABLE NETWORKS",
-    loadingNetworks: "Loading networks...",
-    loadNetworksError: "Could not load networks.",
-    retry: "Try again",
-    conversionHint:
-      "The amount will be converted to USDT based on the current rate",
-    proceed: "Proceed",
-    createInvoiceError: "Could not create charge. Please try again.",
-    noForwardWallet:
-      "Receiving wallet not found. Register a wallet to continue.",
-  },
+
   settingsLanguage: {
     title: "Language & Currency",
     appLanguage: "APP LANGUAGE",
@@ -191,6 +52,7 @@ export default {
       PYG: "Paraguayan Guaraní",
     },
   },
+
   support: {
     title: "Support",
     needHelp: "Need help?",
@@ -203,115 +65,114 @@ export default {
       q1: {
         question: "1. What is Colossus Crypto?",
         answer:
-          "Colossus Crypto is a digital payment solution developed by I Like Technology, allowing businesses of all sizes to accept payments in USDT (Tether) — one of the most stable and widely used cryptocurrencies — via app, web system and card terminal.",
+          "Colossus Crypto is a digital payment solution developed by I Like Technology, allowing businesses of all sizes to accept payments in USDT (Tether) via app, web system and card terminal.",
       },
       q2: {
         question: "2. Who can use Colossus Crypto?",
         answer:
-          "The platform is aimed at merchants (individuals or companies) who want to offer a modern and secure payment alternative to their customers, with lower fees and immediate liquidity.",
+          "The platform is aimed at merchants who want to offer a modern and secure payment alternative with lower fees and immediate liquidity.",
       },
       q3: {
         question: "3. How does receiving in USDT work?",
         answer:
-          "When making a sale, the merchant generates a QR code or payment link via the app, system or terminal. The customer pays in USDT, and the amount is instantly received in the merchant's digital wallet linked to Colossus Crypto.",
+          "When making a sale, the merchant generates a QR code or payment link. The customer pays in USDT, and the amount is instantly received in the merchant's digital wallet.",
       },
       q4: {
         question: "4. What fees does Colossus Crypto charge?",
-        answer:
-          "Colossus Crypto charges a fixed fee of 1.95% per transaction, lower than the average charged by traditional credit card operators.",
+        answer: "Colossus Crypto charges a fixed fee of 1.95% per transaction.",
       },
       q5: {
-        question:
-          "5. Do I need to understand cryptocurrency to use the platform?",
+        question: "5. Do I need to understand cryptocurrency?",
         answer:
-          "No. The platform was designed to be intuitive and simple, with a friendly interface and dedicated support, even for those who have never used cryptocurrency before.",
+          "No. The platform was designed to be intuitive and simple, even for those who have never used cryptocurrency.",
       },
       q6: {
         question: "6. Where can I use Colossus Crypto?",
         answer:
-          "The solution can be used in physical stores, e-commerce, delivery services or freelancers, via mobile app, web system or compatible payment terminal.",
+          "In physical stores, e-commerce, delivery services or freelancers, via mobile app, web system or compatible terminal.",
       },
       q7: {
         question: "7. Is it safe to receive payments in USDT?",
         answer:
-          "Yes. USDT is a dollar-backed stablecoin with high stability and liquidity. Colossus Crypto also uses security technologies, encryption and authentication to ensure full protection in transactions.",
+          "Yes. USDT is a dollar-backed stablecoin with high stability and liquidity.",
       },
       q8: {
-        question:
-          "8. What are the benefits of accepting cryptocurrency in my business?",
+        question: "8. What are the benefits of accepting cryptocurrency?",
         answer:
-          "In addition to visibility as a modern company, merchants benefit from lower fees, instant settlement, access to a new consumer profile and exemption from traditional banking bureaucracies.",
+          "Lower fees, instant settlement, access to a new consumer profile and exemption from banking bureaucracies.",
       },
       q9: {
-        question: "9. Do I need to register to use it?",
+        question: "9. Do I need to register?",
         answer:
-          "Download the app, register with a Colossus Crypto consultant and, after verification, your company will be ready to accept USDT payments.",
+          "Download the app, register with a Colossus Crypto consultant and after verification your company will be ready to accept USDT.",
       },
     },
   },
+
   terms: {
     title: "Terms of Use",
     docTitle: "Terms of Use – Colossus Crypto",
     lastUpdated: "Last updated: {{date}}",
     intro:
-      'These Terms of Use govern the use of the Colossus Crypto platform, hereinafter referred to as the "Platform", owned by I Like Technology, registered under CNPJ No. 45.123.168/0001-22.\n\nBy accessing or using any feature available on the Platform, the User declares to have read, understood and fully agreed to the provisions set forth herein.',
+      "These Terms of Use govern the use of the Colossus Crypto platform, owned by I Like Technology, registered under CNPJ No. 45.123.168/0001-22.",
     footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "Purpose",
         paragraphs: [
-          "This platform aims to provide technological solutions for merchants and users to accept and make payments using digital assets, especially the USDT (Tether) stablecoin, in a secure, efficient and transparent environment, via mobile app, web system, APIs and physical devices (terminals).",
+          "This platform provides technological solutions for merchants and users to accept and make payments using digital assets, especially the USDT stablecoin.",
         ],
       },
       s2: {
-        title: "Registration and Eligibility",
+        title: "Registration",
         paragraphs: [
-          "2.1. To use the services, the User must register in advance, providing true, complete and up-to-date information.",
-          "2.2. I Like Technology reserves the right to verify the accuracy of information and may refuse or suspend registrations in case of inconsistencies or misuse.",
+          "2.1. To use the services, the User must register in advance with true and complete information.",
+          "2.2. I Like Technology reserves the right to verify information and refuse registrations in case of inconsistencies.",
         ],
       },
       s3: {
         title: "Terms of Use",
         paragraphs: [
-          "3.1. The User agrees to use the Platform exclusively for lawful purposes, being civilly and criminally responsible for any acts performed.",
+          "3.1. The User agrees to use the Platform exclusively for lawful purposes.",
           "3.2. It is prohibited to use the Platform for:",
         ],
         bullets: [
-          "Fraudulent transactions or those involving illegal activities",
-          "Money laundering or financing of terrorism",
-          "Trading products or services prohibited by law",
+          "Fraudulent transactions or illegal activities",
+          "Money laundering or terrorism financing",
+          "Trading prohibited products or services",
         ],
       },
       s4: {
         title: "Fees",
         paragraphs: [
-          "4.1. Use of the Platform may incur fees, currently set at 2% (two percent) on each transaction performed.",
-          "4.2. I Like Technology reserves the right to change the values with prior notice of at least 15 (fifteen) days.",
+          "4.1. Use of the Platform may incur fees, currently set at 2% per transaction.",
+          "4.2. I Like Technology reserves the right to change values with at least 15 days notice.",
         ],
       },
       s5: {
         title: "Intellectual Property",
         paragraphs: [
-          "All elements of Colossus Crypto, including logos, systems, codes, content and trademarks, are the exclusive property of I Like Technology, and any unauthorized reproduction or use is prohibited.",
+          "All elements of Colossus Crypto are the exclusive property of I Like Technology. Unauthorized reproduction is prohibited.",
         ],
       },
       s6: {
         title: "Responsibilities",
         paragraphs: ["6.1. I Like Technology is not responsible for:"],
         bullets: [
-          "Errors caused by misuse of the platform",
-          "Failures resulting from third parties (e.g.: internet providers)",
-          "Financial losses resulting from improper transactions carried out by third parties with access to the user's account or wallet",
+          "Errors caused by misuse",
+          "Failures from third parties",
+          "Financial losses from unauthorized transactions",
         ],
       },
       s7: {
-        title: "Modifications and Updates",
+        title: "Modifications",
         paragraphs: [
-          "These Terms may be changed at any time. Continued use of the platform after changes are published will imply tacit acceptance of the new terms.",
+          "These Terms may be changed at any time. Continued use implies acceptance of the new terms.",
         ],
       },
     },
   },
+
   communityMap: {
     headerTitle: "Colossus Community",
     filterAll: "All",
@@ -330,6 +191,7 @@ export default {
     paymentMethods: "PAYMENT METHODS",
     tags: "TAGS",
   },
+
   wallet: {
     title: "Wallet",
     totalBalance: "TOTAL BALANCE",
@@ -347,68 +209,80 @@ export default {
     lowGas: "Low {{symbol}} balance for fees",
     viewOnly:
       "You are viewing this wallet in read-only mode. The access key is associated with another device — withdrawals can only be made from that device.",
+    modal: {
+      pinTitle: "To access the wallet we need to validate your PIN code.",
+      pinTitleModal: "Authentication required to access the wallet.",
+    },
   },
+
+  walletReceive: {
+    title: "Receive",
+    addressLabel: "Address",
+    copied: "Address copied!",
+    copy: "Copy",
+    share: "Share",
+    noAddress: "No wallet found.",
+  },
+
   walletSetup: {
     title: "Set up wallet",
     subtitle: "How do you want to set it up?",
-    description:
-      "Create a new wallet, import an existing one, or connect an external address for viewing.",
+    description: "Create a new wallet or import an existing one.",
     createNew: "Create new wallet",
     createDescription:
-      "The app generates a wallet just for you, with balance, withdrawal and PIX integrated. You keep the 12-word recovery phrase.",
+      "The app generates a wallet just for you. You keep the 12-word recovery phrase.",
     recommended: "RECOMMENDED",
     import: "Import existing wallet",
     importDescription:
-      "Already have a wallet with a 12-word phrase (MetaMask, Trust Wallet, SafePal)? Import here for full access to balance, withdrawal and PIX.",
+      "Already have a wallet with a 12-word phrase (MetaMask, Trust Wallet, SafePal)? Import here for full access.",
     viewOnly: "View balance only",
     viewOnlyDescription:
-      "Enter only the public address. You will see the balance but cannot withdraw via the app — movements remain in your original wallet.",
+      "Enter only the public address. You will see the balance but cannot withdraw via the app.",
     connectAddress: "Connect address",
-    warning:
-      "Never share your 12-word phrase or private key with anyone. Colossus Crypto will never ask for this information.",
+    warning: "Never share your 12-word phrase or private key with anyone.",
     clipboardError: "Could not access clipboard",
     invalidAddress: "Invalid address.",
     connectSuccess: "External wallet connected!",
     connectError: "Could not save wallet. Please try again.",
   },
+
   walletBackup: {
     titleReveal: "Recovery phrase",
     titleConfirm: "Confirm backup",
     warningNeverShare: "Never share",
     warningText:
-      " these 12 words with anyone. Anyone with them can access and move all funds in your wallet. Colossus Crypto will never ask for these words by phone, chat or email.",
+      " these 12 words with anyone. Anyone with them can access and move all funds in your wallet.",
     revealButton: "Tap to reveal words",
     continueButton: "I've noted them, continue",
     stepLabel: "FINAL STEP",
     stepTitle: "Confirm you noted correctly",
-    stepSubtitle:
-      "Enter the requested words to confirm your backup. This ensures you actually saved the phrase in a safe place.",
+    stepSubtitle: "Enter the requested words to confirm your backup.",
     wordLabel: "WORD #{{number}}",
     wordPlaceholder: "Enter word",
     confirmButton: "Confirm and create wallet",
     errorWordMismatch: "A word doesn't match. Check your backup.",
     errorGenerate: "Could not generate wallet. Please try again.",
     errorSave: "Could not save wallet. Please try again.",
-    errorRegister:
-      "Wallet created locally, but could not register it on the server. Check your internet and try again in Settings > Wallet.",
+    errorRegister: "Wallet created locally, but could not register on server.",
     revealFirst: "Tap 'Reveal words' before continuing.",
   },
+
   walletImport: {
     title: "Import wallet",
     warningNeverShare: "Never share",
     warningText:
-      " your recovery phrase. Colossus Crypto will never ask for these words by phone, chat or email. Only enter on trusted connections.",
+      " your recovery phrase. Colossus Crypto will never ask for these words.",
     sectionLabel: "RECOVERY PHRASE (12 WORDS)",
     wordPlaceholder: "word",
     importButton: "Import wallet",
     importing: "Importing...",
     errorFillAll: "Fill in all 12 words.",
     errorInvalidMnemonic: "Invalid recovery phrase. Check the words and order.",
-    errorRegister:
-      "Wallet imported locally, but could not register it on the server. Check your internet.",
+    errorRegister: "Wallet imported locally, but could not register on server.",
     errorImport: "Could not import wallet. Please try again.",
     successImport: "Wallet imported successfully!",
   },
+
   walletPinSetup: {
     labelCreate: "CREATE PIN",
     labelReset: "RESET PIN",
@@ -423,25 +297,32 @@ export default {
     successCreate: "PIN created successfully!",
     successReset: "PIN reset successfully!",
   },
+
   walletExport: {
     title: "Recovery phrase",
     lockedTitle: "Protected content",
     lockedSubtitle:
-      "Your 12-word recovery phrase can only be viewed after confirming your security PIN.",
+      "Your 12-word recovery phrase can only be viewed after confirming your PIN.",
     unlockButton: "Confirm PIN to view",
     warningNeverShare: "Never share",
     warningText:
-      " these words with anyone. Anyone with them can move all funds in your wallet without reversal.",
+      " these words with anyone. Anyone with them can move all funds without reversal.",
     revealButton: "Tap to reveal",
     hideButton: "Hide words",
     copyButton: "Copy all words",
     copiedSuccess: "Phrase copied! Keep it in a safe place.",
     errorNotFound: "No seed phrase found. This wallet may be external.",
-    errorRecover: "Could not recover the seed phrase.",
+    errorRecover: "Could not recover seed phrase.",
     pinTitle: "Confirm your PIN",
     pinSubtitle: "Authentication required to display your recovery phrase.",
   },
+
   walletWithdraw: {
+    memoLabel: "MEMO (OPTIONAL)",
+    memoPlaceholder: "Identification or transaction note",
+    memoNote:
+      "The memo is optional and is permanently recorded on the blockchain.",
+    qrHint: "Point at the wallet address QR Code",
     title: "Withdraw USDT",
     networkLabel: "NETWORK",
     addressLabel: "DESTINATION ADDRESS",
@@ -450,7 +331,7 @@ export default {
     amountPlaceholder: "0.00",
     available: "Available: {{amount}} USDT",
     maxButton: "MAX",
-    lowGas: "Low {{symbol}} balance — may not be enough to pay network fee.",
+    lowGas: "Low {{symbol}} balance — may not be enough for network fee.",
     submitButton: "Review and withdraw",
     invalidAddress: "Invalid destination address.",
     invalidAmount: "Enter a valid amount.",
@@ -464,15 +345,17 @@ export default {
     pinTitle: "Confirm withdrawal",
     pinSubtitle: "You are sending {{amount}} USDT. Confirm PIN to proceed.",
   },
+
   walletWithdrawSuccess: {
     title: "Withdrawal sent!",
     subtitle:
-      "The transaction was signed and sent to the blockchain. Confirmation may take a few seconds depending on the network.",
+      "The transaction was signed and sent to the blockchain. Confirmation may take a few seconds.",
     txidLabel: "TXID",
     explorerButton: "View on Explorer",
     shareButton: "Share",
     shareMessage: "Transaction confirmed:\n{{url}}",
   },
+
   walletWithdrawPix: {
     title: "PIX Withdrawal",
     networkLabel: "NETWORK",
@@ -508,6 +391,7 @@ export default {
     qrHint: "Point at the PIX QR Code",
     pixIdentified: "PIX identified: {{name}}",
   },
+
   walletWithdrawPixForm: {
     title: "PIX Details",
     summaryLabel: "SUMMARY",
@@ -528,10 +412,8 @@ export default {
     qrInvalid: "Invalid or unrecognized QR Code.",
     qrSuccess: "QR read: {{name}}",
     fixedAmount: "QR with fixed amount: R$ {{amount}}",
-    typePhone: "Phone",
-    typeEvp: "Random key",
-    typeCopyPaste: "Copy and Paste (QR)",
   },
+
   walletWithdrawPixConfirm: {
     title: "Confirm PIX",
     detailsLabel: "OPERATION DETAILS",
@@ -549,10 +431,11 @@ export default {
     pinSubtitle: "You will send {{usdt}} USDT and receive R$ {{brl}} via PIX.",
     errorGeneric: "Could not process PIX withdrawal.",
   },
+
   walletWithdrawPixStatus: {
     title: "Awaiting confirmation",
     subtitle:
-      "USDT has been sent. We are waiting for blockchain confirmation to process the PIX.",
+      "USDT has been sent. Waiting for blockchain confirmation to process PIX.",
     network: "Network",
     pixKey: "PIX Key",
     type: "Type",
@@ -560,12 +443,13 @@ export default {
     txid: "TXID",
     txidCopied: "TXID copied!",
     errorExpired:
-      "The transaction expired before confirmation. Check your balance and try again.",
+      "Transaction expired before confirmation. Check your balance and try again.",
     errorFailed:
-      "The transaction failed. USDT may have been returned — check your balance and contact support with the TXID.",
+      "Transaction failed. USDT may have been returned — check your balance and contact support.",
     errorGeneric: "An error occurred. Contact support with the TXID.",
     errorTimeout: "Wait time exceeded. Check status soon.",
   },
+
   walletWithdrawPixSuccess: {
     title: "PIX sent!",
     subtitle:
@@ -589,8 +473,7 @@ export default {
   walletPixReceipt: {
     title: "PIX Receipt",
     loading: "Loading receipt...",
-    error:
-      "Could not load the receipt. The transaction may still be processing.",
+    error: "Could not load receipt. The transaction may still be processing.",
     confirmed: "PIX CONFIRMED",
     valueLabel: "Amount received via PIX",
     sectionRecipient: "RECIPIENT",
@@ -622,6 +505,7 @@ export default {
     pixReceipt: "PIX Receipt",
     blockchain: "Blockchain",
   },
+
   gasSponsor: {
     idleTitle: "Sponsored gas",
     idleSubtitle:
