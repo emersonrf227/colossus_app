@@ -440,6 +440,11 @@ export default {
       "Se requiere autenticación para mostrar tu frase de recuperación.",
   },
   walletWithdraw: {
+    memoLabel: "MEMO (OPCIONAL)",
+    memoPlaceholder: "Identificación o nota de la transacción",
+    memoNote:
+      "El memo es opcional y queda registrado permanentemente en la blockchain.",
+    qrHint: "Apunta al código QR de la dirección",
     title: "Retirar USDT",
     networkLabel: "RED",
     addressLabel: "DIRECCIÓN DESTINO",

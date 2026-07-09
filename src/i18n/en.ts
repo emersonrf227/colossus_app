@@ -442,6 +442,11 @@ export default {
     pinSubtitle: "Authentication required to display your recovery phrase.",
   },
   walletWithdraw: {
+    memoLabel: "MEMO (OPTIONAL)",
+    memoPlaceholder: "Identification or transaction note",
+    memoNote:
+      "The memo is optional and is permanently recorded on the blockchain.",
+    qrHint: "Point at the wallet address QR Code",
     title: "Withdraw USDT",
     networkLabel: "NETWORK",
     addressLabel: "DESTINATION ADDRESS",

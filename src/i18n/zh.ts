@@ -410,6 +410,10 @@ export default {
     pinSubtitle: "需要身份验证才能显示您的恢复助记词。",
   },
   walletWithdraw: {
+    memoLabel: "MEMO（可选）",
+    memoPlaceholder: "交易标识或备注",
+    memoNote: "Memo是可选的，将永久记录在区块链上。",
+    qrHint: "对准钱包地址二维码",
     title: "提取USDT",
     networkLabel: "网络",
     addressLabel: "目标地址",

@@ -422,6 +422,10 @@ export default {
     pinSubtitle: "المصادقة مطلوبة لعرض عبارة الاسترداد.",
   },
   walletWithdraw: {
+    memoLabel: "MEMO (اختياري)",
+    memoPlaceholder: "تعريف أو ملاحظة المعاملة",
+    memoNote: "الـ Memo اختياري ويُسجَّل بشكل دائم على البلوكشين.",
+    qrHint: "وجّه الكاميرا نحو رمز QR للعنوان",
     title: "سحب USDT",
     networkLabel: "الشبكة",
     addressLabel: "عنوان الوجهة",
