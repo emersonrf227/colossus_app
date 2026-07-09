@@ -1,13 +1,14 @@
 import { ethers } from "ethers";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import rstruther from "@/infraestructure/http/nodeApi";
 import { getSigningWallet } from "../wallet/walletStorage";
 import { getProvider, WalletNetworkKey } from "../wallet/walletProviders";
 
 export interface GasSponsorResult {
   txid: string;
-  amount: string; // ex: "0.01" POL
-  symbol: string; // "POL" ou "XPL"
-  estimatedArrival: number; // segundos estimados para o gas chegar
+  amount: string;
+  symbol: string;
+  estimatedArrival: number;
 }
 
 export class GasSponsorError extends Error {
@@ -25,16 +26,46 @@ export class GasSponsorError extends Error {
   }
 }
 
-// Limite mínimo de gas nativo para disparar o pedido (em ETH/POL/XPL)
+// ─── Flag de sessão pendente ──────────────────────────────────────────────
+// Salva no AsyncStorage que o gas foi recebido mas o approve ainda não foi
+// executado. Se o app fechar no meio do processo, ao reabrir essa flag
+// estará presente e o fluxo de approve pode ser retomado.
+
+const GAS_PENDING_KEY = "gas_sponsor_pending";
+
+interface GasPendingSession {
+  network: WalletNetworkKey;
+  backendAddress: string;
+  gasTxid: string;
+  estimatedArrival: number;
+  startedAt: number; // timestamp unix
+}
+
+export async function getGasPendingSession(): Promise<GasPendingSession | null> {
+  try {
+    const raw = await AsyncStorage.getItem(GAS_PENDING_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as GasPendingSession;
+  } catch {
+    return null;
+  }
+}
+
+async function setGasPendingSession(session: GasPendingSession): Promise<void> {
+  await AsyncStorage.setItem(GAS_PENDING_KEY, JSON.stringify(session));
+}
+
+export async function clearGasPendingSession(): Promise<void> {
+  await AsyncStorage.removeItem(GAS_PENDING_KEY);
+}
+
+// ─── Threshold de gas ────────────────────────────────────────────────────
+
 export const GAS_THRESHOLD: Record<WalletNetworkKey, string> = {
-  polygon: "0.08", // 0.01 POL
-  plasma: "0.01", // 0.01 XPL
+  polygon: "0.08",
+  plasma: "0.01",
 };
 
-/**
- * Verifica se o saldo nativo está abaixo do threshold de gas.
- * Se sim, retorna true e o app deve mostrar o botão de gas patrocinado.
- */
 export async function needsGasSponsorship(
   address: string,
   network: WalletNetworkKey,
@@ -49,38 +80,21 @@ export async function needsGasSponsorship(
   }
 }
 
-/**
- * Solicita gas patrocinado ao backend.
- *
- * Fluxo:
- * 1. Monta mensagem com endereço + timestamp + nonce (anti-replay)
- * 2. Assina localmente com a chave privada (sem gas — só criptografia)
- * 3. Envia endereço + assinatura + timestamp ao backend
- * 4. Backend verifica assinatura, saldo USDT e cooldown antes de enviar gas
- */
+// ─── Solicitação de gas ───────────────────────────────────────────────────
+
 export async function requestGasSponsorship(
   network: WalletNetworkKey,
+  backendAddress: string,
 ): Promise<GasSponsorResult> {
-  // 1. Obtém a wallet de assinatura local
   const wallet = await getSigningWallet();
   if (!wallet) {
-    throw new GasSponsorError(
-      "Carteira não encontrada. Esta função só está disponível em carteiras geradas pelo app.",
-      "NO_WALLET",
-    );
+    throw new GasSponsorError("Carteira não encontrada.", "NO_WALLET");
   }
 
-  // 2. Monta a mensagem com timestamp atual (segundos) como nonce
-  //    O backend rejeita mensagens com mais de 5 minutos
   const timestamp = Math.floor(Date.now() / 1000);
   const nonce = `${wallet.address.toLowerCase()}:${timestamp}:gas-request:${network}`;
-
-  // 3. Assina a mensagem localmente — zero custo, só criptografia
-  //    ethers.signMessage adiciona o prefixo "\x19Ethereum Signed Message:\n"
-  //    automaticamente (padrão EIP-191)
   const signature = await wallet.signMessage(nonce);
 
-  // 4. Envia ao backend
   try {
     const response = await rstruther.post("gas/request", {
       address: wallet.address,
@@ -90,40 +104,47 @@ export async function requestGasSponsorship(
     });
 
     const res = response.data?.data?.res;
-    if (!res) {
+    if (!res)
       throw new GasSponsorError("Resposta inesperada do servidor.", "REJECTED");
-    }
 
-    return {
+    const result: GasSponsorResult = {
       txid: res.txid,
       amount: res.amount,
       symbol: res.symbol,
       estimatedArrival: res.estimatedArrival ?? 15,
     };
+
+    // ✅ Gas confirmado pelo backend — salva a flag de sessão pendente.
+    // A partir daqui o approve DEVE acontecer. Se o app fechar, ao reabrir
+    // a tela verifica getGasPendingSession() e retoma daqui.
+    await setGasPendingSession({
+      network,
+      backendAddress,
+      gasTxid: result.txid,
+      estimatedArrival: result.estimatedArrival,
+      startedAt: timestamp,
+    });
+
+    return result;
   } catch (error: any) {
     const code = error?.response?.data?.code;
     const message = error?.response?.data?.message;
 
-    if (code === "COOLDOWN") {
+    if (code === "COOLDOWN")
       throw new GasSponsorError(
-        message ??
-          "Você já solicitou gas recentemente. Aguarde antes de solicitar novamente.",
+        message ?? "Você já solicitou gas recentemente.",
         "COOLDOWN",
       );
-    }
-    if (code === "LOW_BALANCE") {
+    if (code === "LOW_BALANCE")
       throw new GasSponsorError(
-        message ?? "Saldo de USDT insuficiente para solicitar gas patrocinado.",
+        message ?? "Saldo de USDT insuficiente.",
         "LOW_BALANCE",
       );
-    }
-    if (code === "ALREADY_ENOUGH") {
+    if (code === "ALREADY_ENOUGH")
       throw new GasSponsorError(
         message ?? "Você já tem gas suficiente nesta rede.",
         "ALREADY_ENOUGH",
       );
-    }
-
     if (error instanceof GasSponsorError) throw error;
 
     throw new GasSponsorError(
@@ -133,15 +154,8 @@ export async function requestGasSponsorship(
   }
 }
 
-/**
- * Após receber o gas, executa o approve on-chain e notifica o backend
- * para resgatar os 0.5 USDT via transferFrom imediatamente.
- *
- * Fluxo:
- * 1. App faz approve(hotWallet, 0.5 USDT) on-chain
- * 2. App notifica POST gas/collect
- * 3. Backend verifica allowance e chama transferFrom
- */
+// ─── Approve + Coleta ─────────────────────────────────────────────────────
+
 export async function approveAndCollect(
   network: WalletNetworkKey,
   backendAddress: string,
@@ -169,15 +183,37 @@ export async function approveAndCollect(
   const decimals = await usdtContract.decimals();
   const amount = ethers.parseUnits(amountUsdt, decimals);
 
-  // 1. Approve on-chain
+  // Approve on-chain
   const approveTx = await usdtContract.approve(backendAddress, amount);
   await approveTx.wait();
 
-  // 2. Notifica backend para resgatar via transferFrom
-  const response = await rstruther.post("gas/collect", {
+  // Notifica backend para resgatar via transferFrom
+  await rstruther.post("gas/collect", {
     address: wallet.address,
     network: network.toUpperCase(),
   });
 
+  // ✅ Approve concluído — remove a flag de sessão pendente.
+  // A partir daqui o backend já tem o allowance e pode resgatar.
+  await clearGasPendingSession();
+
   return { approveTxid: approveTx.hash };
 }
+
+// ─── Retomada de sessão pendente ─────────────────────────────────────────
+
+/**
+ * Verifica se existe uma sessão de gas pendente (app fechou antes do approve).
+ * Deve ser chamado ao montar o GasSponsorModal ou o WalletHome.
+ *
+ * Se retornar uma sessão, exibe o modal direto no estado "approving"
+ * e chama approveAndCollect com os dados salvos.
+ *
+ * Exemplo de uso no WalletHome:
+ *
+ *   useEffect(() => {
+ *     getGasPendingSession().then((session) => {
+ *       if (session) setShowGasModal(true); // modal abre já no passo correto
+ *     });
+ *   }, []);
+ */

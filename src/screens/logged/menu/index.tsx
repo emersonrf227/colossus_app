@@ -20,6 +20,7 @@ import {
   MapIcon,
   KeyRound,
   AlertTriangle,
+  Eraser,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import * as S from "./styles";
@@ -57,12 +58,7 @@ const MENU_ITEMS: MenuItem[] = [
     accentColor: "#6C5CE7",
     route: "getInfo",
   },
-  {
-    labelKey: "menu.items.wallet",
-    icon: KeyRound,
-    accentColor: "#00D2D3",
-    route: "WalletExport",
-  },
+
   {
     labelKey: "menu.items.invoices",
     icon: History,
@@ -93,6 +89,12 @@ const MENU_ITEMS: MenuItem[] = [
     icon: MapIcon,
     accentColor: "#c3f883",
     route: "Maps",
+  },
+  {
+    labelKey: "menu.items.wallet",
+    icon: KeyRound,
+    accentColor: "#00D2D3",
+    route: "WalletExport",
   },
 ];
 
@@ -277,7 +279,7 @@ export default function MenuScreen() {
               onPress={() => setShowLogoutModal(true)}
               activeOpacity={0.7}
             >
-              <LogOut size={18} color={colors.danger} strokeWidth={2.2} />
+              <Eraser size={18} color={colors.danger} strokeWidth={2.2} />
               <S.LogoutButtonText>{t("menu.logout")}</S.LogoutButtonText>
             </S.LogoutButton>
           </S.ScrollContent>

@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import {
   requestGasSponsorship,
   approveAndCollect,
+  getGasPendingSession,
   GasSponsorError,
   GasSponsorResult,
 } from "../../../components/gas/gasService";
@@ -175,8 +176,43 @@ export default function GasSponsorModal({
       setResult(null);
       setErrorMsg("");
       setApproveHash(null);
+      return;
     }
-  }, [visible]);
+
+    // Verifica se há uma sessão de gas pendente (app fechou antes do approve)
+    // Se sim, pula direto para o passo de approve
+    getGasPendingSession().then((session) => {
+      if (!session) return;
+      if (session.network !== network) return; // sessão de outra rede, ignora
+      // Retoma o fluxo a partir do approve
+      const waitMs = Math.max(
+        0,
+        (session.estimatedArrival + 5) * 1000 -
+          (Date.now() - session.startedAt * 1000),
+      );
+      setStep("requesting");
+      setTimeout(async () => {
+        setStep("approving");
+        try {
+          await approveAndCollect(session.network, session.backendAddress);
+          setStep("success");
+          onSuccess?.({
+            txid: session.gasTxid,
+            amount: "",
+            symbol: "",
+            estimatedArrival: 0,
+          });
+        } catch (error: any) {
+          setErrorMsg(
+            error instanceof GasSponsorError
+              ? error.message
+              : t("gasSponsor.errorGeneric"),
+          );
+          setStep("error");
+        }
+      }, waitMs);
+    });
+  }, [visible, network]);
 
   const handleRequest = useCallback(async () => {
     setStep("requesting");

@@ -102,16 +102,9 @@ export default function WalletBackup() {
     setSubmitting(true);
     try {
       await persistGeneratedWallet(walletData);
-      try {
-        await registerWalletAddress({
-          network: "polygon",
-          address: walletData.address,
-        });
-      } catch {
-        showToast({ message: t("walletBackup.errorRegister"), type: "error" });
-        navigate("WalletPinSetup" as never, { mode: "create" } as never);
-        return;
-      }
+      registerWalletAddress({
+        address: walletData.address,
+      });
       navigate("WalletPinSetup" as never, { mode: "create" } as never);
     } catch {
       showToast({ message: t("walletBackup.errorSave"), type: "error" });

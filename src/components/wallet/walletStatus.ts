@@ -1,10 +1,7 @@
-import rstruther from "@/infraestructure/http/nodeApi";
-import {
-  getStoredWalletAddress,
-  localSeedMatchesAddress,
-} from "./walletStorage";
+import { getStoredWalletAddress } from "./walletStorage";
 import { WalletNetworkKey } from "./walletProviders";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import swapxApi from "@/infraestructure/http/swapixApi";
 
 export interface ApiWalletRecord {
   id: number;
@@ -50,6 +47,8 @@ export async function getWalletStatus(): Promise<WalletStatus> {
     return { mode: "none", record: null };
   }
   const mode = source === "external" ? "view-only" : "full";
+
+  console.log("endereco===>", address);
   return {
     mode,
     record: { address } as any,
@@ -60,7 +59,7 @@ export async function registerWalletAddress(params: {
   address: string;
 }): Promise<void> {
   try {
-    await rstruther.post("register/wallet", {
+    await swapxApi.post("app/register/wallet", {
       address: params.address,
     });
   } catch (error: any) {

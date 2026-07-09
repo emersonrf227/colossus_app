@@ -227,99 +227,41 @@ export default function PinConfirmModal({
             <ShieldCheck size={26} color={colors.primary} strokeWidth={2.2} />
           </IconWrap>
 
-          {view === "pin" ? (
-            <>
-              <Title>{title}</Title>
-              <Subtitle>{subtitle}</Subtitle>
-              <DotsRow>
-                {Array.from({ length: PIN_LENGTH }).map((_, i) => (
-                  <Dot key={i} filled={i < pin.length} err={hasError} />
-                ))}
-              </DotsRow>
-              {hasError && <ErrText>PIN incorreto. Tente novamente.</ErrText>}
-              <Keypad>
-                {KEYPAD.map((key, i) => (
-                  <KBtn
-                    key={i}
-                    onPress={() => key && handleKey(key)}
-                    activeOpacity={key ? 0.6 : 1}
-                    disabled={!key || verifying}
-                    style={{ opacity: !key ? 0 : 1 }}
-                  >
-                    {key === "⌫" ? (
-                      <Delete
-                        size={20}
-                        color={colors.textMuted}
-                        strokeWidth={2}
-                      />
-                    ) : (
-                      <KText>{key}</KText>
-                    )}
-                  </KBtn>
-                ))}
-              </Keypad>
-              <SmallBtn onPress={() => setView("recovery")} activeOpacity={0.7}>
-                <SmallBtnText>Esqueci meu PIN</SmallBtnText>
-              </SmallBtn>
-              <SmallBtn onPress={onCancel} activeOpacity={0.7}>
-                <SmallBtnText>Cancelar</SmallBtnText>
-              </SmallBtn>
-            </>
-          ) : (
-            <>
-              <Title>Confirme sua senha</Title>
-              <Subtitle>
-                Para redefinir o PIN, confirme a senha de acesso ao app.
-              </Subtitle>
-              <InputRow>
-                <TextInput
-                  style={{ flex: 1, color: colors.textPrimary, fontSize: 14 }}
-                  placeholder="Senha de login"
-                  placeholderTextColor="rgba(255,255,255,0.35)"
-                  secureTextEntry={!showPwd}
-                  value={recoveryPwd}
-                  onChangeText={(t) => {
-                    setRecoveryPwd(t);
-                    setRecError(false);
-                  }}
-                  autoFocus
-                />
-                <TouchableOpacity
-                  onPress={() => setShowPwd((p) => !p)}
-                  activeOpacity={0.7}
+          <>
+            <Title>{title}</Title>
+            <Subtitle>{subtitle}</Subtitle>
+            <DotsRow>
+              {Array.from({ length: PIN_LENGTH }).map((_, i) => (
+                <Dot key={i} filled={i < pin.length} err={hasError} />
+              ))}
+            </DotsRow>
+            {hasError && <ErrText>PIN incorreto. Tente novamente.</ErrText>}
+            <Keypad>
+              {KEYPAD.map((key, i) => (
+                <KBtn
+                  key={i}
+                  onPress={() => key && handleKey(key)}
+                  activeOpacity={key ? 0.6 : 1}
+                  disabled={!key || verifying}
+                  style={{ opacity: !key ? 0 : 1 }}
                 >
-                  {showPwd ? (
-                    <EyeOff
-                      size={18}
-                      color="#FFFFFF"
-                      opacity={0.6}
+                  {key === "⌫" ? (
+                    <Delete
+                      size={20}
+                      color={colors.textMuted}
                       strokeWidth={2}
                     />
                   ) : (
-                    <Eye
-                      size={18}
-                      color="#FFFFFF"
-                      opacity={0.6}
-                      strokeWidth={2}
-                    />
+                    <KText>{key}</KText>
                   )}
-                </TouchableOpacity>
-              </InputRow>
-              {recError && <ErrText>Senha incorreta.</ErrText>}
-              <RecBtn
-                onPress={handleRecovery}
-                disabled={recVerifying || !recoveryPwd}
-                activeOpacity={0.85}
-              >
-                <RecBtnText>
-                  {recVerifying ? "Verificando..." : "Redefinir PIN"}
-                </RecBtnText>
-              </RecBtn>
-              <SmallBtn onPress={() => setView("pin")} activeOpacity={0.7}>
-                <SmallBtnText>← Voltar para o PIN</SmallBtnText>
-              </SmallBtn>
-            </>
-          )}
+                </KBtn>
+              ))}
+            </Keypad>
+
+            <SmallBtn onPress={onCancel} activeOpacity={0.7}>
+              <SmallBtnText>Cancelar</SmallBtnText>
+            </SmallBtn>
+          </>
         </Card>
       </Overlay>
     </Modal>

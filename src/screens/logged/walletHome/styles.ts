@@ -278,3 +278,52 @@ export const cardLogo = styled.View`
   margin-top: ${hp(0.5)}px;
   margin-bottom: ${hp(1)}px;
 `;
+
+export const LockedState = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: ${hp(6)}px;
+`;
+export const LockedTitle = styled.Text`
+  color: ${colors.textPrimary};
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 8px;
+  margin-top: 16px;
+`;
+export const LockedSubtitle = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 13px;
+  text-align: center;
+  line-height: 19px;
+  padding-horizontal: 20px;
+  margin-bottom: ${hp(3)}px;
+`;
+export const UnlockButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: ${hp(6.5)}px;
+  border-radius: 16px;
+  padding-horizontal: 32px;
+  background-color: ${colors.primary};
+  elevation: 8;
+`;
+
+export const IconWrapper = styled.View`
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(108, 92, 231, 0.18);
+`;
+
+export const UnlockButtonText = styled.Text`
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+`;

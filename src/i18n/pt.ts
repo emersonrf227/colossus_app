@@ -118,7 +118,7 @@ export default {
     preferences: "PREFERÊNCIAS",
     general: "GERAL",
     languageAndCurrency: "Idioma e Moeda",
-    logout: "Sair da conta",
+    logout: "Apagar Carteira",
     logoutError: "Não foi possível sair. Tente novamente.",
     items: {
       info: "Receber",
@@ -359,6 +359,11 @@ export default {
     lowGas: "Saldo de {{symbol}} baixo para taxas",
     viewOnly:
       "Você está vendo esta carteira apenas para consulta. A chave de acesso está associada a outro dispositivo — saques só podem ser feitos a partir dele.",
+    modal: {
+      pinTitle:
+        "Para ter acesso a carteira precisamos validar o seu código PIN.",
+      pinTitleModal: "Autenticação necessária para acessar a carteira.",
+    },
   },
   walletReceive: {
     addressLabel: "Endereço",
