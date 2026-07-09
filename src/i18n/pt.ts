@@ -454,6 +454,10 @@ export default {
   },
 
   walletWithdraw: {
+    memoLabel: "MEMO (OPCIONAL)",
+    memoPlaceholder: "Identificação ou nota da transação",
+    memoNote: "O memo é opcional e fica registrado na blockchain.",
+    qrHint: "Aponte para o endereço em QR Code",
     title: "Sacar USDT",
     networkLabel: "REDE",
     addressLabel: "ENDEREÇO DE DESTINO",
