@@ -98,8 +98,7 @@ export default {
       },
       q9: {
         question: "9. ¿Necesito registro?",
-        answer:
-          "Descarga la app y regístrate con un consultor de {{appName}}.",
+        answer: "Descarga la app y regístrate con un consultor de {{appName}}.",
       },
     },
   },
@@ -176,6 +175,19 @@ export default {
     openingHours: "HORARIO DE ATENCIÓN",
     paymentMethods: "FORMAS DE PAGO",
     tags: "ETIQUETAS",
+  },
+  about: {
+    title: "Acerca de",
+    versionLabel: "VERSIÓN {{version}}",
+    brazilTitle: "Tecnología 100% brasileña",
+    brazilDescriptionBefore: "{{appName}} es desarrollada y mantenida ",
+    brazilDescriptionHighlight: "en Brasil, por brasileños",
+    brazilDescriptionAfter:
+      ", combinando tecnología de vanguardia en criptomonedas con el soporte y la confianza de una empresa nacional.",
+    developedBy: "DESARROLLADO POR",
+    companyLabel: "EMPRESA",
+    cnpjLabel: "CNPJ",
+    footerNote: "Hecho con 💜 en 🇧🇷 para todo el mundo.",
   },
   wallet: {
     title: "Billetera",
