@@ -190,6 +190,19 @@ export default {
     paymentMethods: "FORMAS DE PAGAMENTO",
     tags: "TAGS",
   },
+  about: {
+    title: "Sobre",
+    versionLabel: "VERSÃO {{version}}",
+    brazilTitle: "Tecnologia 100% brasileira",
+    brazilDescriptionBefore: "A {{appName}} é desenvolvida e mantida ",
+    brazilDescriptionHighlight: "no Brasil, por brasileiros",
+    brazilDescriptionAfter:
+      ", unindo tecnologia de ponta em criptomoedas com o suporte e a confiança de uma empresa nacional.",
+    developedBy: "DESENVOLVIDO POR",
+    companyLabel: "EMPRESA",
+    cnpjLabel: "CNPJ",
+    footerNote: "Feito com 💜 e no 🇧🇷 para todo o mundo.",
+  },
 
   // ─── Wallet ───────────────────────────────────────────────────────────────
   wallet: {
