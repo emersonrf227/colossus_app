@@ -128,6 +128,19 @@ export default {
       s7: { title: "修改", paragraphs: ["条款可随时更改。"] },
     },
   },
+  about: {
+    title: "关于",
+    versionLabel: "版本 {{version}}",
+    brazilTitle: "100%巴西技术",
+    brazilDescriptionBefore: "{{appName}}由巴西人开发和维护",
+    brazilDescriptionHighlight: "在巴西，由巴西人",
+    brazilDescriptionAfter:
+      "，将前沿加密货币技术与国内企业的支持和信任相结合。",
+    developedBy: "开发者",
+    companyLabel: "公司",
+    cnpjLabel: "CNPJ",
+    footerNote: "以爱制作于巴西，献给全世界。",
+  },
   communityMap: {
     headerTitle: "{{appName}}社区",
     filterAll: "全部",
