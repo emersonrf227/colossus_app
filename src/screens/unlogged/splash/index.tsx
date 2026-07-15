@@ -28,8 +28,6 @@ export default function WalletGate() {
       const mnemonic = await getStoredMnemonic();
       const pinConfigured = await hasWalletPin();
 
-      console.log("Menmoinc======>", mnemonic);
-
       if (!isActive) return;
 
       if (!mnemonic) {
@@ -66,7 +64,7 @@ export default function WalletGate() {
 
       <S.LoaderWrapper>
         <S.LoaderAnimation
-          source={require("@/assets/loadcolossus.gif")}
+          source={require("@/assets/helm-loading.gif")}
           resizeMode="contain"
         />
         <S.StatusText>{statusText}</S.StatusText>

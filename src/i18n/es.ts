@@ -197,6 +197,8 @@ export default {
     addressCopied: "¡Dirección copiada!",
     sendButton: "Enviar",
     sendSubtitle: "Blockchain",
+    receiveButton: "Recibir",
+    receiveSubtitle: "QR y dirección",
     pixButton: "Retirar",
     pixSubtitle: "con PIX",
     withdraw: "Retirar",

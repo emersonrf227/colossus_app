@@ -17,7 +17,7 @@ const USDT_CONTRACT_PLASMA = "0xB8CE59FC3717ada4C02eaDF9682A9e934F625ebb"; // �
 
 // Explorers para links das transações
 const EXPLORER_POLYGON = "https://polygonscan.com/tx";
-const EXPLORER_PLASMA = "https://explorer.plasma.to/tx"; // 👉 substitua se diferente
+const EXPLORER_PLASMA = "https://plasmascan.to/tx"; // explorer oficial da Plasma
 
 export type WalletNetworkKey = "polygon" | "plasma";
 
@@ -43,6 +43,33 @@ export interface TransactionPage {
 }
 
 const PAGE_SIZE = 25;
+
+/**
+ * GET no Etherscan com retry para rate limit.
+ * A API key é compartilhada entre todos os usuários do app (free tier =
+ * 5 req/s) — quando o limite estoura, o Etherscan responde status "0" com
+ * "Max rate limit reached". Antes isso virava lista vazia silenciosa;
+ * agora espera um pouco e tenta de novo (até 2 retries).
+ */
+async function etherscanGet(params: Record<string, unknown>): Promise<any> {
+  let lastData: any = null;
+  console.log("PARAMS====>", params);
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const response = await axios.get(ETHERSCAN_V2_BASE, {
+      params,
+      timeout: 6000,
+    });
+    lastData = response.data;
+    const isRateLimited =
+      lastData?.status !== "1" &&
+      typeof lastData?.result === "string" &&
+      lastData.result.toLowerCase().includes("rate limit");
+    if (!isRateLimited) return lastData;
+    await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+  }
+  return lastData;
+}
 
 function formatValue(raw: string, decimals: number): string {
   const num = Number(BigInt(raw)) / Math.pow(10, decimals);
@@ -84,24 +111,21 @@ async function fetchTokenTxs(
     return [];
   }
 
-  const response = await axios.get(ETHERSCAN_V2_BASE, {
-    params: {
-      chainid: chainId,
-      module: "account",
-      action: "tokentx",
-      contractaddress: usdtContract,
-      address,
-      page,
-      offset: PAGE_SIZE,
-      sort: "desc",
-      apikey: ETHERSCAN_API_KEY,
-    },
-    timeout: 10000,
+  const data = await etherscanGet({
+    chainid: chainId,
+    module: "account",
+    action: "tokentx",
+    contractaddress: usdtContract,
+    address,
+    page,
+    offset: PAGE_SIZE,
+    sort: "desc",
+    apikey: ETHERSCAN_API_KEY,
   });
 
-  if (response.data.status !== "1") return [];
+  if (data.status !== "1") return [];
 
-  return (response.data.result as any[]).map((tx) => ({
+  return (data.result as any[]).map((tx) => ({
     hash: tx.hash,
     from: tx.from,
     to: tx.to,
@@ -130,23 +154,20 @@ async function fetchNativeTxs(
     return [];
   }
 
-  const response = await axios.get(ETHERSCAN_V2_BASE, {
-    params: {
-      chainid: chainId,
-      module: "account",
-      action: "txlist",
-      address,
-      page,
-      offset: PAGE_SIZE,
-      sort: "desc",
-      apikey: ETHERSCAN_API_KEY,
-    },
-    timeout: 10000,
+  const data = await etherscanGet({
+    chainid: chainId,
+    module: "account",
+    action: "txlist",
+    address,
+    page,
+    offset: PAGE_SIZE,
+    sort: "desc",
+    apikey: ETHERSCAN_API_KEY,
   });
 
-  if (response.data.status !== "1") return [];
+  if (data.status !== "1") return [];
 
-  return (response.data.result as any[])
+  return (data.result as any[])
     .filter((tx) => tx.value !== "0")
     .map((tx) => ({
       hash: tx.hash,
@@ -178,10 +199,18 @@ export async function fetchOnChainHistory(params: {
 }): Promise<TransactionPage> {
   const { address, network, page } = params;
 
-  const [usdtTxs, nativeTxs] = await Promise.all([
+  // allSettled: se uma das consultas falhar/estourar timeout (ex: rede sem
+  // suporte no explorer), a outra ainda é exibida em vez de erro geral.
+  const [usdtResult, nativeResult] = await Promise.allSettled([
     fetchTokenTxs(address, network, page),
     fetchNativeTxs(address, network, page),
   ]);
+  const usdtTxs = usdtResult.status === "fulfilled" ? usdtResult.value : [];
+  const nativeTxs =
+    nativeResult.status === "fulfilled" ? nativeResult.value : [];
+  if (usdtResult.status === "rejected" && nativeResult.status === "rejected") {
+    throw new Error("history_fetch_failed");
+  }
 
   // Mescla e ordena por timestamp decrescente
   const all = [...usdtTxs, ...nativeTxs].sort(

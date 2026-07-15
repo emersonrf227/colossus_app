@@ -48,7 +48,6 @@ export async function getWalletStatus(): Promise<WalletStatus> {
   }
   const mode = source === "external" ? "view-only" : "full";
 
-  console.log("endereco===>", address);
   return {
     mode,
     record: { address } as any,

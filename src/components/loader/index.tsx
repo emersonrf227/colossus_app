@@ -8,7 +8,7 @@ export default function Loader() {
       <StatusBar barStyle="default" backgroundColor="transparent" translucent />
       <S.LoaderBackground />
       <S.cardLogo>
-        <S.ImgGig source={require("@/assets/loadcolossus.gif")} />
+        <S.ImgGig source={require("@/assets/helm-loading.gif")} />
       </S.cardLogo>
     </S.LoaderOverlay>
   );

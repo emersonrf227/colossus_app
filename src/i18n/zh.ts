@@ -167,6 +167,8 @@ export default {
     addressCopied: "地址已复制！",
     sendButton: "发送",
     sendSubtitle: "区块链",
+    receiveButton: "接收",
+    receiveSubtitle: "二维码和地址",
     pixButton: "提现",
     pixSubtitle: "通过PIX",
     withdraw: "提现",

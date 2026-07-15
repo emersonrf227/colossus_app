@@ -195,6 +195,8 @@ export default {
     addressCopied: "Адрес скопирован!",
     sendButton: "Отправить",
     sendSubtitle: "Блокчейн",
+    receiveButton: "Получить",
+    receiveSubtitle: "QR и адрес",
     pixButton: "Вывести",
     pixSubtitle: "через PIX",
     withdraw: "Вывести",

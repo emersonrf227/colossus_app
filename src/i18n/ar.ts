@@ -196,6 +196,8 @@ export default {
     addressCopied: "تم نسخ العنوان!",
     sendButton: "إرسال",
     sendSubtitle: "بلوكشين",
+    receiveButton: "استلام",
+    receiveSubtitle: "QR والعنوان",
     pixButton: "سحب",
     pixSubtitle: "عبر PIX",
     withdraw: "سحب",

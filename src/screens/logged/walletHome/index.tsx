@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   Send,
   QrCode,
+  ArrowDownToLine,
   KeyRound,
   Copy,
   Network,
@@ -413,6 +414,25 @@ export default function WalletHome() {
                       </S.ActionButtonText>
                       <ActionButtonSubText accentColor={colors.primary}>
                         {t("wallet.sendSubtitle")}
+                      </ActionButtonSubText>
+                    </S.ActionButton>
+                    <S.ActionButton
+                      accentColor={colors.accent}
+                      onPress={() => navigate("getInfo" as never)}
+                      activeOpacity={0.75}
+                    >
+                      <S.ActionIconWrapper accentColor={colors.accent}>
+                        <ArrowDownToLine
+                          size={18}
+                          color={colors.accent}
+                          strokeWidth={2.2}
+                        />
+                      </S.ActionIconWrapper>
+                      <S.ActionButtonText accentColor={colors.accent}>
+                        {t("wallet.receiveButton")}
+                      </S.ActionButtonText>
+                      <ActionButtonSubText accentColor={colors.accent}>
+                        {t("wallet.receiveSubtitle")}
                       </ActionButtonSubText>
                     </S.ActionButton>
                     <S.ActionButton

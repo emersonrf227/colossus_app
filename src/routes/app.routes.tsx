@@ -1,14 +1,14 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SingIn from "../screens/unlogged/singin/";
-import proofConfirm from "@/screens/logged/proofConfirm";
+import ProofConfirm from "@/screens/logged/proofConfirm";
 import Splash from "@/screens/unlogged/splash";
 import MenuScreen from "@/screens/logged/menu";
 import Extract from "@/screens/logged/extract";
-import proofExtract from "@/screens/logged/proofExtract";
-import getInfo from "@/screens/logged/getInfo";
-import getAbout from "@/screens/logged/getAbout";
-import supportScren from "@/screens/logged/support";
+import ProofExtract from "@/screens/logged/proofExtract";
+import GetInfo from "@/screens/logged/getInfo";
+import GetAbout from "@/screens/logged/getAbout";
+import SupportScren from "@/screens/logged/support";
 import TermsOfUse from "@/screens/logged/termsOfUse";
 import SelectNetworks from "@/screens/logged/selectNetwork";
 import SettingsLanguage from "@/screens/logged/settingsLanguage";
@@ -38,13 +38,13 @@ export function AppRoutes() {
       <Screen name="SingIn" component={SingIn} />
 
       <Screen name="Splash" component={Splash} />
-      <Screen name="getAbout" component={getAbout} />
-      <Screen name="supportScren" component={supportScren} />
-      <Screen name="getInfo" component={getInfo} />
-      <Screen name="proofExtract" component={proofExtract} />
+      <Screen name="getAbout" component={GetAbout} />
+      <Screen name="supportScren" component={SupportScren} />
+      <Screen name="getInfo" component={GetInfo} />
+      <Screen name="proofExtract" component={ProofExtract} />
       <Screen name="Extract" component={Extract} />
       <Screen name="MenuScreen" component={MenuScreen} />
-      <Screen name="proofConfirm" component={proofConfirm} />
+      <Screen name="proofConfirm" component={ProofConfirm} />
       <Screen name="TermsOfUse" component={TermsOfUse} />
       <Screen name="SelectNetworks" component={SelectNetworks} />
       <Screen name="SettingsLanguage" component={SettingsLanguage} />

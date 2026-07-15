@@ -28,7 +28,7 @@ interface invoiceData {
   };
 }
 
-export default function proofExtract() {
+export default function ProofExtract() {
   const { t } = useTranslation();
   const route = useRoute();
   const navigation = useNavigation();

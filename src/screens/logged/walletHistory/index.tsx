@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   StatusBar,
   FlatList,
@@ -324,12 +325,14 @@ export default function WalletHistory() {
   }, []);
 
   const loadPage = useCallback(
-    async (targetPage: number, reset = false) => {
+    async (targetPage: number, reset = false, silent = false) => {
+      console.log("oiiewioqyrioe");
       if (!record?.address || isLeavingRef.current) return;
-      if (reset) setLoading(true);
-      else setLoadingMore(true);
+      if (reset && !silent) setLoading(true);
+      else if (!reset) setLoadingMore(true);
       setError(false);
       try {
+        console.log("goireuw");
         const result = await fetchOnChainHistory({
           address: record.address,
           network,
@@ -342,6 +345,13 @@ export default function WalletHistory() {
         setHasMore(result.hasMore);
         setPage(result.nextPage);
         lookupPixProofs(result.transactions);
+        // Guarda a 1ª página para exibição instantânea na próxima visita
+        if (targetPage === 1) {
+          AsyncStorage.setItem(
+            `walletHistory:${network}:${record.address}`,
+            JSON.stringify(result.transactions),
+          ).catch(() => {});
+        }
       } catch {
         if (isMountedRef.current) setError(true);
       } finally {
@@ -355,16 +365,53 @@ export default function WalletHistory() {
     [record?.address, network, lookupPixProofs],
   );
 
-  // Aguarda a proofKey estar pronta antes de carregar para garantir
-  // que o lookupPixProofs consegue consultar sell/proof logo na 1ª carga
+  // Mantém referência atual das transações (para reprocessar os PIX proofs
+  // quando a proofKey ficar pronta, sem bloquear o carregamento inicial)
+  const transactionsRef = useRef<OnChainTransaction[]>([]);
   useEffect(() => {
-    if (!proofKeyReady) return;
+    transactionsRef.current = transactions;
+  }, [transactions]);
+
+  // Carrega o histórico IMEDIATAMENTE (sem esperar a proofKey).
+  // Antes: a tela ficava bloqueada até getProofKey() resolver.
+  useEffect(() => {
+    if (!record?.address) return;
     setTransactions([]);
     setPixMap({});
     setPage(1);
     setHasMore(true);
-    loadPage(1, true);
-  }, [network, proofKeyReady]);
+
+    // 1) Cache: mostra a última 1ª página na hora (stale-while-revalidate)
+    let cancelled = false;
+    const cacheKey = `walletHistory:${network}:${record.address}`;
+    const cachePromise = AsyncStorage.getItem(cacheKey)
+      .then((raw) => {
+        if (cancelled || !raw || !isMountedRef.current) return false;
+        const cached = JSON.parse(raw) as OnChainTransaction[];
+        if (cached.length === 0) return false;
+        setTransactions((prev) => (prev.length ? prev : cached));
+        setLoading(false);
+        return true;
+      })
+      .catch(() => false);
+
+    // 2) Busca dados frescos em paralelo (silencioso se o cache apareceu)
+    cachePromise.then((hadCache) => {
+      if (!cancelled) loadPage(1, true, hadCache === true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [network, record?.address]);
+
+  // Quando a proofKey ficar disponível, processa os comprovantes PIX das
+  // transações já carregadas.
+  useEffect(() => {
+    if (proofKeyReady && transactionsRef.current.length > 0) {
+      lookupPixProofs(transactionsRef.current);
+    }
+  }, [proofKeyReady, lookupPixProofs]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
