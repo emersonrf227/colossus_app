@@ -156,6 +156,19 @@ export default {
       },
     },
   },
+  about: {
+    title: "О приложении",
+    versionLabel: "ВЕРСИЯ {{version}}",
+    brazilTitle: "100% бразильская технология",
+    brazilDescriptionBefore: "{{appName}} разработана и поддерживается ",
+    brazilDescriptionHighlight: "в Бразилии, бразильцами",
+    brazilDescriptionAfter:
+      ", сочетая передовые криптовалютные технологии с поддержкой и надёжностью национальной компании.",
+    developedBy: "РАЗРАБОТАНО",
+    companyLabel: "КОМПАНИЯ",
+    cnpjLabel: "CNPJ",
+    footerNote: "Сделано с 💜 в 🇧🇷 для всего мира.",
+  },
   communityMap: {
     headerTitle: "Сообщество {{appName}}",
     filterAll: "Все",
