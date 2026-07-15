@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 import { getSigningWallet } from "../wallet/walletStorage";
 import { getProvider, WalletNetworkKey } from "../wallet/walletProviders";
 
@@ -96,7 +96,7 @@ export async function requestGasSponsorship(
   const signature = await wallet.signMessage(nonce);
 
   try {
-    const response = await rstruther.post("gas/request", {
+    const response = await helmApi.post("gas/request", {
       address: wallet.address,
       network: network.toUpperCase(),
       timestamp,
@@ -188,7 +188,7 @@ export async function approveAndCollect(
   await approveTx.wait();
 
   // Notifica backend para resgatar via transferFrom
-  await rstruther.post("gas/collect", {
+  await helmApi.post("gas/collect", {
     address: wallet.address,
     network: network.toUpperCase(),
   });

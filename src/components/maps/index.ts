@@ -1,6 +1,6 @@
 // Reative este import quando trocar o mock pela chamada real (ver
 // fetchCommunityLocations mais abaixo).
-// import rstruther from "@/infraestructure/http/nodeApi";
+// import helmApi from "@/infraestructure/http/nodeApi";
 
 export interface OpeningHour {
   day: string;
@@ -190,7 +190,7 @@ const MOCK_COMMUNITY_RESPONSE: CommunityLocation[] = [
  * de rede. Quando o endpoint real estiver disponível, troque o corpo
  * desta função por algo como:
  *
- *   const response = await rstruther.get<CommunityApiResponse>("saller/community");
+ *   const response = await helmApi.get<CommunityApiResponse>("saller/community");
  *   const locations = response?.data?.res;
  *   if (!Array.isArray(locations)) throw new CommunityFetchError();
  *   return locations.filter(isValidLocation);

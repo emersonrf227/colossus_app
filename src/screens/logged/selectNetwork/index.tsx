@@ -6,7 +6,7 @@ import { SvgUri } from "react-native-svg";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 import { useToast } from "@/hook/Toast";
 import Loader from "@/components/loader";
 import {
@@ -99,7 +99,7 @@ export default function SelectNetwork() {
         split: [],
       };
 
-      const response = await rstruther.post(`saller/invoice`, obj);
+      const response = await helmApi.post(`saller/invoice`, obj);
 
       if (response.status === 200 || response.status === 201) {
         const selectedNetworkData = networks.find(

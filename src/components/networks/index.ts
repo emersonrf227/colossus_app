@@ -5,7 +5,7 @@
 // puro:
 //   { status: 0, msg: "invoices data", res: [{ network, icon }, ...] }
 
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 
 export interface NetworkOption {
   network: string;
@@ -46,7 +46,7 @@ export class NetworksFetchError extends Error {
 export async function fetchAvailableNetworks(): Promise<NetworkOption[]> {
   let response;
   try {
-    response = await rstruther.get<NetworksApiResponse>("saller/networks");
+    response = await helmApi.get<NetworksApiResponse>("saller/networks");
   } catch {
     throw new NetworksFetchError();
   }

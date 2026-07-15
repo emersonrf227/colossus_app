@@ -11,7 +11,7 @@ import { ArrowLeft, Receipt, CalendarRange } from "lucide-react-native";
 import moment from "moment";
 
 import * as S from "./styles";
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -155,7 +155,7 @@ export default function Extract() {
 
       setLoadingPage(true);
       try {
-        const response = await rstruther.get("saller/invoice/list", {
+        const response = await helmApi.get("saller/invoice/list", {
           params: {
             dateFrom: dataInicial,
             dateTo: dataFinal,

@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 import {
   saveLastCredentials,
   getLastCredentials,
@@ -49,11 +49,11 @@ interface AuthProviderProps {
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 // Cliente axios separado e "limpo" para chamadas de auth (login/refresh).
-// Importante: NÃO usar `rstruther` aqui, porque `rstruther` carrega o
+// Importante: NÃO usar `helmApi` aqui, porque `helmApi` carrega o
 // interceptor de 401 declarado mais abaixo. Se o próprio endpoint de
 // refresh devolvesse 401 e estivesse interceptado, entraríamos num loop.
 const authClient = axios.create({
-  baseURL: rstruther.defaults.baseURL,
+  baseURL: helmApi.defaults.baseURL,
 });
 
 function AuthProvider({ children }: AuthProviderProps) {

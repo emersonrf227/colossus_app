@@ -1,4 +1,4 @@
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 import axios from "axios";
 
 // ---------------------------------------------------------------------------
@@ -68,7 +68,7 @@ export interface PixTransaction {
 
 /**
  * Busca a cotação atual USDT→BRL.
- * Usa axios direto (não o rstruther autenticado) pois é uma API pública.
+ * Usa axios direto (não o helmApi autenticado) pois é uma API pública.
  */
 export async function fetchSwapQuote(amountBrl: number): Promise<SwapQuote> {
   const response = await axios.get(
@@ -95,7 +95,7 @@ export async function fetchSwapQuote(amountBrl: number): Promise<SwapQuote> {
  * Usado para calcular o valor real de USDT que o usuário precisa enviar.
  */
 export async function fetchNetworkTicker(): Promise<NetworkTicker> {
-  const response = await rstruther.get("sell/ticker");
+  const response = await helmApi.get("sell/ticker");
   const res = response.data?.data?.res;
 
   if (!res) throw new Error("Não foi possível obter o ticker de rede.");
@@ -136,7 +136,7 @@ export function calculateUsdtNeeded(params: {
 // ---------------------------------------------------------------------------
 
 export async function decodeBrCode(emv: string): Promise<DecodedBrCode> {
-  const response = await rstruther.post("sell/decode-brcode", { emv });
+  const response = await helmApi.post("sell/decode-brcode", { emv });
 
   if (response.data?.statusCode !== 200) {
     throw new Error("QR Code inválido ou não reconhecido.");
@@ -171,7 +171,7 @@ export async function createPixTransaction(
     amount: params.amount,
     proofKey: params.proofKey,
   });
-  const response = await rstruther.post("sell/create-crypto-to-pix", {
+  const response = await helmApi.post("sell/create-crypto-to-pix", {
     network: params.network,
     key: params.key,
     typeKey: params.typeKey,
@@ -199,7 +199,7 @@ export async function createPixTransaction(
 export async function getPixTransactionStatus(
   uuid: string,
 ): Promise<PixTransaction> {
-  const response = await rstruther.get("sell/get-status-crypto-to-pix", {
+  const response = await helmApi.get("sell/get-status-crypto-to-pix", {
     params: { uuid },
   });
 
@@ -225,7 +225,7 @@ export async function sendPixTxid(params: {
   txid: string;
   id: number;
 }): Promise<void> {
-  await rstruther.post("sell/send-txid", {
+  await helmApi.post("sell/send-txid", {
     proofKey: params.proofKey,
     txid: params.txid,
     id: params.id,
@@ -254,7 +254,7 @@ export async function getPixProof(params: {
   txid: string;
 }): Promise<PixTransaction | null> {
   try {
-    const response = await rstruther.post("sell/proof", {
+    const response = await helmApi.post("sell/proof", {
       proofKey: params.proofKey,
       txid: params.txid,
     });

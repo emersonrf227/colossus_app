@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { ActivityIndicator, StatusBar } from "react-native";
+import { usePreventScreenCapture } from "expo-screen-capture";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Eye, AlertTriangle, Check } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,8 @@ import {
 type Step = "reveal" | "confirm";
 
 export default function WalletBackup() {
+  // Impede screenshot/gravação de tela enquanto a seed está visível
+  usePreventScreenCapture();
   const navigation = useNavigation();
   const { navigate } = navigation;
   const { showToast } = useToast();

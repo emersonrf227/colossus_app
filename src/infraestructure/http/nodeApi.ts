@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 
-const rstruther: AxiosInstance = axios.create({
+const helmApi: AxiosInstance = axios.create({
   baseURL: "https://api.colossuscrypto.com.br/v1/",
   timeout: 300000,
   maxBodyLength: Number.POSITIVE_INFINITY,
@@ -11,4 +11,4 @@ const rstruther: AxiosInstance = axios.create({
   },
 });
 
-export default rstruther;
+export default helmApi;

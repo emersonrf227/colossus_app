@@ -64,48 +64,52 @@ export default {
       q1: {
         question: "1. O que é a {{appName}}?",
         answer:
-          "A {{appName}} é uma solução de pagamentos digitais desenvolvida pela I Like Technology, que permite que comércios de todos os portes aceitem pagamentos em USDT (Tether) – uma das criptomoedas mais estáveis e utilizadas do mundo – por meio de aplicativo, sistema web e maquininha de cartão.",
+          "A {{appName}} é uma carteira digital de autocustódia desenvolvida pela I Like Technology, que permite a qualquer pessoa guardar, enviar e receber USDT (Tether) nas redes blockchain suportadas, com total controle sobre os próprios fundos.",
       },
       q2: {
         question: "2. Quem pode utilizar a {{appName}}?",
         answer:
-          "A plataforma é voltada para comerciantes (pessoas físicas ou jurídicas) que desejam oferecer uma alternativa moderna e segura de pagamento aos seus clientes, além de contar com taxas mais atrativas e liquidez imediata.",
+          "Qualquer pessoa maior de 18 anos — não é preciso ser comerciante ou empresa. Se você quer guardar seus USDT com segurança, enviar para outras carteiras ou receber de qualquer lugar do mundo, a {{appName}} é para você.",
       },
       q3: {
-        question: "3. Como funciona o recebimento em USDT?",
+        question: "3. O que significa autocustódia?",
         answer:
-          "Ao realizar uma venda, o comerciante gera um QR Code ou link de pagamento via aplicativo, sistema ou maquininha. O cliente faz o pagamento em USDT, e o valor é recebido instantaneamente na carteira digital do comerciante vinculada à {{appName}}.",
+          "Significa que só você tem acesso aos seus fundos. As chaves da sua carteira (as 12 palavras de recuperação) ficam apenas no seu dispositivo — nem a {{appName}} consegue acessá-las, movimentar seus ativos ou recuperá-las por você.",
       },
       q4: {
-        question: "4. Quais são as taxas cobradas pela {{appName}}?",
+        question: "4. Quais são as taxas?",
         answer:
-          "A {{appName}} cobra uma taxa fixa de 1.95% por transação, inferior à média praticada por operadoras tradicionais de cartão de crédito.",
+          "Guardar e receber USDT na {{appName}} não custa nada. Ao enviar, você paga apenas a taxa de rede (gás), cobrada pela própria blockchain — não pela {{appName}}. Funcionalidades específicas, quando tiverem custo, mostram o valor antes de você confirmar.",
       },
       q5: {
-        question: "5. Preciso entender de criptomoedas para usar a plataforma?",
+        question: "5. Preciso entender de criptomoedas para usar?",
         answer:
-          "Não. A plataforma foi projetada para ser intuitiva e simples, com interface amigável e suporte dedicado, mesmo para quem nunca utilizou criptomoedas antes.",
+          "Não. O app foi projetado para ser simples e intuitivo, mesmo para quem nunca usou criptomoedas. Você cria sua carteira em minutos e o app te orienta em cada passo.",
       },
       q6: {
-        question: "6. Onde posso usar a {{appName}}?",
+        question: "6. O que acontece se eu perder minhas 12 palavras?",
         answer:
-          "A solução pode ser utilizada em lojas físicas, e-commerces, serviços delivery ou autônomos, através de aplicativo mobile, sistema web ou maquininha de pagamento compatível.",
+          "As 12 palavras são a única forma de recuperar sua carteira. Se você perdê-las, o acesso aos fundos é perdido de forma definitiva — ninguém, nem a {{appName}}, pode recuperá-las. Por isso, anote em papel e guarde em local seguro.",
       },
       q7: {
-        question: "7. É seguro receber pagamentos em USDT?",
+        question: "7. É seguro usar USDT?",
         answer:
-          "Sim. O USDT é uma stablecoin lastreada em dólar, com estabilidade e liquidez elevadas. Além disso, a {{appName}} adota tecnologias de segurança, criptografia e autenticação para garantir total proteção nas transações.",
+          "O USDT é uma stablecoin lastreada em dólar, com alta liquidez e ampla adoção. A {{appName}} soma a isso criptografia local, PIN de acesso e bloqueio de capturas de tela nas áreas sensíveis.",
       },
       q8: {
-        question:
-          "8. Quais os benefícios de aceitar criptomoedas no meu negócio?",
+        question: "8. Em quais redes a {{appName}} funciona?",
         answer:
-          "Além da visibilidade como empresa moderna, os comerciantes se beneficiam com taxas menores, liquidação instantânea, acesso a um novo perfil de consumidores e isenção de burocracias bancárias tradicionais.",
+          "Atualmente nas redes Polygon e Plasma. Ao enviar ou receber, confira sempre se a rede selecionada é a mesma da outra carteira — envios em rede incompatível não podem ser recuperados.",
       },
       q9: {
-        question: "9. Preciso de cadastro para usar?",
+        question: "9. Como começo a usar?",
         answer:
-          "Baixe o app, realize seu cadastro junto a um consultor da {{appName}} e, após verificação, sua empresa já estará pronta para aceitar pagamentos em USDT.",
+          "Baixe o app, crie uma carteira nova (ou importe uma existente com suas 12 palavras) e pronto: em poucos minutos você já pode receber e enviar USDT.",
+      },
+      q10: {
+        question: "10. O que é o gás patrocinado?",
+        answer:
+          "Para enviar USDT, a blockchain cobra uma pequena taxa na moeda nativa da rede (como POL na Polygon). Se o seu saldo dessa moeda estiver baixo, a {{appName}} pode patrocinar o gás: você recebe o necessário para concluir suas transações sem precisar comprar a moeda nativa em outro lugar. Quando disponível, o app oferece isso automaticamente.",
       },
     },
   },
@@ -114,60 +118,89 @@ export default {
     docTitle: "Termos de Uso – {{appName}}",
     lastUpdated: "Última atualização: {{date}}",
     intro:
-      'Este Termo de Uso regula a utilização da plataforma {{appName}}, doravante denominada "Plataforma", de titularidade da I Like Technology, inscrita sob o CNPJ nº 45.123.168/0001-22.\n\nAo acessar ou utilizar qualquer funcionalidade disponibilizada na Plataforma, o Usuário declara ter lido, compreendido e concordado integralmente com as disposições aqui previstas.',
+      'Este Termo de Uso regula a utilização do aplicativo {{appName}}, doravante denominado "Aplicativo", de titularidade da I Like Technology, inscrita sob o CNPJ nº 45.123.168/0001-22.\n\nAo acessar ou utilizar qualquer funcionalidade do Aplicativo, o Usuário declara ter lido, compreendido e concordado integralmente com as disposições aqui previstas.',
     footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
-        title: "Objeto",
+        title: "Objeto e Natureza do Serviço",
         paragraphs: [
-          "A presente plataforma tem por finalidade disponibilizar soluções tecnológicas para que comerciantes e usuários aceitem e realizem pagamentos por meio de ativos digitais, especialmente a stablecoin USDT (Tether), em ambiente seguro, eficiente e transparente, por meio de aplicativo, sistema web, APIs e dispositivos físicos (maquininhas).",
+          "1.1. O {{appName}} é uma carteira digital de autocustódia (self-custody) que permite ao Usuário armazenar, enviar e receber ativos digitais, em especial a stablecoin USDT (Tether), nas redes blockchain suportadas (como Polygon e Plasma).",
+          "1.2. A I Like Technology fornece exclusivamente a tecnologia de interface com as redes blockchain. Não é instituição financeira, corretora, exchange ou custodiante, não intermedeia operações e não detém, em nenhum momento, a posse, o controle ou o acesso aos ativos do Usuário.",
         ],
       },
       s2: {
-        title: "Cadastro e Elegibilidade",
+        title: "Autocustódia e Chaves Privadas",
         paragraphs: [
-          "2.1. Para utilizar os serviços, o Usuário deverá realizar cadastro prévio, fornecendo informações verídicas, completas e atualizadas.",
-          "2.2. A I Like Technology reserva-se o direito de verificar a veracidade das informações, podendo, inclusive, recusar ou suspender cadastros em caso de inconsistências ou uso indevido.",
+          "2.1. As chaves privadas e a frase de recuperação (12 palavras) são geradas e armazenadas exclusivamente no dispositivo do Usuário. A I Like Technology não possui cópia, backup ou qualquer meio de acesso a elas.",
+          "2.2. O Usuário é o único e exclusivo responsável pela guarda e sigilo da sua frase de recuperação. A perda, o extravio ou o compartilhamento indevido dessas informações implica a perda definitiva e irreversível do acesso aos ativos, sem qualquer possibilidade de recuperação pela I Like Technology.",
+          "2.3. O {{appName}} jamais solicitará a frase de recuperação por e-mail, telefone, aplicativos de mensagem ou qualquer outro canal.",
         ],
       },
       s3: {
-        title: "Condições de Uso",
+        title: "Cadastro e Elegibilidade",
         paragraphs: [
-          "3.1. O Usuário compromete-se a utilizar a Plataforma exclusivamente para fins lícitos, responsabilizando-se civil e criminalmente por quaisquer atos praticados.",
-          "3.2. É vedada a utilização da Plataforma para:",
-        ],
-        bullets: [
-          "Transações fraudulentas ou que envolvam atividades ilegais",
-          "Lavagem de dinheiro ou financiamento ao terrorismo",
-          "Comércio de produtos ou serviços proibidos por lei",
+          "3.1. Para utilizar os serviços, o Usuário deverá fornecer informações verídicas, completas e atualizadas, sendo civilmente responsável pela sua exatidão.",
+          "3.2. O uso do Aplicativo é permitido apenas a maiores de 18 (dezoito) anos, plenamente capazes.",
+          "3.3. A I Like Technology reserva-se o direito de recusar ou suspender cadastros em caso de inconsistências, fraude ou uso indevido.",
         ],
       },
       s4: {
-        title: "Remuneração e Taxas",
+        title: "Condições de Uso e Vedações",
         paragraphs: [
-          "4.1. A utilização da Plataforma poderá implicar na incidência de taxas, atualmente fixadas em 2% (dois por cento) sobre cada transação realizada.",
-          "4.2. A I Like Technology reserva-se o direito de alterar os valores mediante aviso prévio com antecedência mínima de 15 (quinze) dias.",
+          "4.1. O Usuário compromete-se a utilizar o Aplicativo exclusivamente para fins lícitos, responsabilizando-se civil e criminalmente por seus atos.",
+          "4.2. É expressamente vedada a utilização do Aplicativo para:",
+        ],
+        bullets: [
+          "Transações fraudulentas ou vinculadas a atividades ilegais",
+          "Lavagem de dinheiro ou financiamento ao terrorismo",
+          "Comércio de produtos ou serviços proibidos por lei",
+          "Tentativas de burlar, atacar ou explorar vulnerabilidades do Aplicativo ou das redes blockchain",
         ],
       },
       s5: {
-        title: "Propriedade Intelectual",
+        title: "Transações em Blockchain",
         paragraphs: [
-          "Todos os elementos da {{appName}}, incluindo logotipos, sistemas, códigos, conteúdos e marcas, são de propriedade exclusiva da I Like Technology, sendo vedada qualquer reprodução ou uso não autorizado.",
+          "5.1. As transações em blockchain são definitivas e irreversíveis. Uma vez confirmadas na rede, não podem ser canceladas, estornadas ou modificadas pela I Like Technology.",
+          "5.2. É responsabilidade exclusiva do Usuário conferir o endereço de destino e a rede selecionada antes de confirmar qualquer envio. Ativos enviados a endereços incorretos ou em rede incompatível são irrecuperáveis.",
+          "5.3. As transações estão sujeitas a taxas de rede (gás), cobradas pelas próprias redes blockchain e alheias ao controle da I Like Technology.",
         ],
       },
       s6: {
-        title: "Responsabilidades",
-        paragraphs: ["6.1. A I Like Technology não se responsabiliza por:"],
-        bullets: [
-          "Erros causados por má utilização da plataforma",
-          "Falhas decorrentes de terceiros (ex: operadoras de internet)",
-          "Perdas financeiras decorrentes de transações indevidas realizadas por terceiros com acesso à conta ou wallet do usuário",
+        title: "Riscos",
+        paragraphs: [
+          "6.1. O Usuário declara estar ciente dos riscos inerentes aos ativos digitais, incluindo, entre outros: volatilidade de preços, possibilidade de perda de paridade de stablecoins, falhas, congestionamentos ou ataques às redes blockchain e alterações regulatórias.",
+          "6.2. A utilização do Aplicativo é feita por conta e risco do Usuário, que reconhece que ativos digitais não contam com garantia de fundos ou proteção governamental.",
         ],
       },
       s7: {
-        title: "Modificações e Atualizações",
+        title: "Taxas",
         paragraphs: [
-          "Este Termo poderá ser alterado a qualquer momento. O uso contínuo da plataforma após a publicação das alterações implicará aceitação tácita dos novos termos.",
+          "7.1. Funcionalidades específicas do Aplicativo poderão estar sujeitas a taxas de serviço, sempre informadas de forma clara antes da confirmação da operação.",
+          "7.2. A I Like Technology reserva-se o direito de alterar suas taxas mediante aviso prévio com antecedência mínima de 15 (quinze) dias.",
+        ],
+      },
+      s8: {
+        title: "Propriedade Intelectual",
+        paragraphs: [
+          "Todos os elementos do {{appName}}, incluindo logotipos, sistemas, códigos, conteúdos e marcas, são de propriedade exclusiva da I Like Technology, sendo vedada qualquer reprodução ou uso não autorizado.",
+        ],
+      },
+      s9: {
+        title: "Limitação de Responsabilidade",
+        paragraphs: ["9.1. A I Like Technology não se responsabiliza por:"],
+        bullets: [
+          "Perda, roubo ou compartilhamento da frase de recuperação ou das chaves privadas do Usuário",
+          "Transações enviadas a endereços incorretos ou em redes incompatíveis",
+          "Falhas, congestionamentos ou ataques às redes blockchain e a serviços de terceiros",
+          "Acesso indevido ao dispositivo do Usuário, inclusive por malware ou engenharia social",
+          "Variações de preço ou perda de paridade de ativos digitais",
+        ],
+      },
+      s10: {
+        title: "Modificações e Disposições Gerais",
+        paragraphs: [
+          "10.1. Este Termo poderá ser alterado a qualquer momento. O uso contínuo do Aplicativo após a publicação das alterações implicará aceitação tácita dos novos termos.",
+          "10.2. Este Termo é regido pelas leis da República Federativa do Brasil, ficando eleito o foro do domicílio do Usuário para dirimir eventuais controvérsias.",
         ],
       },
     },
@@ -238,6 +271,30 @@ export default {
     title: "Receber",
   },
 
+  walletSecurity: {
+    title: "Antes de criar sua carteira",
+    steps: {
+      selfCustody: {
+        title: "Você no controle total",
+        text: "O {{appName}} é uma carteira de autocustódia: só você tem acesso aos seus fundos. Nós não guardamos cópia das suas 12 palavras e não podemos recuperá-las por você.",
+      },
+      writePaper: {
+        title: "Anote em papel",
+        text: "Você vai receber 12 palavras de recuperação. Anote-as à mão, em papel, na ordem exata, e guarde em local seguro — de preferência mais de uma cópia, em lugares diferentes.",
+      },
+      noScreenshot: {
+        title: "Nada de print ou foto",
+        text: "Não tire captura de tela nem fotografe as palavras. Imagens vão para a galeria, nuvem e backups automáticos — qualquer app com acesso pode roubá-las.",
+      },
+      noCloud: {
+        title: "Nunca envie ou digite",
+        text: "Não envie as palavras por e-mail, WhatsApp ou nuvem, e não as digite em sites ou outros apps. O {{appName}} nunca vai pedir suas 12 palavras.",
+      },
+    },
+    acceptText: "Estou ciente de que, se eu perder minhas 12 palavras, perderei o acesso aos meus fundos de forma definitiva e ninguém — nem o {{appName}} — poderá recuperá-los.",
+    acceptButton: "Entendi, criar carteira",
+    nextButton: "Continuar",
+  },
   walletSetup: {
     title: "Configurar carteira",
     subtitle: "Como você quer configurar?",

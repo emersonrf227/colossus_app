@@ -35,7 +35,10 @@ import {
   PixTransaction,
 } from "../../../components/pix/pixService";
 import { getProofKey } from "../../../components/wallet/walletStorage";
-import { ApiWalletRecord } from "../../../components/wallet/walletStatus";
+import {
+  ApiWalletRecord,
+  getWalletStatus,
+} from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
 
@@ -267,7 +270,12 @@ export default function WalletHistory() {
   const route = useRoute();
   const { t } = useTranslation();
   const params = (route.params ?? {}) as RouteParams;
-  const record = params.record;
+
+  // record pode vir por parâmetro; se não vier (ex: navegação pelo menu),
+  // é buscado via getWalletStatus no efeito abaixo.
+  const [record, setRecord] = useState<ApiWalletRecord | undefined>(
+    params.record,
+  );
 
   const [network, setNetwork] = useState<WalletNetworkKey>(
     params.network ?? "polygon",
@@ -296,6 +304,26 @@ export default function WalletHistory() {
     return () => {
       isMountedRef.current = false;
     };
+  }, []);
+
+  // Sem record nos params (ex: veio pelo menu): busca o status da wallet
+  useEffect(() => {
+    if (record?.address) return;
+    getWalletStatus()
+      .then((status) => {
+        if (!isMountedRef.current) return;
+        if (status.record) setRecord(status.record);
+        else {
+          setError(true);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMountedRef.current) {
+          setError(true);
+          setLoading(false);
+        }
+      });
   }, []);
 
   const lookupPixProofs = useCallback(async (txs: OnChainTransaction[]) => {

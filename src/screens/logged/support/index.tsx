@@ -27,6 +27,7 @@ const FAQ_KEYS = [
   "q7",
   "q8",
   "q9",
+  "q10",
 ] as const;
 
 export default function SupportScreen() {

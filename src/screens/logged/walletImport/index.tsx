@@ -12,6 +12,8 @@ import {
 import { Platform, StatusBar as RNStatusBar } from "react-native";
 import { useToast } from "@/hook/Toast";
 import { persistGeneratedWallet } from "../../../components/wallet/walletStorage";
+import { usePreventScreenCapture } from "expo-screen-capture";
+import Loader from "@/components/loader";
 import { registerWalletAddress } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
@@ -145,6 +147,8 @@ export const CardLogo = styled.View`
 `;
 
 export default function WalletImport() {
+  // Impede screenshot/gravação de tela enquanto as palavras são digitadas
+  usePreventScreenCapture();
   const navigation = useNavigation();
   const { navigate, goBack } = navigation;
   const { showToast } = useToast();
@@ -286,6 +290,7 @@ export default function WalletImport() {
             </SubmitButton>
           </ScrollView>
         </SafeArea>
+        {submitting && <Loader />}
       </Background>
     </Container>
   );

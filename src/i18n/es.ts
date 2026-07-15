@@ -62,43 +62,52 @@ export default {
       q1: {
         question: "1. ¿Qué es {{appName}}?",
         answer:
-          "{{appName}} es una solución de pagos digitales que permite a comercios de todos los tamaños aceptar pagos en USDT.",
+          "{{appName}} es una billetera digital de autocustodia desarrollada por I Like Technology que permite a cualquier persona guardar, enviar y recibir USDT (Tether) en las redes blockchain soportadas, con control total sobre sus propios fondos.",
       },
       q2: {
         question: "2. ¿Quién puede usar {{appName}}?",
         answer:
-          "Comerciantes que desean ofrecer una alternativa de pago moderna con tarifas más bajas y liquidez inmediata.",
+          "Cualquier persona mayor de 18 años — no necesitas ser comerciante ni empresa. Si quieres guardar tus USDT con seguridad, enviarlos a otras billeteras o recibirlos desde cualquier parte del mundo, {{appName}} es para ti.",
       },
       q3: {
-        question: "3. ¿Cómo funciona la recepción en USDT?",
+        question: "3. ¿Qué significa autocustodia?",
         answer:
-          "El comerciante genera un código QR. El cliente paga en USDT y el monto se recibe instantáneamente.",
+          "Significa que solo tú tienes acceso a tus fondos. Las claves de tu billetera (las 12 palabras de recuperación) están únicamente en tu dispositivo — ni siquiera {{appName}} puede acceder a ellas, mover tus activos o recuperarlas por ti.",
       },
       q4: {
-        question: "4. ¿Qué tarifas cobra {{appName}}?",
-        answer: "Una tarifa fija del 1.95% por transacción.",
+        question: "4. ¿Cuáles son las tarifas?",
+        answer:
+          "Guardar y recibir USDT en {{appName}} no cuesta nada. Al enviar, solo pagas la tarifa de red (gas), cobrada por la propia blockchain — no por {{appName}}. Las funciones específicas con costo siempre lo muestran antes de confirmar.",
       },
       q5: {
-        question: "5. ¿Necesito entender de criptomonedas?",
-        answer: "No. La plataforma es intuitiva y simple.",
+        question: "5. ¿Necesito entender de criptomonedas para usarla?",
+        answer:
+          "No. La app está diseñada para ser simple e intuitiva, incluso para quien nunca usó criptomonedas. Creas tu billetera en minutos y la app te guía en cada paso.",
       },
       q6: {
-        question: "6. ¿Dónde puedo usar {{appName}}?",
-        answer: "En tiendas físicas, e-commerce, delivery o autónomos.",
+        question: "6. ¿Qué pasa si pierdo mis 12 palabras?",
+        answer:
+          "Las 12 palabras son la única forma de recuperar tu billetera. Si las pierdes, el acceso a tus fondos se pierde de forma definitiva — nadie, ni siquiera {{appName}}, puede recuperarlas. Anótalas en papel y guárdalas en un lugar seguro.",
       },
       q7: {
-        question: "7. ¿Es seguro recibir en USDT?",
+        question: "7. ¿Es seguro usar USDT?",
         answer:
-          "Sí. El USDT es una stablecoin respaldada en dólares con alta estabilidad.",
+          "El USDT es una stablecoin respaldada en dólares, con alta liquidez y amplia adopción. {{appName}} suma cifrado local, PIN de acceso y bloqueo de capturas de pantalla en las áreas sensibles.",
       },
       q8: {
-        question: "8. ¿Cuáles son los beneficios?",
+        question: "8. ¿En qué redes funciona {{appName}}?",
         answer:
-          "Tarifas menores, liquidación instantánea y acceso a nuevos consumidores.",
+          "Actualmente en Polygon y Plasma. Al enviar o recibir, verifica siempre que la red seleccionada sea la misma de la otra billetera — los envíos en redes incompatibles no se pueden recuperar.",
       },
       q9: {
-        question: "9. ¿Necesito registro?",
-        answer: "Descarga la app y regístrate con un consultor de {{appName}}.",
+        question: "9. ¿Cómo empiezo a usarla?",
+        answer:
+          "Descarga la app, crea una billetera nueva (o importa una existente con tus 12 palabras) y listo: en pocos minutos ya puedes recibir y enviar USDT.",
+      },
+      q10: {
+        question: "10. ¿Qué es el gas patrocinado?",
+        answer:
+          "Para enviar USDT, la blockchain cobra una pequeña tarifa en la moneda nativa de la red (como POL en Polygon). Si tu saldo de esa moneda es bajo, {{appName}} puede patrocinar el gas: recibes lo necesario para completar tus transacciones sin comprar la moneda nativa en otro lugar. Cuando está disponible, la app lo ofrece automáticamente.",
       },
     },
   },
@@ -107,54 +116,90 @@ export default {
     docTitle: "Términos de Uso – {{appName}}",
     lastUpdated: "Última actualización: {{date}}",
     intro:
-      "Estos Términos de Uso regulan el uso de la plataforma {{appName}}, de titularidad de I Like Technology, CNPJ 45.123.168/0001-22.",
+      'Estos Términos de Uso regulan la utilización de la aplicación {{appName}} ("Aplicación"), de titularidad de I Like Technology, inscrita bajo el CNPJ nº 45.123.168/0001-22.\n\nAl acceder o utilizar cualquier funcionalidad de la Aplicación, el Usuario declara haber leído, comprendido y aceptado íntegramente las disposiciones aquí previstas.',
     footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
-        title: "Objeto",
+        title: "Objeto y Naturaleza del Servicio",
         paragraphs: [
-          "Esta plataforma ofrece soluciones tecnológicas para aceptar pagos con USDT.",
+          "1.1. {{appName}} es una billetera digital de autocustodia que permite al Usuario almacenar, enviar y recibir activos digitales, en especial la stablecoin USDT (Tether), en las redes blockchain soportadas (como Polygon y Plasma).",
+          "1.2. I Like Technology provee exclusivamente la tecnología de interfaz con las redes blockchain. No es institución financiera, corredora, exchange ni custodio, no intermedia operaciones y en ningún momento posee, controla o accede a los activos del Usuario.",
         ],
       },
       s2: {
-        title: "Registro",
+        title: "Autocustodia y Claves Privadas",
         paragraphs: [
-          "2.1. El usuario debe registrarse con información veraz.",
-          "2.2. I Like Technology puede rechazar registros inconsistentes.",
+          "2.1. Las claves privadas y la frase de recuperación (12 palabras) se generan y almacenan exclusivamente en el dispositivo del Usuario. I Like Technology no posee copia, respaldo ni medio alguno de acceso a ellas.",
+          "2.2. El Usuario es el único responsable de la custodia y confidencialidad de su frase de recuperación. Su pérdida o divulgación indebida implica la pérdida definitiva e irreversible del acceso a los activos, sin posibilidad de recuperación por I Like Technology.",
+          "2.3. {{appName}} jamás solicitará la frase de recuperación por correo, teléfono, apps de mensajería u otro canal.",
         ],
       },
       s3: {
-        title: "Condiciones",
-        paragraphs: ["3.1. Solo uso lícito.", "3.2. Prohibido:"],
-        bullets: [
-          "Transacciones fraudulentas",
-          "Lavado de dinero",
-          "Servicios prohibidos por ley",
+        title: "Registro y Elegibilidad",
+        paragraphs: [
+          "3.1. Para utilizar los servicios, el Usuario deberá proporcionar información verídica, completa y actualizada, siendo responsable de su exactitud.",
+          "3.2. La Aplicación solo puede ser utilizada por mayores de 18 años con plena capacidad legal.",
+          "3.3. I Like Technology se reserva el derecho de rechazar o suspender registros en caso de inconsistencias, fraude o uso indebido.",
         ],
       },
       s4: {
-        title: "Tarifas",
+        title: "Condiciones de Uso y Prohibiciones",
         paragraphs: [
-          "4.1. Tarifa del 2% por transacción.",
-          "4.2. Cambios con 15 días de aviso.",
+          "4.1. El Usuario se compromete a utilizar la Aplicación exclusivamente para fines lícitos, respondiendo civil y penalmente por sus actos.",
+          "4.2. Queda expresamente prohibido utilizar la Aplicación para:",
+        ],
+        bullets: [
+          "Transacciones fraudulentas o vinculadas a actividades ilegales",
+          "Lavado de dinero o financiamiento del terrorismo",
+          "Comercio de productos o servicios prohibidos por ley",
+          "Intentos de vulnerar, atacar o explotar fallas de la Aplicación o de las redes blockchain",
         ],
       },
       s5: {
-        title: "Propiedad Intelectual",
-        paragraphs: ["Todos los elementos son propiedad de I Like Technology."],
+        title: "Transacciones en Blockchain",
+        paragraphs: [
+          "5.1. Las transacciones en blockchain son definitivas e irreversibles. Una vez confirmadas en la red, no pueden ser canceladas, revertidas ni modificadas por I Like Technology.",
+          "5.2. Es responsabilidad exclusiva del Usuario verificar la dirección de destino y la red seleccionada antes de confirmar cualquier envío. Los activos enviados a direcciones incorrectas o redes incompatibles son irrecuperables.",
+          "5.3. Las transacciones están sujetas a tarifas de red (gas), cobradas por las propias redes blockchain y ajenas al control de I Like Technology.",
+        ],
       },
       s6: {
-        title: "Responsabilidades",
-        paragraphs: ["6.1. I Like Technology no se responsabiliza por:"],
-        bullets: [
-          "Errores por mal uso",
-          "Fallos de terceros",
-          "Pérdidas por acceso no autorizado",
+        title: "Riesgos",
+        paragraphs: [
+          "6.1. El Usuario declara conocer los riesgos inherentes a los activos digitales, incluyendo: volatilidad de precios, posible pérdida de paridad de stablecoins, fallas, congestión o ataques a las redes blockchain y cambios regulatorios.",
+          "6.2. El uso de la Aplicación es por cuenta y riesgo del Usuario. Los activos digitales no cuentan con garantía de depósitos ni protección gubernamental.",
         ],
       },
       s7: {
-        title: "Modificaciones",
-        paragraphs: ["Estos términos pueden cambiar en cualquier momento."],
+        title: "Tarifas",
+        paragraphs: [
+          "7.1. Funcionalidades específicas de la Aplicación podrán estar sujetas a tarifas de servicio, siempre informadas claramente antes de confirmar la operación.",
+          "7.2. I Like Technology se reserva el derecho de modificar sus tarifas con aviso previo de al menos 15 (quince) días.",
+        ],
+      },
+      s8: {
+        title: "Propiedad Intelectual",
+        paragraphs: [
+          "Todos los elementos de {{appName}}, incluidos logotipos, sistemas, códigos, contenidos y marcas, son propiedad exclusiva de I Like Technology; queda prohibida cualquier reproducción o uso no autorizado.",
+        ],
+      },
+      s9: {
+        title: "Limitación de Responsabilidad",
+        paragraphs: ["9.1. I Like Technology no se responsabiliza por:"],
+        bullets: [
+          "Pérdida, robo o divulgación de la frase de recuperación o claves privadas del Usuario",
+          "Transacciones enviadas a direcciones incorrectas o redes incompatibles",
+          "Fallas, congestión o ataques a las redes blockchain y servicios de terceros",
+          "Acceso indebido al dispositivo del Usuario, incluso por malware o ingeniería social",
+          "Variaciones de precio o pérdida de paridad de los activos digitales",
+        ],
+      },
+      s10: {
+        title: "Modificaciones y Disposiciones Generales",
+        paragraphs: [
+          "10.1. Estos Términos podrán modificarse en cualquier momento. El uso continuado de la Aplicación tras la publicación de cambios implica su aceptación tácita.",
+          "10.2. Estos Términos se rigen por las leyes de la República Federativa de Brasil, eligiéndose el fuero del domicilio del Usuario para resolver controversias.",
+        ],
       },
     },
   },
@@ -221,6 +266,30 @@ export default {
     copy: "Copiar",
     share: "Compartir",
     noAddress: "Ninguna billetera encontrada.",
+  },
+  walletSecurity: {
+    title: "Antes de crear tu billetera",
+    steps: {
+      selfCustody: {
+        title: "Tú tienes el control total",
+        text: "{{appName}} es una billetera de autocustodia: solo tú tienes acceso a tus fondos. No guardamos copia de tus 12 palabras y no podemos recuperarlas por ti.",
+      },
+      writePaper: {
+        title: "Anótalas en papel",
+        text: "Recibirás 12 palabras de recuperación. Escríbelas a mano, en papel, en el orden exacto, y guárdalas en un lugar seguro — idealmente más de una copia, en sitios distintos.",
+      },
+      noScreenshot: {
+        title: "Sin capturas ni fotos",
+        text: "No hagas captura de pantalla ni fotografíes las palabras. Las imágenes van a la galería, la nube y los respaldos automáticos — cualquier app con acceso podría robarlas.",
+      },
+      noCloud: {
+        title: "Nunca las envíes ni escribas",
+        text: "No envíes las palabras por correo, WhatsApp o nube, y no las escribas en sitios web u otras apps. {{appName}} nunca te pedirá tus 12 palabras.",
+      },
+    },
+    acceptText: "Entiendo que si pierdo mis 12 palabras perderé el acceso a mis fondos de forma definitiva y nadie — ni siquiera {{appName}} — podrá recuperarlos.",
+    acceptButton: "Entendido, crear billetera",
+    nextButton: "Continuar",
   },
   walletSetup: {
     title: "Configurar billetera",

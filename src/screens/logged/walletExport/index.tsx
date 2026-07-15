@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { StatusBar, Clipboard } from "react-native";
+import { usePreventScreenCapture } from "expo-screen-capture";
 import { useNavigation } from "@react-navigation/native";
 import {
   ArrowLeft,
@@ -209,6 +210,8 @@ export const CardLogo = styled.View`
 `;
 
 export default function WalletExport() {
+  // Impede screenshot/gravação de tela enquanto a seed está visível
+  usePreventScreenCapture();
   const navigation = useNavigation();
   const { showToast } = useToast();
   const { t } = useTranslation();

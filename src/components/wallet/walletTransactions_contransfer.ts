@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 import {
   getProvider,
   getNetworkConfig,
@@ -109,7 +109,7 @@ export async function withdrawCrypto({
 
     // Envia a tx assinada ao backend para ele submeter pagando o gas
     // 👉 Ajuste o endpoint quando ele existir no backend
-    const response = await rstruther.post("saller/withdraw", {
+    const response = await helmApi.post("saller/withdraw", {
       network,
       signedTx,
       fromAddress: connectedWallet.address,
@@ -162,7 +162,7 @@ export async function requestPixWithdrawQuote(
   params: WithdrawPixQuoteParams,
 ): Promise<WithdrawPixQuote> {
   try {
-    const response = await rstruther.post("saller/withdraw-pix", {
+    const response = await helmApi.post("saller/withdraw-pix", {
       amount: params.amountBrl,
       pixKey: params.pixKey,
       pixKeyType: params.pixKeyType,
@@ -193,7 +193,7 @@ export async function confirmPixWithdraw(params: {
   withdrawId: string;
   txid: string;
 }): Promise<void> {
-  await rstruther.post("saller/withdraw-pix/confirm", {
+  await helmApi.post("saller/withdraw-pix/confirm", {
     withdrawId: params.withdrawId,
     txid: params.txid,
   });

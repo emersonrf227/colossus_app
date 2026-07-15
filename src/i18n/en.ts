@@ -65,46 +65,52 @@ export default {
       q1: {
         question: "1. What is {{appName}}?",
         answer:
-          "{{appName}} is a digital payment solution developed by I Like Technology, allowing businesses of all sizes to accept payments in USDT (Tether) via app, web system and card terminal.",
+          "{{appName}} is a self-custody digital wallet developed by I Like Technology that lets anyone store, send and receive USDT (Tether) on supported blockchain networks, with full control over their own funds.",
       },
       q2: {
         question: "2. Who can use {{appName}}?",
         answer:
-          "The platform is aimed at merchants who want to offer a modern and secure payment alternative with lower fees and immediate liquidity.",
+          "Anyone over 18 — you don't need to be a merchant or a company. If you want to store your USDT safely, send it to other wallets or receive it from anywhere in the world, {{appName}} is for you.",
       },
       q3: {
-        question: "3. How does receiving in USDT work?",
+        question: "3. What does self-custody mean?",
         answer:
-          "When making a sale, the merchant generates a QR code or payment link. The customer pays in USDT, and the amount is instantly received in the merchant's digital wallet.",
+          "It means only you have access to your funds. Your wallet keys (the 12 recovery words) live only on your device — not even {{appName}} can access them, move your assets or recover them for you.",
       },
       q4: {
-        question: "4. What fees does {{appName}} charge?",
-        answer: "{{appName}} charges a fixed fee of 1.95% per transaction.",
+        question: "4. What are the fees?",
+        answer:
+          "Storing and receiving USDT in {{appName}} costs nothing. When sending, you only pay the network (gas) fee, charged by the blockchain itself — not by {{appName}}. Specific features that carry a cost always show it before you confirm.",
       },
       q5: {
-        question: "5. Do I need to understand cryptocurrency?",
+        question: "5. Do I need to understand crypto to use it?",
         answer:
-          "No. The platform was designed to be intuitive and simple, even for those who have never used cryptocurrency.",
+          "No. The app is designed to be simple and intuitive, even for first-time crypto users. You create your wallet in minutes and the app guides you through every step.",
       },
       q6: {
-        question: "6. Where can I use {{appName}}?",
+        question: "6. What happens if I lose my 12 words?",
         answer:
-          "In physical stores, e-commerce, delivery services or freelancers, via mobile app, web system or compatible terminal.",
+          "The 12 words are the only way to recover your wallet. If you lose them, access to your funds is permanently lost — no one, not even {{appName}}, can recover them. Write them on paper and keep them somewhere safe.",
       },
       q7: {
-        question: "7. Is it safe to receive payments in USDT?",
+        question: "7. Is USDT safe to use?",
         answer:
-          "Yes. USDT is a dollar-backed stablecoin with high stability and liquidity.",
+          "USDT is a dollar-backed stablecoin with high liquidity and wide adoption. {{appName}} adds local encryption, PIN protection and screenshot blocking on sensitive screens.",
       },
       q8: {
-        question: "8. What are the benefits of accepting cryptocurrency?",
+        question: "8. Which networks does {{appName}} support?",
         answer:
-          "Lower fees, instant settlement, access to a new consumer profile and exemption from banking bureaucracies.",
+          "Currently Polygon and Plasma. When sending or receiving, always make sure the selected network matches the other wallet — transfers on incompatible networks cannot be recovered.",
       },
       q9: {
-        question: "9. Do I need to register?",
+        question: "9. How do I get started?",
         answer:
-          "Download the app, register with a {{appName}} consultant and after verification your company will be ready to accept USDT.",
+          "Download the app, create a new wallet (or import an existing one with your 12 words) and that's it: within minutes you can receive and send USDT.",
+      },
+      q10: {
+        question: "10. What is sponsored gas?",
+        answer:
+          "To send USDT, the blockchain charges a small fee in the network's native coin (such as POL on Polygon). If your native balance is low, {{appName}} can sponsor the gas: you receive enough to complete your transactions without having to buy the native coin elsewhere. When available, the app offers this automatically.",
       },
     },
   },
@@ -114,60 +120,89 @@ export default {
     docTitle: "Terms of Use – {{appName}}",
     lastUpdated: "Last updated: {{date}}",
     intro:
-      "These Terms of Use govern the use of the {{appName}} platform, owned by I Like Technology, registered under CNPJ No. 45.123.168/0001-22.",
+      'These Terms of Use govern the use of the {{appName}} application ("App"), owned by I Like Technology, registered under CNPJ No. 45.123.168/0001-22.\n\nBy accessing or using any feature of the App, the User declares to have read, understood and fully agreed to the provisions set forth herein.',
     footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
-        title: "Purpose",
+        title: "Purpose and Nature of the Service",
         paragraphs: [
-          "This platform provides technological solutions for merchants and users to accept and make payments using digital assets, especially the USDT stablecoin.",
+          "1.1. {{appName}} is a self-custody digital wallet that allows the User to store, send and receive digital assets, in particular the stablecoin USDT (Tether), on supported blockchain networks (such as Polygon and Plasma).",
+          "1.2. I Like Technology provides only the interface technology to blockchain networks. It is not a financial institution, broker, exchange or custodian, does not intermediate transactions and never holds possession, control or access to the User's assets.",
         ],
       },
       s2: {
-        title: "Registration",
+        title: "Self-Custody and Private Keys",
         paragraphs: [
-          "2.1. To use the services, the User must register in advance with true and complete information.",
-          "2.2. I Like Technology reserves the right to verify information and refuse registrations in case of inconsistencies.",
+          "2.1. Private keys and the recovery phrase (12 words) are generated and stored exclusively on the User's device. I Like Technology has no copy, backup or any means of accessing them.",
+          "2.2. The User is solely responsible for safekeeping the recovery phrase. Loss or improper sharing of this information results in the permanent and irreversible loss of access to the assets, with no possibility of recovery by I Like Technology.",
+          "2.3. {{appName}} will never request the recovery phrase by email, phone, messaging apps or any other channel.",
         ],
       },
       s3: {
-        title: "Terms of Use",
+        title: "Registration and Eligibility",
         paragraphs: [
-          "3.1. The User agrees to use the Platform exclusively for lawful purposes.",
-          "3.2. It is prohibited to use the Platform for:",
-        ],
-        bullets: [
-          "Fraudulent transactions or illegal activities",
-          "Money laundering or terrorism financing",
-          "Trading prohibited products or services",
+          "3.1. To use the services, the User must provide true, complete and up-to-date information, being liable for its accuracy.",
+          "3.2. The App may only be used by persons over 18 years of age with full legal capacity.",
+          "3.3. I Like Technology reserves the right to refuse or suspend registrations in case of inconsistencies, fraud or misuse.",
         ],
       },
       s4: {
-        title: "Fees",
+        title: "Conditions of Use and Prohibitions",
         paragraphs: [
-          "4.1. Use of the Platform may incur fees, currently set at 2% per transaction.",
-          "4.2. I Like Technology reserves the right to change values with at least 15 days notice.",
+          "4.1. The User agrees to use the App exclusively for lawful purposes and is civilly and criminally liable for their actions.",
+          "4.2. Use of the App is expressly prohibited for:",
+        ],
+        bullets: [
+          "Fraudulent transactions or transactions linked to illegal activities",
+          "Money laundering or terrorism financing",
+          "Trade of products or services prohibited by law",
+          "Attempts to circumvent, attack or exploit vulnerabilities of the App or blockchain networks",
         ],
       },
       s5: {
-        title: "Intellectual Property",
+        title: "Blockchain Transactions",
         paragraphs: [
-          "All elements of {{appName}} are the exclusive property of I Like Technology. Unauthorized reproduction is prohibited.",
+          "5.1. Blockchain transactions are final and irreversible. Once confirmed on the network, they cannot be cancelled, reversed or modified by I Like Technology.",
+          "5.2. It is the User's sole responsibility to verify the destination address and selected network before confirming any transfer. Assets sent to incorrect addresses or incompatible networks are unrecoverable.",
+          "5.3. Transactions are subject to network (gas) fees, charged by the blockchain networks themselves and beyond the control of I Like Technology.",
         ],
       },
       s6: {
-        title: "Responsibilities",
-        paragraphs: ["6.1. I Like Technology is not responsible for:"],
-        bullets: [
-          "Errors caused by misuse",
-          "Failures from third parties",
-          "Financial losses from unauthorized transactions",
+        title: "Risks",
+        paragraphs: [
+          "6.1. The User declares awareness of the risks inherent to digital assets, including but not limited to: price volatility, potential loss of stablecoin parity, failures, congestion or attacks on blockchain networks, and regulatory changes.",
+          "6.2. Use of the App is at the User's own risk. Digital assets are not covered by deposit insurance or government protection.",
         ],
       },
       s7: {
-        title: "Modifications",
+        title: "Fees",
         paragraphs: [
-          "These Terms may be changed at any time. Continued use implies acceptance of the new terms.",
+          "7.1. Specific features of the App may be subject to service fees, always clearly disclosed before the operation is confirmed.",
+          "7.2. I Like Technology reserves the right to change its fees upon prior notice of at least 15 (fifteen) days.",
+        ],
+      },
+      s8: {
+        title: "Intellectual Property",
+        paragraphs: [
+          "All elements of {{appName}}, including logos, systems, code, content and trademarks, are the exclusive property of I Like Technology; any unauthorized reproduction or use is prohibited.",
+        ],
+      },
+      s9: {
+        title: "Limitation of Liability",
+        paragraphs: ["9.1. I Like Technology is not liable for:"],
+        bullets: [
+          "Loss, theft or sharing of the User's recovery phrase or private keys",
+          "Transactions sent to incorrect addresses or incompatible networks",
+          "Failures, congestion or attacks on blockchain networks and third-party services",
+          "Unauthorized access to the User's device, including via malware or social engineering",
+          "Price variations or loss of parity of digital assets",
+        ],
+      },
+      s10: {
+        title: "Amendments and General Provisions",
+        paragraphs: [
+          "10.1. These Terms may be amended at any time. Continued use of the App after publication of changes implies tacit acceptance of the new terms.",
+          "10.2. These Terms are governed by the laws of the Federative Republic of Brazil, with the courts of the User's domicile elected to resolve any disputes.",
         ],
       },
     },
@@ -226,6 +261,30 @@ export default {
     noAddress: "No wallet found.",
   },
 
+  walletSecurity: {
+    title: "Before creating your wallet",
+    steps: {
+      selfCustody: {
+        title: "You are in full control",
+        text: "{{appName}} is a self-custody wallet: only you have access to your funds. We do not keep a copy of your 12 words and cannot recover them for you.",
+      },
+      writePaper: {
+        title: "Write it on paper",
+        text: "You will receive 12 recovery words. Write them by hand, on paper, in the exact order, and store them somewhere safe — ideally more than one copy, in different places.",
+      },
+      noScreenshot: {
+        title: "No screenshots or photos",
+        text: "Do not screenshot or photograph your words. Images end up in your gallery, cloud and automatic backups — any app with access could steal them.",
+      },
+      noCloud: {
+        title: "Never send or type them",
+        text: "Do not send your words by email, WhatsApp or cloud, and never type them into websites or other apps. {{appName}} will never ask for your 12 words.",
+      },
+    },
+    acceptText: "I understand that if I lose my 12 words I will permanently lose access to my funds, and no one — not even {{appName}} — can recover them.",
+    acceptButton: "I understand, create wallet",
+    nextButton: "Continue",
+  },
   walletSetup: {
     title: "Set up wallet",
     subtitle: "How do you want to set it up?",

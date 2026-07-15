@@ -1,4 +1,4 @@
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 
 export interface OpeningHour {
   day: string;
@@ -60,7 +60,7 @@ export class CommunityFetchError extends Error {
 export async function fetchCommunityLocations(): Promise<CommunityLocation[]> {
   let response;
   try {
-    response = await rstruther.get<CommunityApiResponse>("saller/community");
+    response = await helmApi.get<CommunityApiResponse>("saller/community");
   } catch {
     throw new CommunityFetchError();
   }

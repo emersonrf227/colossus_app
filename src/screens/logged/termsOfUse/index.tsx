@@ -14,7 +14,18 @@ import LogoSvg from "@/assets/logov2.svg";
 const TERMS_LAST_UPDATED = "06/04/2025";
 
 // Ordem de exibição das seções; número exibido vem do índice (+1).
-const SECTION_KEYS = ["s1", "s2", "s3", "s4", "s5", "s6", "s7"] as const;
+const SECTION_KEYS = [
+  "s1",
+  "s2",
+  "s3",
+  "s4",
+  "s5",
+  "s6",
+  "s7",
+  "s8",
+  "s9",
+  "s10",
+] as const;
 
 export default function TermsOfUse() {
   const { t } = useTranslation();

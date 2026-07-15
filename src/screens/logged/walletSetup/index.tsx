@@ -51,10 +51,16 @@ export default function WalletSetup() {
   }, [externalAddress, showToast, navigate, t]);
 
   const handleCreateNew = useCallback(() => {
-    navigate("WalletBackup" as never);
+    // Passa primeiro pelos avisos de segurança (autocustódia, papel,
+    // sem print/foto/nuvem) com aceite explícito antes de gerar a seed.
+    navigate("WalletSecurityIntro" as never);
   }, [navigate]);
   const handleImport = useCallback(() => {
-    navigate("WalletImport" as never);
+    // Import também passa pelos avisos de segurança antes de digitar a seed
+    navigate(
+      "WalletSecurityIntro" as never,
+      { target: "WalletImport" } as never,
+    );
   }, [navigate]);
 
   return (

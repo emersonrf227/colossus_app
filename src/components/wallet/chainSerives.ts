@@ -1,4 +1,4 @@
-import rstruther from "@/infraestructure/http/nodeApi";
+import helmApi from "@/infraestructure/http/nodeApi";
 
 export type NetworkAvailability = {
   polygon: boolean;
@@ -13,7 +13,7 @@ export type NetworkAvailability = {
  */
 export async function fetchWalletChains(): Promise<NetworkAvailability> {
   try {
-    const response = await rstruther.get("chain/wallet");
+    const response = await helmApi.get("chain/wallet");
     const res = response.data?.data?.res;
 
     console.log(res);
@@ -36,7 +36,7 @@ export async function fetchWalletChains(): Promise<NetworkAvailability> {
  */
 export async function fetchPixChains(): Promise<NetworkAvailability> {
   try {
-    const response = await rstruther.get("chain/pix");
+    const response = await helmApi.get("chain/pix");
     const res = response.data?.data?.res;
     if (!res) throw new Error("Resposta inválida");
     return {
