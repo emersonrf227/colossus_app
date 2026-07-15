@@ -1,3 +1,4 @@
+import BRAND from "@/config/brand";
 import React, { useCallback, useState } from "react";
 import {
   useFocusEffect,
@@ -107,7 +108,7 @@ export default function ProofConfirm() {
   //         `[C]${doubleDivider}\n` +
   //         `[L]\n` +
   //         `[C]support@iliketechnology.com.br\n` +
-  //         `[C]support@colossuscrypto.com.br\n` +
+  //         `[C]${BRAND.supportEmail}\n` +
   //         `[L]\n` +
   //         `[L]\n`,
   //       printerNbrCharactersPerLine: lineWidth,
@@ -180,7 +181,7 @@ export default function ProofConfirm() {
           `[C]${doubleDivider}\n` +
           `[L]\n` +
           `[C]support@iliketechnology.com.br\n` +
-          `[C]support@colossuscrypto.com.br\n` +
+          `[C]${BRAND.supportEmail}\n` +
           `[L]\n` +
           `[L]\n`,
         printerNbrCharactersPerLine: lineWidth,
@@ -272,7 +273,7 @@ export default function ProofConfirm() {
 
             <S.ReceiptCard>
               <S.ReceiptHeader>
-                <S.ReceiptBrand>COLOSSUS CRYPTO</S.ReceiptBrand>
+                <S.ReceiptBrand>{BRAND.nameUpper}</S.ReceiptBrand>
                 <S.ReceiptBrandSubtitle>
                   {t("receipt.receiptSubtitle")}
                 </S.ReceiptBrandSubtitle>

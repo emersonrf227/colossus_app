@@ -2,6 +2,8 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import BRAND from "@/config/brand";
+
 import pt from "./pt";
 import en from "./en";
 import es from "./es";
@@ -28,7 +30,11 @@ AsyncStorage.getItem("appLanguage").then((savedLang) => {
     lng,
     fallbackLng: "pt",
     resources,
-    interpolation: { escapeValue: false },
+    interpolation: {
+      escapeValue: false,
+      // Toda tradução pode usar {{appName}} — valor vem do config de whitelabel
+      defaultVariables: { appName: BRAND.name },
+    },
   });
 });
 

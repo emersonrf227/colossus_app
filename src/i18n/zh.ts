@@ -54,8 +54,8 @@ export default {
     faqSectionTitle: "常见问题",
     faq: {
       q1: {
-        question: "1. 什么是Colossus Crypto？",
-        answer: "Colossus Crypto是接受USDT支付的数字支付解决方案。",
+        question: "1. 什么是{{appName}}？",
+        answer: "{{appName}}是接受USDT支付的数字支付解决方案。",
       },
       q2: {
         question: "2. 谁可以使用？",
@@ -90,11 +90,11 @@ export default {
   },
   terms: {
     title: "使用条款",
-    docTitle: "使用条款 – Colossus Crypto",
+    docTitle: "使用条款 – {{appName}}",
     lastUpdated: "最后更新：{{date}}",
     intro:
-      "本使用条款规范Colossus Crypto平台的使用，该平台由I Like Technology拥有，CNPJ 45.123.168/0001-22。",
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      "本使用条款规范{{appName}}平台的使用，该平台由I Like Technology拥有，CNPJ 45.123.168/0001-22。",
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "目的",
@@ -129,7 +129,7 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "Colossus社区",
+    headerTitle: "{{appName}}社区",
     filterAll: "全部",
     loading: "正在加载社区...",
     errorLoad: "无法加载地点。",

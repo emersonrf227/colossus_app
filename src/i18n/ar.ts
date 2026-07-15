@@ -59,8 +59,8 @@ export default {
     faqSectionTitle: "الأسئلة الشائعة",
     faq: {
       q1: {
-        question: "1. ما هو Colossus Crypto؟",
-        answer: "Colossus Crypto هو حل دفع رقمي لقبول المدفوعات بـ USDT.",
+        question: "1. ما هو {{appName}}؟",
+        answer: "{{appName}} هو حل دفع رقمي لقبول المدفوعات بـ USDT.",
       },
       q2: {
         question: "2. من يمكنه الاستخدام؟",
@@ -99,11 +99,11 @@ export default {
   },
   terms: {
     title: "شروط الاستخدام",
-    docTitle: "شروط الاستخدام – Colossus Crypto",
+    docTitle: "شروط الاستخدام – {{appName}}",
     lastUpdated: "آخر تحديث: {{date}}",
     intro:
-      "تحكم هذه الشروط استخدام منصة Colossus Crypto المملوكة لـ I Like Technology، CNPJ 45.123.168/0001-22.",
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      "تحكم هذه الشروط استخدام منصة {{appName}} المملوكة لـ I Like Technology، CNPJ 45.123.168/0001-22.",
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "الغرض",
@@ -145,7 +145,7 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "مجتمع Colossus",
+    headerTitle: "مجتمع {{appName}}",
     filterAll: "الكل",
     loading: "جاري تحميل المجتمع...",
     errorLoad: "تعذّر تحميل المواقع.",

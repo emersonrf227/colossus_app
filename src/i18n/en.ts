@@ -63,12 +63,12 @@ export default {
     faqSectionTitle: "FREQUENTLY ASKED QUESTIONS",
     faq: {
       q1: {
-        question: "1. What is Colossus Crypto?",
+        question: "1. What is {{appName}}?",
         answer:
-          "Colossus Crypto is a digital payment solution developed by I Like Technology, allowing businesses of all sizes to accept payments in USDT (Tether) via app, web system and card terminal.",
+          "{{appName}} is a digital payment solution developed by I Like Technology, allowing businesses of all sizes to accept payments in USDT (Tether) via app, web system and card terminal.",
       },
       q2: {
-        question: "2. Who can use Colossus Crypto?",
+        question: "2. Who can use {{appName}}?",
         answer:
           "The platform is aimed at merchants who want to offer a modern and secure payment alternative with lower fees and immediate liquidity.",
       },
@@ -78,8 +78,8 @@ export default {
           "When making a sale, the merchant generates a QR code or payment link. The customer pays in USDT, and the amount is instantly received in the merchant's digital wallet.",
       },
       q4: {
-        question: "4. What fees does Colossus Crypto charge?",
-        answer: "Colossus Crypto charges a fixed fee of 1.95% per transaction.",
+        question: "4. What fees does {{appName}} charge?",
+        answer: "{{appName}} charges a fixed fee of 1.95% per transaction.",
       },
       q5: {
         question: "5. Do I need to understand cryptocurrency?",
@@ -87,7 +87,7 @@ export default {
           "No. The platform was designed to be intuitive and simple, even for those who have never used cryptocurrency.",
       },
       q6: {
-        question: "6. Where can I use Colossus Crypto?",
+        question: "6. Where can I use {{appName}}?",
         answer:
           "In physical stores, e-commerce, delivery services or freelancers, via mobile app, web system or compatible terminal.",
       },
@@ -104,18 +104,18 @@ export default {
       q9: {
         question: "9. Do I need to register?",
         answer:
-          "Download the app, register with a Colossus Crypto consultant and after verification your company will be ready to accept USDT.",
+          "Download the app, register with a {{appName}} consultant and after verification your company will be ready to accept USDT.",
       },
     },
   },
 
   terms: {
     title: "Terms of Use",
-    docTitle: "Terms of Use – Colossus Crypto",
+    docTitle: "Terms of Use – {{appName}}",
     lastUpdated: "Last updated: {{date}}",
     intro:
-      "These Terms of Use govern the use of the Colossus Crypto platform, owned by I Like Technology, registered under CNPJ No. 45.123.168/0001-22.",
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      "These Terms of Use govern the use of the {{appName}} platform, owned by I Like Technology, registered under CNPJ No. 45.123.168/0001-22.",
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "Purpose",
@@ -152,7 +152,7 @@ export default {
       s5: {
         title: "Intellectual Property",
         paragraphs: [
-          "All elements of Colossus Crypto are the exclusive property of I Like Technology. Unauthorized reproduction is prohibited.",
+          "All elements of {{appName}} are the exclusive property of I Like Technology. Unauthorized reproduction is prohibited.",
         ],
       },
       s6: {
@@ -174,9 +174,9 @@ export default {
   },
 
   communityMap: {
-    headerTitle: "Colossus Community",
+    headerTitle: "{{appName}} Community",
     filterAll: "All",
-    loading: "Loading Colossus community...",
+    loading: "Loading {{appName}} community...",
     errorLoad: "Could not load locations.",
     retry: "Try again",
     errors: {
@@ -271,7 +271,7 @@ export default {
     title: "Import wallet",
     warningNeverShare: "Never share",
     warningText:
-      " your recovery phrase. Colossus Crypto will never ask for these words.",
+      " your recovery phrase. {{appName}} will never ask for these words.",
     sectionLabel: "RECOVERY PHRASE (12 WORDS)",
     wordPlaceholder: "word",
     importButton: "Import wallet",

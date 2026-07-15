@@ -60,12 +60,12 @@ export default {
     faqSectionTitle: "ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ",
     faq: {
       q1: {
-        question: "1. Что такое Colossus Crypto?",
+        question: "1. Что такое {{appName}}?",
         answer:
-          "Colossus Crypto — решение для цифровых платежей, позволяющее принимать оплату в USDT.",
+          "{{appName}} — решение для цифровых платежей, позволяющее принимать оплату в USDT.",
       },
       q2: {
-        question: "2. Кто может использовать Colossus Crypto?",
+        question: "2. Кто может использовать {{appName}}?",
         answer:
           "Торговцы, желающие предложить современный способ оплаты с низкими комиссиями.",
       },
@@ -102,11 +102,11 @@ export default {
   },
   terms: {
     title: "Условия использования",
-    docTitle: "Условия использования – Colossus Crypto",
+    docTitle: "Условия использования – {{appName}}",
     lastUpdated: "Последнее обновление: {{date}}",
     intro:
-      "Настоящие Условия регулируют использование платформы Colossus Crypto, принадлежащей I Like Technology, CNPJ 45.123.168/0001-22.",
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      "Настоящие Условия регулируют использование платформы {{appName}}, принадлежащей I Like Technology, CNPJ 45.123.168/0001-22.",
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "Предмет",
@@ -157,7 +157,7 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "Сообщество Colossus",
+    headerTitle: "Сообщество {{appName}}",
     filterAll: "Все",
     loading: "Загрузка сообщества...",
     errorLoad: "Не удалось загрузить места.",

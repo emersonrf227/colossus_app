@@ -60,12 +60,12 @@ export default {
     faqSectionTitle: "PREGUNTAS FRECUENTES",
     faq: {
       q1: {
-        question: "1. ¿Qué es Colossus Crypto?",
+        question: "1. ¿Qué es {{appName}}?",
         answer:
-          "Colossus Crypto es una solución de pagos digitales que permite a comercios de todos los tamaños aceptar pagos en USDT.",
+          "{{appName}} es una solución de pagos digitales que permite a comercios de todos los tamaños aceptar pagos en USDT.",
       },
       q2: {
-        question: "2. ¿Quién puede usar Colossus Crypto?",
+        question: "2. ¿Quién puede usar {{appName}}?",
         answer:
           "Comerciantes que desean ofrecer una alternativa de pago moderna con tarifas más bajas y liquidez inmediata.",
       },
@@ -75,7 +75,7 @@ export default {
           "El comerciante genera un código QR. El cliente paga en USDT y el monto se recibe instantáneamente.",
       },
       q4: {
-        question: "4. ¿Qué tarifas cobra Colossus Crypto?",
+        question: "4. ¿Qué tarifas cobra {{appName}}?",
         answer: "Una tarifa fija del 1.95% por transacción.",
       },
       q5: {
@@ -83,7 +83,7 @@ export default {
         answer: "No. La plataforma es intuitiva y simple.",
       },
       q6: {
-        question: "6. ¿Dónde puedo usar Colossus Crypto?",
+        question: "6. ¿Dónde puedo usar {{appName}}?",
         answer: "En tiendas físicas, e-commerce, delivery o autónomos.",
       },
       q7: {
@@ -99,17 +99,17 @@ export default {
       q9: {
         question: "9. ¿Necesito registro?",
         answer:
-          "Descarga la app y regístrate con un consultor de Colossus Crypto.",
+          "Descarga la app y regístrate con un consultor de {{appName}}.",
       },
     },
   },
   terms: {
     title: "Términos de Uso",
-    docTitle: "Términos de Uso – Colossus Crypto",
+    docTitle: "Términos de Uso – {{appName}}",
     lastUpdated: "Última actualización: {{date}}",
     intro:
-      "Estos Términos de Uso regulan el uso de la plataforma Colossus Crypto, de titularidad de I Like Technology, CNPJ 45.123.168/0001-22.",
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      "Estos Términos de Uso regulan el uso de la plataforma {{appName}}, de titularidad de I Like Technology, CNPJ 45.123.168/0001-22.",
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "Objeto",
@@ -160,9 +160,9 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "Comunidad Colossus",
+    headerTitle: "Comunidad {{appName}}",
     filterAll: "Todos",
-    loading: "Cargando comunidad Colossus...",
+    loading: "Cargando comunidad {{appName}}...",
     errorLoad: "No se pudieron cargar los lugares.",
     retry: "Intentar de nuevo",
     errors: {
