@@ -41,10 +41,12 @@ import {
 } from "../../../components/pix/pixService";
 import { ApiWalletRecord } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
+import LogoSvg from "@/assets/logov2.svg";
 import {
   enabledNetworks,
   fetchPixChains,
 } from "@/components/wallet/chainSerives";
+import { CardLogo } from "../walletExport";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -308,6 +310,13 @@ const WarningText = styled.Text`
   font-size: 12px;
   line-height: 17px;
 `;
+
+export const cardLogo = styled.View`
+  align-items: center;
+  margin-top: ${hp(0.5)}px;
+  margin-bottom: ${hp(1)}px;
+`;
+
 const PrimaryButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
@@ -579,7 +588,9 @@ export default function WalletWithdrawPix() {
             </BackButton>
             <HeaderTitle>{t("walletWithdrawPix.title")}</HeaderTitle>
           </Header>
-
+          <CardLogo>
+            <LogoSvg width={wp(34)} height={hp(19)} />
+          </CardLogo>
           <ScrollContent
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 24 }}

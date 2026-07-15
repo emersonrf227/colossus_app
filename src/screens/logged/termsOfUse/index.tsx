@@ -42,7 +42,7 @@ export default function TermsOfUse() {
           </S.Header>
 
           <S.cardLogo>
-            <LogoSvg width={wp(36)} height={hp(10)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </S.cardLogo>
 
           <S.ScrollContent

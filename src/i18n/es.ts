@@ -159,9 +159,9 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "Comunidad {{appName}}",
+    headerTitle: "Comunidad Colossus",
     filterAll: "Todos",
-    loading: "Cargando comunidad {{appName}}...",
+    loading: "Cargando comunidad Colossus...",
     errorLoad: "No se pudieron cargar los lugares.",
     retry: "Intentar de nuevo",
     errors: {

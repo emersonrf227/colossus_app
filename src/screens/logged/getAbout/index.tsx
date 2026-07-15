@@ -42,7 +42,7 @@ export default function GetAbout() {
                 source={require("@/assets/logoAbout.png")}
                 resizeMode="contain"
               />
-              <S.BrandName>{BRAND.nameUpper}</S.BrandName>
+              <S.BrandName>{BRAND.developmentby}</S.BrandName>
               <S.VersionBadge>
                 <S.VersionBadgeText>
                   {t("about.versionLabel", { version: appVersion })}

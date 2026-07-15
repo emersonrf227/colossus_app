@@ -163,7 +163,7 @@ export default function proofExtract() {
 
         <S.SafeArea>
           <S.cardLogo>
-            <LogoSvg width={wp(38)} height={hp(11)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </S.cardLogo>
 
           <S.ScrollContent showsVerticalScrollIndicator={false}>

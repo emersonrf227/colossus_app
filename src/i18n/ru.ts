@@ -170,7 +170,7 @@ export default {
     footerNote: "Сделано с 💜 в 🇧🇷 для всего мира.",
   },
   communityMap: {
-    headerTitle: "Сообщество {{appName}}",
+    headerTitle: "Сообщество Colossus",
     filterAll: "Все",
     loading: "Загрузка сообщества...",
     errorLoad: "Не удалось загрузить места.",

@@ -130,7 +130,7 @@ export default function WalletPinSetup() {
             )}
           </S.Header>
           <S.cardLogo>
-            <LogoSvg width={wp(38)} height={hp(11)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </S.cardLogo>
           <S.Content>
             <S.StepLabel>

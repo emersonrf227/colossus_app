@@ -173,9 +173,9 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "Comunidade {{appName}}",
+    headerTitle: "Comunidade Colossus",
     filterAll: "Todos",
-    loading: "Carregando comunidade {{appName}}...",
+    loading: "Carregando Comunidade Colossus...",
     errorLoad: "Não foi possível carregar os locais.",
     retry: "Tentar novamente",
     errors: {
@@ -194,7 +194,7 @@ export default {
     title: "Sobre",
     versionLabel: "VERSÃO {{version}}",
     brazilTitle: "Tecnologia 100% brasileira",
-    brazilDescriptionBefore: "A {{appName}} é desenvolvida e mantida ",
+    brazilDescriptionBefore: "A {{devName}} é desenvolvida e mantida ",
     brazilDescriptionHighlight: "no Brasil, por brasileiros",
     brazilDescriptionAfter:
       ", unindo tecnologia de ponta em criptomoedas com o suporte e a confiança de uma empresa nacional.",

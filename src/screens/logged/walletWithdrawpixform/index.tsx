@@ -404,7 +404,7 @@ export default function WalletWithdrawPixForm() {
             <HeaderTitle>{t("walletWithdrawPixForm.title")}</HeaderTitle>
           </Header>
           <CardLogo>
-            <LogoSvg width={wp(28)} height={hp(7)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </CardLogo>
 
           <ScrollView

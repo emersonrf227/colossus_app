@@ -1,4 +1,5 @@
 import BRAND from "@/config/brand";
+import { setWalletSessionUnlocked } from "@/components/wallet/walletSession";
 import React, { useState, useCallback, useEffect } from "react";
 import { Linking, Modal, StatusBar } from "react-native";
 import {
@@ -48,6 +49,9 @@ export default function SingIn() {
 
   useEffect(() => {
     loadSavedLanguage().then(setLanguage);
+    // Voltou para a tela inicial: encerra a sessão desbloqueada da wallet,
+    // para o PIN ser pedido novamente na próxima entrada na WalletHome.
+    setWalletSessionUnlocked(false);
   }, []);
 
   const handleSelectLanguage = useCallback(async (code: LanguageCode) => {
@@ -140,7 +144,7 @@ export default function SingIn() {
             keyboardShouldPersistTaps="handled"
           >
             <S.LogoWrapper>
-              <LogoSvg width={wp(42)} height={hp(13)} />
+              <LogoSvg width={wp(34)} height={hp(26)} />
               <S.WelcomeTitle> {t("login.welcome")}</S.WelcomeTitle>
               <S.WelcomeSubtitle>{t("login.subtitle")}</S.WelcomeSubtitle>
             </S.LogoWrapper>

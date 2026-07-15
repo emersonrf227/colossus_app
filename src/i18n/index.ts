@@ -33,7 +33,7 @@ AsyncStorage.getItem("appLanguage").then((savedLang) => {
     interpolation: {
       escapeValue: false,
       // Toda tradução pode usar {{appName}} — valor vem do config de whitelabel
-      defaultVariables: { appName: BRAND.name },
+      defaultVariables: { appName: BRAND.name, devName: BRAND.devUpper },
     },
   });
 });

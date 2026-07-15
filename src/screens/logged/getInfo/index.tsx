@@ -211,7 +211,7 @@ export default function WalletReceive() {
           </Header>
 
           <CardLogo>
-            <LogoSvg width={wp(36)} height={hp(10)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </CardLogo>
 
           {!loading && !address ? (

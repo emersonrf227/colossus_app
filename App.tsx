@@ -6,10 +6,13 @@ import { ThemeProvider } from "styled-components";
 import theme from "./src/theme";
 import { AuthProvider } from "@/hook/AuthContext";
 import { ToastProvider } from "@/hook/Toast";
+import { useOTAUpdates } from "@/hook/useOTAUpdates";
 import i18n from "i18next";
 import { ethers } from "ethers";
 
 export default function App() {
+  useOTAUpdates();
+
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
       <ThemeProvider theme={theme}>

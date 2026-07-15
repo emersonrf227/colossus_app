@@ -287,7 +287,7 @@ export default function Extract() {
           </S.Header>
 
           <S.cardLogo>
-            <LogoSvg width={wp(34)} height={hp(9)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </S.cardLogo>
 
           <S.SectionLabel> {t("extract.period")}</S.SectionLabel>

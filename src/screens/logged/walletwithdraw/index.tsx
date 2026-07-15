@@ -199,7 +199,7 @@ export default function WalletWithdraw() {
             <S.HeaderTitle>{t("walletWithdraw.title")}</S.HeaderTitle>
           </S.Header>
           <S.cardLogo>
-            <LogoSvg width={wp(38)} height={hp(11)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </S.cardLogo>
 
           <S.ScrollContent

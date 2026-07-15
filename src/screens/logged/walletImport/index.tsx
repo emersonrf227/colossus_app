@@ -229,7 +229,7 @@ export default function WalletImport() {
             <HeaderTitle>{t("walletImport.title")}</HeaderTitle>
           </Header>
           <CardLogo>
-            <LogoSvg width={wp(28)} height={hp(7)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </CardLogo>
           <ScrollView
             showsVerticalScrollIndicator={false}

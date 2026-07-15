@@ -19,6 +19,11 @@ export const BRAND = {
   /** E-mail de suporte impresso em recibos e comprovantes */
   supportEmail: "support@colossuscrypto.com.br",
 
+  developmentby: "Helm Self Wallet",
+  get devUpper() {
+    return this.developmentby.toUpperCase();
+  },
+
   /** Usuário do Telegram aberto nas telas de login/suporte */
   telegram: "colossus_crypto",
 };

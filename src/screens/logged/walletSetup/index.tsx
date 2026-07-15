@@ -73,7 +73,7 @@ export default function WalletSetup() {
 
           <S.ScrollContent>
             <S.CardLogo>
-              <LogoSvg width={wp(38)} height={hp(11)} />
+              <LogoSvg width={wp(34)} height={hp(19)} />
             </S.CardLogo>
             <S.IntroWrapper>
               <S.IntroIconWrapper>

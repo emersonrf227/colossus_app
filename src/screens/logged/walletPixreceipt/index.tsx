@@ -263,7 +263,7 @@ export default function WalletPixReceipt() {
             <HeaderTitle>{t("walletPixReceipt.title")}</HeaderTitle>
           </Header>
           <CardLogo>
-            <LogoSvg width={wp(28)} height={hp(7)} />
+            <LogoSvg width={wp(34)} height={hp(19)} />
           </CardLogo>
 
           {loading ? (

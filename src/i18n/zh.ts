@@ -142,7 +142,7 @@ export default {
     footerNote: "以爱制作于巴西，献给全世界。",
   },
   communityMap: {
-    headerTitle: "{{appName}}社区",
+    headerTitle: "Colossus 社区",
     filterAll: "全部",
     loading: "正在加载社区...",
     errorLoad: "无法加载地点。",

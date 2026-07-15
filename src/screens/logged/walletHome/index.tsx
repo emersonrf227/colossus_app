@@ -6,6 +6,7 @@ import {
   RefreshControl,
   View,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import {
   useNavigation,
@@ -53,6 +54,10 @@ import {
 } from "../../../components/wallet/walletProviders";
 import { colors } from "../dashboard/styles";
 import { fetchWalletChains } from "@/components/wallet/chainSerives";
+import {
+  isWalletSessionUnlocked,
+  setWalletSessionUnlocked,
+} from "@/components/wallet/walletSession";
 import LogoSvg from "@/assets/logov2.svg";
 import TetherLogo from "@/assets/networks/tether.png";
 import {
@@ -108,7 +113,8 @@ interface RouteParams {
 
 export default function WalletHome() {
   const [pinVisible, setPinVisible] = useState(false);
-  const [unlocked, setUnlocked] = useState(false);
+  // Se o PIN já foi digitado nesta sessão, entra desbloqueado direto
+  const [unlocked, setUnlocked] = useState(isWalletSessionUnlocked());
   const [blurred, setBlurred] = useState(true);
 
   const navigation = useNavigation();
@@ -139,6 +145,7 @@ export default function WalletHome() {
     setPinVisible(false);
     try {
       setUnlocked(true);
+      setWalletSessionUnlocked(true);
       setBlurred(true);
     } catch {
       showToast({ message: t("walletExport.errorRecover"), type: "error" });
@@ -152,8 +159,13 @@ export default function WalletHome() {
       if (chains.plasma) nets.push("plasma");
       if (nets.length > 0) setEnabledNetworkKeys(nets);
     });
-    checkGas();
   }, []);
+
+  // Roda o check de gás quando o endereço da wallet estiver disponível
+  // (record é carregado de forma assíncrona — no mount ele pode ser null).
+  useEffect(() => {
+    if (record?.address) checkGas();
+  }, [record?.address]);
 
   const isFullAccess = mode === "full";
 
@@ -213,6 +225,7 @@ export default function WalletHome() {
   );
 
   async function checkGas() {
+    if (!record?.address) return;
     if (await needsGasSponsorship(record.address, "polygon")) {
       setShowGasModal(true);
     }
@@ -306,7 +319,7 @@ export default function WalletHome() {
             />
 
             <CardLogoWrapper>
-              <LogoSvg width={wp(38)} height={hp(11)} />
+              <LogoSvg width={wp(34)} height={hp(19)} />
             </CardLogoWrapper>
 
             <S.ScrollContent
@@ -453,11 +466,17 @@ export default function WalletHome() {
                             <S.NetworkInfo>
                               <S.NetworkName>{config.label}</S.NetworkName>
                               {balance.lowGasWarning && isFullAccess && (
-                                <S.NetworkGasWarning>
-                                  {t("wallet.lowGas", {
-                                    symbol: config.nativeCurrencySymbol,
-                                  })}
-                                </S.NetworkGasWarning>
+                                <TouchableOpacity
+                                  onPress={() => setShowGasModal(true)}
+                                  activeOpacity={0.7}
+                                >
+                                  <S.NetworkGasWarning>
+                                    {t("wallet.lowGas", {
+                                      symbol: config.nativeCurrencySymbol,
+                                    })}
+                                    {"  ▸"}
+                                  </S.NetworkGasWarning>
+                                </TouchableOpacity>
                               )}
                             </S.NetworkInfo>
                             <View style={{ alignItems: "flex-end", gap: 4 }}>

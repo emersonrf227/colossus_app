@@ -158,7 +158,7 @@ export default {
     footerNote: "صُنع بـ 💜 في 🇧🇷 للعالم أجمع.",
   },
   communityMap: {
-    headerTitle: "مجتمع {{appName}}",
+    headerTitle: "مجتمع Colossus",
     filterAll: "الكل",
     loading: "جاري تحميل المجتمع...",
     errorLoad: "تعذّر تحميل المواقع.",
