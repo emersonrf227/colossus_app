@@ -162,6 +162,19 @@ export default {
     paymentMethods: "طرق الدفع",
     tags: "العلامات",
   },
+  about: {
+    title: "حول التطبيق",
+    versionLabel: "الإصدار {{version}}",
+    brazilTitle: "تقنية برازيلية 100%",
+    brazilDescriptionBefore: "تم تطوير {{appName}} والحفاظ عليها ",
+    brazilDescriptionHighlight: "في البرازيل، من قِبَل برازيليين",
+    brazilDescriptionAfter:
+      "، تجمع بين أحدث تقنيات العملات المشفرة ودعم وثقة شركة وطنية.",
+    developedBy: "طُوِّر بواسطة",
+    companyLabel: "الشركة",
+    cnpjLabel: "CNPJ",
+    footerNote: "صُنع بـ 💜 في 🇧🇷 للعالم أجمع.",
+  },
   wallet: {
     title: "المحفظة",
     totalBalance: "إجمالي الرصيد",
