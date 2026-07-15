@@ -1,3 +1,4 @@
+import BRAND from "@/config/brand";
 import React from "react";
 import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -41,7 +42,7 @@ export default function GetAbout() {
                 source={require("@/assets/logoAbout.png")}
                 resizeMode="contain"
               />
-              <S.BrandName>COLOSSUS CRYPTO</S.BrandName>
+              <S.BrandName>{BRAND.nameUpper}</S.BrandName>
               <S.VersionBadge>
                 <S.VersionBadgeText>
                   {t("about.versionLabel", { version: appVersion })}

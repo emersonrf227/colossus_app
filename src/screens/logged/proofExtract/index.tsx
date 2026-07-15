@@ -1,3 +1,4 @@
+import BRAND from "@/config/brand";
 import React, { useCallback, useState } from "react";
 import {
   useFocusEffect,
@@ -107,7 +108,7 @@ export default function ProofExtract() {
           `[C]${doubleDivider}\n` +
           `[L]\n` +
           `[C]support@iliketechnology.com.br\n` +
-          `[C]support@colossuscrypto.com.br\n` +
+          `[C]${BRAND.supportEmail}\n` +
           `[L]\n` +
           `[L]\n`,
         printerNbrCharactersPerLine: lineWidth,
@@ -115,7 +116,7 @@ export default function ProofExtract() {
       });
 
       await ThermalPrinterModule.printTcp({
-        payload: `[L]\n` + `[C]<b>Proof Colossus Crypto</b>\n` + `[L]\n`,
+        payload: `[L]\n` + `[C]<b>Proof ${BRAND.name}</b>\n` + `[L]\n`,
         printerNbrCharactersPerLine: lineWidth,
         ip: "192.168.100.246",
         port: 9100,
@@ -178,7 +179,7 @@ export default function ProofExtract() {
 
             <S.ReceiptCard>
               <S.ReceiptHeader>
-                <S.ReceiptBrand>COLOSSUS CRYPTO</S.ReceiptBrand>
+                <S.ReceiptBrand>{BRAND.nameUpper}</S.ReceiptBrand>
                 <S.ReceiptBrandSubtitle>
                   {t("receipt.receiptSubtitle")}
                 </S.ReceiptBrandSubtitle>

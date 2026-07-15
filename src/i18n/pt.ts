@@ -76,7 +76,7 @@ export default {
     title: "Sobre",
     versionLabel: "VERSÃO {{version}}",
     brazilTitle: "Tecnologia 100% brasileira",
-    brazilDescriptionBefore: "A Colossus Crypto é desenvolvida e mantida ",
+    brazilDescriptionBefore: "A {{appName}} é desenvolvida e mantida ",
     brazilDescriptionHighlight: "no Brasil, por brasileiros",
     brazilDescriptionAfter:
       ", unindo tecnologia de ponta em criptomoedas com o suporte e a confiança de uma empresa nacional.",
@@ -156,7 +156,7 @@ export default {
     printButton: "Imprimir comprovante",
     backButton: "Voltar ao início",
     print: {
-      headerTitle: "Proof Colossus Crypto",
+      headerTitle: "Proof {{appName}}",
       statusConfirmed: "PAGAMENTO CONFIRMADO",
       amountLabel: "Valor",
       dateTimeLabel: "Data/Hora",
@@ -202,24 +202,24 @@ export default {
     faqSectionTitle: "PERGUNTAS FREQUENTES",
     faq: {
       q1: {
-        question: "1. O que é a Colossus Crypto?",
+        question: "1. O que é a {{appName}}?",
         answer:
-          "A Colossus Crypto é uma solução de pagamentos digitais desenvolvida pela I Like Technology, que permite que comércios de todos os portes aceitem pagamentos em USDT (Tether) – uma das criptomoedas mais estáveis e utilizadas do mundo – por meio de aplicativo, sistema web e maquininha de cartão.",
+          "A {{appName}} é uma solução de pagamentos digitais desenvolvida pela I Like Technology, que permite que comércios de todos os portes aceitem pagamentos em USDT (Tether) – uma das criptomoedas mais estáveis e utilizadas do mundo – por meio de aplicativo, sistema web e maquininha de cartão.",
       },
       q2: {
-        question: "2. Quem pode utilizar a Colossus Crypto?",
+        question: "2. Quem pode utilizar a {{appName}}?",
         answer:
           "A plataforma é voltada para comerciantes (pessoas físicas ou jurídicas) que desejam oferecer uma alternativa moderna e segura de pagamento aos seus clientes, além de contar com taxas mais atrativas e liquidez imediata.",
       },
       q3: {
         question: "3. Como funciona o recebimento em USDT?",
         answer:
-          "Ao realizar uma venda, o comerciante gera um QR Code ou link de pagamento via aplicativo, sistema ou maquininha. O cliente faz o pagamento em USDT, e o valor é recebido instantaneamente na carteira digital do comerciante vinculada à Colossus Crypto.",
+          "Ao realizar uma venda, o comerciante gera um QR Code ou link de pagamento via aplicativo, sistema ou maquininha. O cliente faz o pagamento em USDT, e o valor é recebido instantaneamente na carteira digital do comerciante vinculada à {{appName}}.",
       },
       q4: {
-        question: "4. Quais são as taxas cobradas pela Colossus Crypto?",
+        question: "4. Quais são as taxas cobradas pela {{appName}}?",
         answer:
-          "A Colossus Crypto cobra uma taxa fixa de 1.95% por transação, inferior à média praticada por operadoras tradicionais de cartão de crédito.",
+          "A {{appName}} cobra uma taxa fixa de 1.95% por transação, inferior à média praticada por operadoras tradicionais de cartão de crédito.",
       },
       q5: {
         question: "5. Preciso entender de criptomoedas para usar a plataforma?",
@@ -227,14 +227,14 @@ export default {
           "Não. A plataforma foi projetada para ser intuitiva e simples, com interface amigável e suporte dedicado, mesmo para quem nunca utilizou criptomoedas antes.",
       },
       q6: {
-        question: "6. Onde posso usar a Colossus Crypto?",
+        question: "6. Onde posso usar a {{appName}}?",
         answer:
           "A solução pode ser utilizada em lojas físicas, e-commerces, serviços delivery ou autônomos, através de aplicativo mobile, sistema web ou maquininha de pagamento compatível.",
       },
       q7: {
         question: "7. É seguro receber pagamentos em USDT?",
         answer:
-          "Sim. O USDT é uma stablecoin lastreada em dólar, com estabilidade e liquidez elevadas. Além disso, a Colossus Crypto adota tecnologias de segurança, criptografia e autenticação para garantir total proteção nas transações.",
+          "Sim. O USDT é uma stablecoin lastreada em dólar, com estabilidade e liquidez elevadas. Além disso, a {{appName}} adota tecnologias de segurança, criptografia e autenticação para garantir total proteção nas transações.",
       },
       q8: {
         question:
@@ -245,17 +245,17 @@ export default {
       q9: {
         question: "9. Preciso de cadastro para usar?",
         answer:
-          "Baixe o app, realize seu cadastro junto a um consultor da Colossus Crypto e, após verificação, sua empresa já estará pronta para aceitar pagamentos em USDT.",
+          "Baixe o app, realize seu cadastro junto a um consultor da {{appName}} e, após verificação, sua empresa já estará pronta para aceitar pagamentos em USDT.",
       },
     },
   },
   terms: {
     title: "Termos de Uso",
-    docTitle: "Termos de Uso – Colossus Crypto",
+    docTitle: "Termos de Uso – {{appName}}",
     lastUpdated: "Última atualização: {{date}}",
     intro:
-      'Este Termo de Uso regula a utilização da plataforma Colossus Crypto, doravante denominada "Plataforma", de titularidade da I Like Technology, inscrita sob o CNPJ nº 45.123.168/0001-22.\n\nAo acessar ou utilizar qualquer funcionalidade disponibilizada na Plataforma, o Usuário declara ter lido, compreendido e concordado integralmente com as disposições aqui previstas.',
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      'Este Termo de Uso regula a utilização da plataforma {{appName}}, doravante denominada "Plataforma", de titularidade da I Like Technology, inscrita sob o CNPJ nº 45.123.168/0001-22.\n\nAo acessar ou utilizar qualquer funcionalidade disponibilizada na Plataforma, o Usuário declara ter lido, compreendido e concordado integralmente com as disposições aqui previstas.',
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "Objeto",
@@ -292,7 +292,7 @@ export default {
       s5: {
         title: "Propriedade Intelectual",
         paragraphs: [
-          "Todos os elementos da Colossus Crypto, incluindo logotipos, sistemas, códigos, conteúdos e marcas, são de propriedade exclusiva da I Like Technology, sendo vedada qualquer reprodução ou uso não autorizado.",
+          "Todos os elementos da {{appName}}, incluindo logotipos, sistemas, códigos, conteúdos e marcas, são de propriedade exclusiva da I Like Technology, sendo vedada qualquer reprodução ou uso não autorizado.",
         ],
       },
       s6: {
@@ -313,9 +313,9 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "Comunidade Colossus",
+    headerTitle: "Comunidade {{appName}}",
     filterAll: "Todos",
-    loading: "Carregando comunidade Colossus...",
+    loading: "Carregando comunidade {{appName}}...",
     errorLoad: "Não foi possível carregar os locais.",
     retry: "Tentar novamente",
     errors: {
@@ -369,7 +369,7 @@ export default {
       "Informe apenas o endereço público. Você verá o saldo mas não poderá sacar pelo app — movimentações ficam na sua wallet original.",
     connectAddress: "Conectar endereço",
     warning:
-      "Nunca compartilhe sua frase de 12 palavras ou chave privada com ninguém. A Colossus Crypto jamais vai pedir essas informações.",
+      "Nunca compartilhe sua frase de 12 palavras ou chave privada com ninguém. A {{appName}} jamais vai pedir essas informações.",
     clipboardError: "Não foi possível acessar a área de transferência",
     invalidAddress: "Endereço inválido.",
     connectSuccess: "Wallet externa conectada!",
@@ -381,7 +381,7 @@ export default {
     titleConfirm: "Confirme o backup",
     warningNeverShare: "Nunca compartilhe",
     warningText:
-      " estas 12 palavras com ninguém. Qualquer pessoa com elas pode acessar e mover todo o saldo da sua carteira. A Colossus Crypto nunca vai pedir essas palavras por telefone, chat ou e-mail.",
+      " estas 12 palavras com ninguém. Qualquer pessoa com elas pode acessar e mover todo o saldo da sua carteira. A {{appName}} nunca vai pedir essas palavras por telefone, chat ou e-mail.",
     revealButton: "Toque para revelar as palavras",
     continueButton: "Já anotei, continuar",
     stepLabel: "ÚLTIMA ETAPA",
@@ -403,7 +403,7 @@ export default {
     title: "Importar carteira",
     warningNeverShare: "Nunca compartilhe",
     warningText:
-      " sua frase de recuperação. A Colossus Crypto nunca vai pedir essas palavras por telefone, chat ou e-mail. Digite apenas em conexões confiáveis.",
+      " sua frase de recuperação. A {{appName}} nunca vai pedir essas palavras por telefone, chat ou e-mail. Digite apenas em conexões confiáveis.",
     sectionLabel: "FRASE DE RECUPERAÇÃO (12 PALAVRAS)",
     wordPlaceholder: "palavra",
     importButton: "Importar carteira",

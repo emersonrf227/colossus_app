@@ -69,7 +69,7 @@ export default {
     title: "关于",
     versionLabel: "版本 {{version}}",
     brazilTitle: "100%巴西技术",
-    brazilDescriptionBefore: "Colossus Crypto由巴西人开发和维护",
+    brazilDescriptionBefore: "{{appName}}由巴西人开发和维护",
     brazilDescriptionHighlight: "在巴西，由巴西人",
     brazilDescriptionAfter:
       "，将前沿加密货币技术与国内企业的支持和信任相结合。",
@@ -149,7 +149,7 @@ export default {
     printButton: "打印收据",
     backButton: "返回首页",
     print: {
-      headerTitle: "Proof Colossus Crypto",
+      headerTitle: "Proof {{appName}}",
       statusConfirmed: "付款已确认",
       amountLabel: "金额",
       dateTimeLabel: "日期/时间",
@@ -189,12 +189,12 @@ export default {
     faqSectionTitle: "常见问题",
     faq: {
       q1: {
-        question: "1. 什么是Colossus Crypto",
+        question: "1. 什么是{{appName}}",
         answer:
-          "Colossus Crypto是由I Like Technology开发的数字支付解决方案，允许各种规模的商家通过应用程序、网络系统和POS终端接受USDT付款。",
+          "{{appName}}是由I Like Technology开发的数字支付解决方案，允许各种规模的商家通过应用程序、网络系统和POS终端接受USDT付款。",
       },
       q2: {
-        question: "2. 谁可以使用Colossus Crypto",
+        question: "2. 谁可以使用{{appName}}",
         answer:
           "该平台面向希望提供现代安全支付替代方案的商家（个人或企业），具有更低的费用和即时流动性。",
       },
@@ -204,8 +204,8 @@ export default {
           "销售时，商家生成二维码或付款链接。客户以USDT付款，金额立即收到。",
       },
       q4: {
-        question: "4. Colossus Crypto收取什么费用",
-        answer: "Colossus Crypto每笔交易收取1.95%的固定费用。",
+        question: "4. {{appName}}收取什么费用",
+        answer: "{{appName}}每笔交易收取1.95%的固定费用。",
       },
       q5: {
         question: "5. 需要了解加密货币才能使用该平台吗",
@@ -213,7 +213,7 @@ export default {
           "不需要。该平台设计直观简单，即使从未使用过加密货币的人也能轻松上手。",
       },
       q6: {
-        question: "6. 在哪里可以使用Colossus Crypto",
+        question: "6. 在哪里可以使用{{appName}}",
         answer: "可在实体店、电子商务、外卖服务或自由职业者中使用。",
       },
       q7: {
@@ -227,17 +227,17 @@ export default {
       q9: {
         question: "9. 需要注册才能使用吗",
         answer:
-          "下载应用程序，与Colossus Crypto顾问注册，验证后即可开始接受USDT付款。",
+          "下载应用程序，与{{appName}}顾问注册，验证后即可开始接受USDT付款。",
       },
     },
   },
   terms: {
     title: "使用条款",
-    docTitle: "使用条款 - Colossus Crypto",
+    docTitle: "使用条款 - {{appName}}",
     lastUpdated: "最后更新：{{date}}",
     intro:
-      "本使用条款规范Colossus Crypto平台的使用，该平台由I Like Technology拥有，注册CNPJ号为45.123.168/0001-22。",
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      "本使用条款规范{{appName}}平台的使用，该平台由I Like Technology拥有，注册CNPJ号为45.123.168/0001-22。",
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "目的",
@@ -274,7 +274,7 @@ export default {
       s5: {
         title: "知识产权",
         paragraphs: [
-          "Colossus Crypto的所有元素均为I Like Technology的专有财产，禁止任何未经授权的复制或使用。",
+          "{{appName}}的所有元素均为I Like Technology的专有财产，禁止任何未经授权的复制或使用。",
         ],
       },
       s6: {
@@ -293,9 +293,9 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "Colossus社区",
+    headerTitle: "{{appName}}社区",
     filterAll: "全部",
-    loading: "正在加载Colossus社区...",
+    loading: "正在加载{{appName}}社区...",
     errorLoad: "无法加载地点。",
     retry: "重试",
     errors: {
@@ -340,7 +340,7 @@ export default {
     viewOnlyDescription: "仅输入公共地址。您将看到余额，但无法通过应用提现。",
     connectAddress: "连接地址",
     warning:
-      "切勿与任何人分享您的12词助记词或私钥。Colossus Crypto永远不会要求此信息。",
+      "切勿与任何人分享您的12词助记词或私钥。{{appName}}永远不会要求此信息。",
     clipboardError: "无法访问剪贴板",
     invalidAddress: "无效地址。",
     connectSuccess: "外部钱包已连接",
@@ -369,7 +369,7 @@ export default {
   walletImport: {
     title: "导入钱包",
     warningNeverShare: "切勿分享",
-    warningText: " 您的恢复助记词。Colossus Crypto永远不会要求这些词。",
+    warningText: " 您的恢复助记词。{{appName}}永远不会要求这些词。",
     sectionLabel: "恢复助记词（12个词）",
     wordPlaceholder: "单词",
     importButton: "导入钱包",

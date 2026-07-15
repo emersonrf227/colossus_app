@@ -71,7 +71,7 @@ export default {
     title: "حول التطبيق",
     versionLabel: "الإصدار {{version}}",
     brazilTitle: "تقنية برازيلية 100%",
-    brazilDescriptionBefore: "تم تطوير Colossus Crypto والحفاظ عليها ",
+    brazilDescriptionBefore: "تم تطوير {{appName}} والحفاظ عليها ",
     brazilDescriptionHighlight: "في البرازيل، من قِبَل برازيليين",
     brazilDescriptionAfter:
       "، تجمع بين أحدث تقنيات العملات المشفرة ودعم وثقة شركة وطنية.",
@@ -151,7 +151,7 @@ export default {
     printButton: "طباعة الإيصال",
     backButton: "العودة للرئيسية",
     print: {
-      headerTitle: "Proof Colossus Crypto",
+      headerTitle: "Proof {{appName}}",
       statusConfirmed: "تم تأكيد الدفع",
       amountLabel: "المبلغ",
       dateTimeLabel: "التاريخ/الوقت",
@@ -195,12 +195,12 @@ export default {
     faqSectionTitle: "الأسئلة الشائعة",
     faq: {
       q1: {
-        question: "1. ما هو Colossus Crypto؟",
+        question: "1. ما هو {{appName}}؟",
         answer:
-          "Colossus Crypto هو حل دفع رقمي طورته I Like Technology يتيح للشركات من جميع الأحجام قبول المدفوعات بعملة USDT (تيثر) عبر التطبيق ونظام الويب وأجهزة نقاط البيع.",
+          "{{appName}} هو حل دفع رقمي طورته I Like Technology يتيح للشركات من جميع الأحجام قبول المدفوعات بعملة USDT (تيثر) عبر التطبيق ونظام الويب وأجهزة نقاط البيع.",
       },
       q2: {
-        question: "2. من يمكنه استخدام Colossus Crypto؟",
+        question: "2. من يمكنه استخدام {{appName}}؟",
         answer:
           "تستهدف المنصة التجار (الأفراد أو الشركات) الراغبين في تقديم بديل دفع حديث وآمن بتكاليف أقل وسيولة فورية.",
       },
@@ -210,15 +210,15 @@ export default {
           "عند إجراء عملية بيع، يُنشئ التاجر رمز QR أو رابط دفع. يدفع العميل بـ USDT، ويُستلم المبلغ فوراً في المحفظة الرقمية.",
       },
       q4: {
-        question: "4. ما هي رسوم Colossus Crypto؟",
-        answer: "تفرض Colossus Crypto رسوماً ثابتة بنسبة 1.95% على كل معاملة.",
+        question: "4. ما هي رسوم {{appName}}؟",
+        answer: "تفرض {{appName}} رسوماً ثابتة بنسبة 1.95% على كل معاملة.",
       },
       q5: {
         question: "5. هل أحتاج إلى فهم العملات المشفرة؟",
         answer: "لا. صُممت المنصة لتكون بسيطة وبديهية مع دعم مخصص.",
       },
       q6: {
-        question: "6. أين يمكنني استخدام Colossus Crypto؟",
+        question: "6. أين يمكنني استخدام {{appName}}؟",
         answer:
           "يمكن استخدامها في المتاجر الفعلية والتجارة الإلكترونية وخدمات التوصيل والعمل الحر.",
       },
@@ -235,17 +235,17 @@ export default {
       q9: {
         question: "9. هل أحتاج إلى تسجيل؟",
         answer:
-          "نزّل التطبيق وسجّل مع مستشار Colossus Crypto وبعد التحقق ستكون شركتك جاهزة لقبول USDT.",
+          "نزّل التطبيق وسجّل مع مستشار {{appName}} وبعد التحقق ستكون شركتك جاهزة لقبول USDT.",
       },
     },
   },
   terms: {
     title: "شروط الاستخدام",
-    docTitle: "شروط الاستخدام – Colossus Crypto",
+    docTitle: "شروط الاستخدام – {{appName}}",
     lastUpdated: "آخر تحديث: {{date}}",
     intro:
-      "تحكم شروط الاستخدام هذه استخدام منصة Colossus Crypto، المملوكة لشركة I Like Technology، المسجلة تحت رقم CNPJ رقم 45.123.168/0001-22.",
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      "تحكم شروط الاستخدام هذه استخدام منصة {{appName}}، المملوكة لشركة I Like Technology، المسجلة تحت رقم CNPJ رقم 45.123.168/0001-22.",
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "الغرض",
@@ -282,7 +282,7 @@ export default {
       s5: {
         title: "الملكية الفكرية",
         paragraphs: [
-          "جميع عناصر Colossus Crypto ملك حصري لـ I Like Technology، ويُحظر أي نسخ أو استخدام غير مصرح به.",
+          "جميع عناصر {{appName}} ملك حصري لـ I Like Technology، ويُحظر أي نسخ أو استخدام غير مصرح به.",
         ],
       },
       s6: {
@@ -303,9 +303,9 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "مجتمع Colossus",
+    headerTitle: "مجتمع {{appName}}",
     filterAll: "الكل",
-    loading: "جاري تحميل مجتمع Colossus...",
+    loading: "جاري تحميل مجتمع {{appName}}...",
     errorLoad: "تعذّر تحميل المواقع.",
     retry: "حاول مجدداً",
     errors: {
@@ -349,7 +349,7 @@ export default {
       "أدخل العنوان العام فقط. ستتمكن من رؤية الرصيد دون إجراء عمليات سحب.",
     connectAddress: "ربط العنوان",
     warning:
-      "لا تشارك عبارة الـ12 كلمة أو مفتاحك الخاص مع أي شخص. لن تطلب Colossus Crypto هذه المعلومات أبداً.",
+      "لا تشارك عبارة الـ12 كلمة أو مفتاحك الخاص مع أي شخص. لن تطلب {{appName}} هذه المعلومات أبداً.",
     clipboardError: "تعذّر الوصول إلى الحافظة",
     invalidAddress: "عنوان غير صالح.",
     connectSuccess: "تم ربط المحفظة الخارجية!",
@@ -378,7 +378,7 @@ export default {
   walletImport: {
     title: "استيراد المحفظة",
     warningNeverShare: "لا تشارك أبداً",
-    warningText: " عبارة الاسترداد. لن تطلب Colossus Crypto هذه الكلمات أبداً.",
+    warningText: " عبارة الاسترداد. لن تطلب {{appName}} هذه الكلمات أبداً.",
     sectionLabel: "عبارة الاسترداد (12 كلمة)",
     wordPlaceholder: "كلمة",
     importButton: "استيراد المحفظة",

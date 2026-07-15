@@ -1,3 +1,4 @@
+import BRAND from "@/config/brand";
 import React, { useState, useCallback } from "react";
 import { Linking, StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -35,7 +36,7 @@ export default function SupportScreen() {
   const { showToast } = useToast();
 
   const openTelegram = useCallback(async () => {
-    const username = "colossus_crypto";
+    const username = BRAND.telegram;
     // App scheme primeiro (abre direto no app do Telegram se instalado);
     // se não for suportado, cai no link universal https://t.me/..., que
     // o sistema resolve abrindo o app (se instalado) ou o navegador.

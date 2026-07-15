@@ -75,7 +75,7 @@ export default {
     title: "About",
     versionLabel: "VERSION {{version}}",
     brazilTitle: "100% Brazilian technology",
-    brazilDescriptionBefore: "Colossus Crypto is developed and maintained ",
+    brazilDescriptionBefore: "{{appName}} is developed and maintained ",
     brazilDescriptionHighlight: "in Brazil, by Brazilians",
     brazilDescriptionAfter:
       ", combining cutting-edge cryptocurrency technology with the support and trust of a national company.",
@@ -155,7 +155,7 @@ export default {
     printButton: "Print receipt",
     backButton: "Back to home",
     print: {
-      headerTitle: "Proof Colossus Crypto",
+      headerTitle: "Proof {{appName}}",
       statusConfirmed: "PAYMENT CONFIRMED",
       amountLabel: "Amount",
       dateTimeLabel: "Date/Time",
@@ -201,24 +201,24 @@ export default {
     faqSectionTitle: "FREQUENTLY ASKED QUESTIONS",
     faq: {
       q1: {
-        question: "1. What is Colossus Crypto?",
+        question: "1. What is {{appName}}?",
         answer:
-          "Colossus Crypto is a digital payment solution developed by I Like Technology, allowing businesses of all sizes to accept payments in USDT (Tether) — one of the most stable and widely used cryptocurrencies — via app, web system and card terminal.",
+          "{{appName}} is a digital payment solution developed by I Like Technology, allowing businesses of all sizes to accept payments in USDT (Tether) — one of the most stable and widely used cryptocurrencies — via app, web system and card terminal.",
       },
       q2: {
-        question: "2. Who can use Colossus Crypto?",
+        question: "2. Who can use {{appName}}?",
         answer:
           "The platform is aimed at merchants (individuals or companies) who want to offer a modern and secure payment alternative to their customers, with lower fees and immediate liquidity.",
       },
       q3: {
         question: "3. How does receiving in USDT work?",
         answer:
-          "When making a sale, the merchant generates a QR code or payment link via the app, system or terminal. The customer pays in USDT, and the amount is instantly received in the merchant's digital wallet linked to Colossus Crypto.",
+          "When making a sale, the merchant generates a QR code or payment link via the app, system or terminal. The customer pays in USDT, and the amount is instantly received in the merchant's digital wallet linked to {{appName}}.",
       },
       q4: {
-        question: "4. What fees does Colossus Crypto charge?",
+        question: "4. What fees does {{appName}} charge?",
         answer:
-          "Colossus Crypto charges a fixed fee of 1.95% per transaction, lower than the average charged by traditional credit card operators.",
+          "{{appName}} charges a fixed fee of 1.95% per transaction, lower than the average charged by traditional credit card operators.",
       },
       q5: {
         question:
@@ -227,14 +227,14 @@ export default {
           "No. The platform was designed to be intuitive and simple, with a friendly interface and dedicated support, even for those who have never used cryptocurrency before.",
       },
       q6: {
-        question: "6. Where can I use Colossus Crypto?",
+        question: "6. Where can I use {{appName}}?",
         answer:
           "The solution can be used in physical stores, e-commerce, delivery services or freelancers, via mobile app, web system or compatible payment terminal.",
       },
       q7: {
         question: "7. Is it safe to receive payments in USDT?",
         answer:
-          "Yes. USDT is a dollar-backed stablecoin with high stability and liquidity. Colossus Crypto also uses security technologies, encryption and authentication to ensure full protection in transactions.",
+          "Yes. USDT is a dollar-backed stablecoin with high stability and liquidity. {{appName}} also uses security technologies, encryption and authentication to ensure full protection in transactions.",
       },
       q8: {
         question:
@@ -245,17 +245,17 @@ export default {
       q9: {
         question: "9. Do I need to register to use it?",
         answer:
-          "Download the app, register with a Colossus Crypto consultant and, after verification, your company will be ready to accept USDT payments.",
+          "Download the app, register with a {{appName}} consultant and, after verification, your company will be ready to accept USDT payments.",
       },
     },
   },
   terms: {
     title: "Terms of Use",
-    docTitle: "Terms of Use – Colossus Crypto",
+    docTitle: "Terms of Use – {{appName}}",
     lastUpdated: "Last updated: {{date}}",
     intro:
-      'These Terms of Use govern the use of the Colossus Crypto platform, hereinafter referred to as the "Platform", owned by I Like Technology, registered under CNPJ No. 45.123.168/0001-22.\n\nBy accessing or using any feature available on the Platform, the User declares to have read, understood and fully agreed to the provisions set forth herein.',
-    footerNote: "Colossus Crypto · I Like Technology\nCNPJ 45.123.168/0001-22",
+      'These Terms of Use govern the use of the {{appName}} platform, hereinafter referred to as the "Platform", owned by I Like Technology, registered under CNPJ No. 45.123.168/0001-22.\n\nBy accessing or using any feature available on the Platform, the User declares to have read, understood and fully agreed to the provisions set forth herein.',
+    footerNote: "{{appName}} · I Like Technology\nCNPJ 45.123.168/0001-22",
     sections: {
       s1: {
         title: "Purpose",
@@ -292,7 +292,7 @@ export default {
       s5: {
         title: "Intellectual Property",
         paragraphs: [
-          "All elements of Colossus Crypto, including logos, systems, codes, content and trademarks, are the exclusive property of I Like Technology, and any unauthorized reproduction or use is prohibited.",
+          "All elements of {{appName}}, including logos, systems, codes, content and trademarks, are the exclusive property of I Like Technology, and any unauthorized reproduction or use is prohibited.",
         ],
       },
       s6: {
@@ -313,9 +313,9 @@ export default {
     },
   },
   communityMap: {
-    headerTitle: "Colossus Community",
+    headerTitle: "{{appName}} Community",
     filterAll: "All",
-    loading: "Loading Colossus community...",
+    loading: "Loading {{appName}} community...",
     errorLoad: "Could not load locations.",
     retry: "Try again",
     errors: {
@@ -365,7 +365,7 @@ export default {
       "Enter only the public address. You will see the balance but cannot withdraw via the app — movements remain in your original wallet.",
     connectAddress: "Connect address",
     warning:
-      "Never share your 12-word phrase or private key with anyone. Colossus Crypto will never ask for this information.",
+      "Never share your 12-word phrase or private key with anyone. {{appName}} will never ask for this information.",
     clipboardError: "Could not access clipboard",
     invalidAddress: "Invalid address.",
     connectSuccess: "External wallet connected!",
@@ -376,7 +376,7 @@ export default {
     titleConfirm: "Confirm backup",
     warningNeverShare: "Never share",
     warningText:
-      " these 12 words with anyone. Anyone with them can access and move all funds in your wallet. Colossus Crypto will never ask for these words by phone, chat or email.",
+      " these 12 words with anyone. Anyone with them can access and move all funds in your wallet. {{appName}} will never ask for these words by phone, chat or email.",
     revealButton: "Tap to reveal words",
     continueButton: "I've noted them, continue",
     stepLabel: "FINAL STEP",
@@ -397,7 +397,7 @@ export default {
     title: "Import wallet",
     warningNeverShare: "Never share",
     warningText:
-      " your recovery phrase. Colossus Crypto will never ask for these words by phone, chat or email. Only enter on trusted connections.",
+      " your recovery phrase. {{appName}} will never ask for these words by phone, chat or email. Only enter on trusted connections.",
     sectionLabel: "RECOVERY PHRASE (12 WORDS)",
     wordPlaceholder: "word",
     importButton: "Import wallet",
