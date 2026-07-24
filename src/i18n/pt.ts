@@ -291,7 +291,8 @@ export default {
         text: "Não envie as palavras por e-mail, WhatsApp ou nuvem, e não as digite em sites ou outros apps. O {{appName}} nunca vai pedir suas 12 palavras.",
       },
     },
-    acceptText: "Estou ciente de que, se eu perder minhas 12 palavras, perderei o acesso aos meus fundos de forma definitiva e ninguém — nem o {{appName}} — poderá recuperá-los.",
+    acceptText:
+      "Estou ciente de que, se eu perder minhas 12 palavras, perderei o acesso aos meus fundos de forma definitiva e ninguém — nem o {{appName}} — poderá recuperá-los.",
     acceptButton: "Entendi, criar carteira",
     nextButton: "Continuar",
   },
@@ -617,5 +618,8 @@ export default {
       "Não foi possível solicitar gas patrocinado. Tente novamente.",
     retry: "Tentar novamente",
     close: "Fechar",
+  },
+  notifications: {
+    title: "Notificações",
   },
 };

@@ -281,7 +281,8 @@ export default {
         text: "Do not send your words by email, WhatsApp or cloud, and never type them into websites or other apps. {{appName}} will never ask for your 12 words.",
       },
     },
-    acceptText: "I understand that if I lose my 12 words I will permanently lose access to my funds, and no one — not even {{appName}} — can recover them.",
+    acceptText:
+      "I understand that if I lose my 12 words I will permanently lose access to my funds, and no one — not even {{appName}} — can recover them.",
     acceptButton: "I understand, create wallet",
     nextButton: "Continue",
   },
@@ -594,5 +595,8 @@ export default {
     errorGeneric: "Could not request sponsored gas. Please try again.",
     retry: "Try again",
     close: "Close",
+  },
+  notifications: {
+    title: "Notifications",
   },
 };

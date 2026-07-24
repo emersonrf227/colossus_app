@@ -68,6 +68,8 @@ import {
 import GasSponsorModal from "../walletGasmodal";
 import { needsGasSponsorship } from "@/components/gas/gasService";
 import PinConfirmModal from "../PinConfirmModal";
+import { useNotifications } from "@/hook/useNotifications";
+import { NotificationBell } from "@/components/notificationBell";
 
 const TetherBadge = styled.View`
   flex-direction: row;
@@ -126,10 +128,20 @@ export default function WalletHome() {
   const [showGasModal, setShowGasModal] = useState(false);
 
   const params = (route.params ?? {}) as Partial<RouteParams>;
+
   const [mode, setMode] = useState<WalletAccessMode>(params.mode ?? "none");
   const [record, setRecord] = useState<ApiWalletRecord | null>(
     params.record ?? null,
   );
+
+  // Notificações - passa o record.address quando carregado
+  console.log("🏠 record.address:", record?.address);
+  const {
+    notifications,
+    unreadCount,
+    loading: notificationsLoading,
+    markAsRead,
+  } = useNotifications(record?.address);
   const [loadingStatus, setLoadingStatus] = useState(
     !params.mode || !params.record,
   );
@@ -305,6 +317,12 @@ export default function WalletHome() {
               </S.HeaderLeft>
 
               <>
+                <NotificationBell
+                  unreadCount={unreadCount}
+                  notifications={notifications}
+                  onMarkAsRead={markAsRead}
+                  disabled={notificationsLoading}
+                />
                 <S.MenuButton onPress={toggleMenu} activeOpacity={0.7}>
                   <Menu size={24} color="#FFFFFF" strokeWidth={2.2} />
                 </S.MenuButton>

@@ -47,6 +47,7 @@ import {
   fetchPixChains,
 } from "@/components/wallet/chainSerives";
 import { CardLogo } from "../walletExport";
+import VirtualLogo from "@/assets/logo-virtual.png";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -97,6 +98,35 @@ const HeaderTitle = styled.Text`
 `;
 const ScrollContent = styled.ScrollView`
   flex: 1;
+`;
+
+const Footer = styled.View`
+  padding-vertical: ${hp(2)}px;
+  padding-horizontal: ${wp(1)}px;
+  align-items: center;
+  gap: 6px;
+`;
+
+const FooterLogoWrapper = styled.View`
+  height: 32px;
+  width: 200px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+`;
+
+const FooterLogoImage = styled.Image`
+  height: 100%;
+  width: 100%;
+  resize-mode: contain;
+`;
+
+const FooterText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11px;
+  text-align: center;
 `;
 const QuoteCard = styled.View`
   border-radius: 18px;
@@ -822,6 +852,13 @@ export default function WalletWithdrawPix() {
               <ArrowRight size={18} color="#FFFFFF" strokeWidth={2.2} />
             </PrimaryButton>
           </ScrollContent>
+
+          <Footer>
+            <FooterLogoWrapper>
+              <FooterLogoImage source={VirtualLogo} />
+            </FooterLogoWrapper>
+            <FooterText>Fornecido por Virtual Tokenizadora</FooterText>
+          </Footer>
         </SafeArea>
       </Background>
 

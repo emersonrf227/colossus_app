@@ -584,4 +584,8 @@ export default {
     retry: "Intentar de nuevo",
     close: "Cerrar",
   },
+  notifications: {
+    title: "Notificaciones",
+    empty: "Sin notificaciones en este momento",
+  },
 };

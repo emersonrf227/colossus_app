@@ -562,4 +562,8 @@ export default {
     retry: "重试",
     close: "关闭",
   },
+  notifications: {
+    title: "通知",
+    empty: "暂无通知",
+  },
 };

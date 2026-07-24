@@ -31,6 +31,7 @@ import {
 import { ApiWalletRecord } from "../../../components/wallet/walletStatus";
 import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
+import VirtualLogo from "@/assets/logo-virtual.png";
 
 export const CardLogo = styled.View`
   align-items: center;
@@ -200,6 +201,35 @@ const PrimaryButtonText = styled.Text`
   color: #fff;
   font-size: 15px;
   font-weight: 700;
+`;
+
+const FooterLogoWrapper = styled.View`
+  height: 32px;
+  width: 200px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+`;
+
+const FooterLogoImage = styled.Image`
+  height: 100%;
+  width: 100%;
+  resize-mode: contain;
+`;
+
+const Footer = styled.View`
+  padding-vertical: ${hp(2)}px;
+  padding-horizontal: ${wp(1)}px;
+  align-items: center;
+  gap: 6px;
+`;
+
+const FooterText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11px;
+  text-align: center;
 `;
 
 interface RouteParams {
@@ -548,6 +578,12 @@ export default function WalletWithdrawPixForm() {
               </PrimaryButtonText>
             </PrimaryButton>
           </ScrollView>
+          <Footer>
+            <FooterLogoWrapper>
+              <FooterLogoImage source={VirtualLogo} />
+            </FooterLogoWrapper>
+            <FooterText>Fornecido por Virtual Tokenizadora</FooterText>
+          </Footer>
         </SafeArea>
       </Background>
 

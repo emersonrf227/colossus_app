@@ -30,6 +30,7 @@ import {
 } from "../../../components/wallet/walletStorage";
 import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
+import VirtualLogo from "@/assets/logo-virtual.png";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
@@ -42,6 +43,29 @@ const Background = styled.ImageBackground`
   width: 100%;
   height: 100%;
 `;
+
+const FooterLogoWrapper = styled.View`
+  height: 32px;
+  width: 200px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+`;
+
+const FooterLogoImage = styled.Image`
+  height: 100%;
+  width: 100%;
+  resize-mode: contain;
+`;
+
+const FooterText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11px;
+  text-align: center;
+`;
+
 const Overlay = styled.View`
   position: absolute;
   top: 0;
@@ -170,6 +194,13 @@ const CardLogo = styled.View`
   align-items: center;
   margin-top: ${hp(0.5)}px;
   margin-bottom: ${hp(1)}px;
+`;
+
+const Footer = styled.View`
+  padding-vertical: ${hp(2)}px;
+  padding-horizontal: ${wp(1)}px;
+  align-items: center;
+  gap: 6px;
 `;
 
 interface RouteParams {
@@ -377,6 +408,12 @@ export default function WalletWithdrawPixConfirm() {
               </PrimaryButtonText>
             </PrimaryButton>
           </ScrollContent>
+          <Footer>
+            <FooterLogoWrapper>
+              <FooterLogoImage source={VirtualLogo} />
+            </FooterLogoWrapper>
+            <FooterText>Fornecido por Virtual Tokenizadora</FooterText>
+          </Footer>
         </SafeArea>
       </Background>
 

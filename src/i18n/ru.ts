@@ -573,4 +573,8 @@ export default {
     retry: "Повторить",
     close: "Закрыть",
   },
+  notifications: {
+    title: "Уведомления",
+    empty: "На данный момент уведомлений нет",
+  },
 };

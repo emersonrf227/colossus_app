@@ -22,9 +22,11 @@ import { useTranslation } from "react-i18next";
 import { PixTransaction } from "../../../components/pix/pixService";
 import { colors } from "../dashboard/styles";
 import LogoSvg from "@/assets/logov2.svg";
+import VirtualLogo from "@/assets/logo-virtual.png";
 
 const STATUSBAR_HEIGHT =
   Platform.OS === "android" ? (RNStatusBar.currentHeight ?? 24) : 0;
+
 const Container = styled.View`
   flex: 1;
   background-color: ${colors.bgDark};
@@ -34,6 +36,7 @@ const Background = styled.ImageBackground`
   width: 100%;
   height: 100%;
 `;
+
 const Overlay = styled.View`
   position: absolute;
   top: 0;
@@ -73,6 +76,13 @@ const Title = styled.Text`
   font-weight: 800;
   text-align: center;
   margin-bottom: 8px;
+`;
+
+const Header = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: ${hp(1)}px;
+  margin-bottom: ${hp(3)}px;
 `;
 const Subtitle = styled.Text`
   color: ${colors.textMuted};
@@ -183,6 +193,39 @@ const SecondaryButtonText = styled.Text`
   font-weight: 600;
 `;
 
+const Footer = styled.View`
+  padding-vertical: ${hp(2)}px;
+  padding-horizontal: ${wp(1)}px;
+  align-items: center;
+  gap: 6px;
+`;
+
+const FooterLogoWrapper = styled.View`
+  height: 32px;
+  width: 200px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+`;
+
+const FooterLogoImage = styled.Image`
+  height: 100%;
+  width: 100%;
+  resize-mode: contain;
+`;
+
+const FooterText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11px;
+  text-align: center;
+`;
+
+const ScrollContent = styled.ScrollView`
+  flex: 1;
+`;
+
 interface RouteParams {
   txid: string;
   explorerUrl: string;
@@ -228,115 +271,129 @@ export default function WalletWithdrawPixSuccess() {
           translucent
         />
         <SafeArea>
+          <Header></Header>
+
           <CardLogo>
             <LogoSvg width={wp(34)} height={hp(19)} />
           </CardLogo>
-          <Content>
-            <IconWrapper>
-              <CheckCircle size={48} color={colors.success} strokeWidth={1.8} />
-            </IconWrapper>
-            <Title>{t("walletWithdrawPixSuccess.title")}</Title>
-            <Subtitle>{t("walletWithdrawPixSuccess.subtitle")}</Subtitle>
-            <HighlightCard>
-              <HighlightRow>
-                <HighlightLabel>
-                  {t("walletWithdrawPixSuccess.valueLabel")}
-                </HighlightLabel>
-                <HighlightValue>R$ {tx.send_brl}</HighlightValue>
-              </HighlightRow>
-            </HighlightCard>
-            <ReceiptCard>
-              <ReceiptTitle>
-                {t("walletWithdrawPixSuccess.receiptTitle")}
-              </ReceiptTitle>
-              {tx.displayDestination && (
+          <ScrollContent>
+            <Content>
+              <IconWrapper>
+                <CheckCircle
+                  size={48}
+                  color={colors.success}
+                  strokeWidth={1.8}
+                />
+              </IconWrapper>
+              <Title>{t("walletWithdrawPixSuccess.title")}</Title>
+              <Subtitle>{t("walletWithdrawPixSuccess.subtitle")}</Subtitle>
+              <HighlightCard>
+                <HighlightRow>
+                  <HighlightLabel>
+                    {t("walletWithdrawPixSuccess.valueLabel")}
+                  </HighlightLabel>
+                  <HighlightValue>R$ {tx.send_brl}</HighlightValue>
+                </HighlightRow>
+              </HighlightCard>
+              <ReceiptCard>
+                <ReceiptTitle>
+                  {t("walletWithdrawPixSuccess.receiptTitle")}
+                </ReceiptTitle>
+                {tx.displayDestination && (
+                  <ReceiptRow>
+                    <ReceiptLabel>
+                      {t("walletWithdrawPixSuccess.beneficiary")}
+                    </ReceiptLabel>
+                    <ReceiptValue>{tx.displayDestination}</ReceiptValue>
+                  </ReceiptRow>
+                )}
                 <ReceiptRow>
                   <ReceiptLabel>
-                    {t("walletWithdrawPixSuccess.beneficiary")}
+                    {t("walletWithdrawPixSuccess.pixKey")}
                   </ReceiptLabel>
-                  <ReceiptValue>{tx.displayDestination}</ReceiptValue>
-                </ReceiptRow>
-              )}
-              <ReceiptRow>
-                <ReceiptLabel>
-                  {t("walletWithdrawPixSuccess.pixKey")}
-                </ReceiptLabel>
-                <ReceiptValue numberOfLines={2}>
-                  {tx.destinarionAddress}
-                </ReceiptValue>
-              </ReceiptRow>
-              <ReceiptRow>
-                <ReceiptLabel>
-                  {t("walletWithdrawPixSuccess.type")}
-                </ReceiptLabel>
-                <ReceiptValue>{tx.typeDestinationKey}</ReceiptValue>
-              </ReceiptRow>
-              <ReceiptRow>
-                <ReceiptLabel>
-                  {t("walletWithdrawPixSuccess.usdtSent")}
-                </ReceiptLabel>
-                <ReceiptValue>{tx.amount_usd}</ReceiptValue>
-              </ReceiptRow>
-              <ReceiptRow>
-                <ReceiptLabel>
-                  {t("walletWithdrawPixSuccess.totalBrl")}
-                </ReceiptLabel>
-                <ReceiptValue>R$ {tx.total_brl}</ReceiptValue>
-              </ReceiptRow>
-              {tx.endtoend && (
-                <ReceiptRow>
-                  <ReceiptLabel>
-                    {t("walletWithdrawPixSuccess.endToEnd")}
-                  </ReceiptLabel>
-                  <ReceiptValue numberOfLines={1} style={{ fontSize: 10 }}>
-                    {tx.endtoend}
+                  <ReceiptValue numberOfLines={2}>
+                    {tx.destinarionAddress}
                   </ReceiptValue>
                 </ReceiptRow>
-              )}
-              <LastReceiptRow>
-                <ReceiptLabel>
-                  {t("walletWithdrawPixSuccess.txidBlockchain")}
-                </ReceiptLabel>
-                <ReceiptValue numberOfLines={1} style={{ fontSize: 10 }}>
-                  {txid}
-                </ReceiptValue>
-              </LastReceiptRow>
-            </ReceiptCard>
-            <ActionsColumn>
-              <PrimaryButton
-                onPress={handleNewTransaction}
-                activeOpacity={0.85}
-              >
-                <RefreshCw size={16} color="#FFFFFF" strokeWidth={2.2} />
-                <PrimaryButtonText>
-                  {t("walletWithdrawPixSuccess.newTransaction")}
-                </PrimaryButtonText>
-              </PrimaryButton>
-              <SecondaryButton
-                onPress={handleOpenExplorer}
-                activeOpacity={0.75}
-              >
-                <ExternalLink
-                  size={16}
-                  color={colors.textPrimary}
-                  strokeWidth={2.2}
-                />
-                <SecondaryButtonText>
-                  {t("walletWithdrawPixSuccess.viewBlockchain")}
-                </SecondaryButtonText>
-              </SecondaryButton>
-              <SecondaryButton onPress={handleShare} activeOpacity={0.75}>
-                <Share2
-                  size={16}
-                  color={colors.textPrimary}
-                  strokeWidth={2.2}
-                />
-                <SecondaryButtonText>
-                  {t("walletWithdrawPixSuccess.shareReceipt")}
-                </SecondaryButtonText>
-              </SecondaryButton>
-            </ActionsColumn>
-          </Content>
+                <ReceiptRow>
+                  <ReceiptLabel>
+                    {t("walletWithdrawPixSuccess.type")}
+                  </ReceiptLabel>
+                  <ReceiptValue>{tx.typeDestinationKey}</ReceiptValue>
+                </ReceiptRow>
+                <ReceiptRow>
+                  <ReceiptLabel>
+                    {t("walletWithdrawPixSuccess.usdtSent")}
+                  </ReceiptLabel>
+                  <ReceiptValue>{tx.amount_usd}</ReceiptValue>
+                </ReceiptRow>
+                <ReceiptRow>
+                  <ReceiptLabel>
+                    {t("walletWithdrawPixSuccess.totalBrl")}
+                  </ReceiptLabel>
+                  <ReceiptValue>R$ {tx.total_brl}</ReceiptValue>
+                </ReceiptRow>
+                {tx.endtoend && (
+                  <ReceiptRow>
+                    <ReceiptLabel>
+                      {t("walletWithdrawPixSuccess.endToEnd")}
+                    </ReceiptLabel>
+                    <ReceiptValue numberOfLines={1} style={{ fontSize: 10 }}>
+                      {tx.endtoend}
+                    </ReceiptValue>
+                  </ReceiptRow>
+                )}
+                <LastReceiptRow>
+                  <ReceiptLabel>
+                    {t("walletWithdrawPixSuccess.txidBlockchain")}
+                  </ReceiptLabel>
+                  <ReceiptValue numberOfLines={1} style={{ fontSize: 10 }}>
+                    {txid}
+                  </ReceiptValue>
+                </LastReceiptRow>
+              </ReceiptCard>
+              <ActionsColumn>
+                <PrimaryButton
+                  onPress={handleNewTransaction}
+                  activeOpacity={0.85}
+                >
+                  <RefreshCw size={16} color="#FFFFFF" strokeWidth={2.2} />
+                  <PrimaryButtonText>
+                    {t("walletWithdrawPixSuccess.newTransaction")}
+                  </PrimaryButtonText>
+                </PrimaryButton>
+                <SecondaryButton
+                  onPress={handleOpenExplorer}
+                  activeOpacity={0.75}
+                >
+                  <ExternalLink
+                    size={16}
+                    color={colors.textPrimary}
+                    strokeWidth={2.2}
+                  />
+                  <SecondaryButtonText>
+                    {t("walletWithdrawPixSuccess.viewBlockchain")}
+                  </SecondaryButtonText>
+                </SecondaryButton>
+                <SecondaryButton onPress={handleShare} activeOpacity={0.75}>
+                  <Share2
+                    size={16}
+                    color={colors.textPrimary}
+                    strokeWidth={2.2}
+                  />
+                  <SecondaryButtonText>
+                    {t("walletWithdrawPixSuccess.shareReceipt")}
+                  </SecondaryButtonText>
+                </SecondaryButton>
+              </ActionsColumn>
+            </Content>
+          </ScrollContent>
+          <Footer>
+            <FooterLogoWrapper>
+              <FooterLogoImage source={VirtualLogo} />
+            </FooterLogoWrapper>
+            <FooterText>Fornecido por Virtual Tokenizadora</FooterText>
+          </Footer>
         </SafeArea>
       </Background>
     </Container>

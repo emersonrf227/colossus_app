@@ -583,4 +583,8 @@ export default {
     retry: "حاول مجدداً",
     close: "إغلاق",
   },
+  notifications: {
+    title: "الإشعارات",
+    empty: "لا توجد إشعارات في الوقت الحالي",
+  },
 };
