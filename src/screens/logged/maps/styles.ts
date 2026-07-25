@@ -117,6 +117,13 @@ export const MarkerPin = styled.View<{ pinColor?: string }>`
   shadow-radius: 4px;
   shadow-offset: 0px 2px;
   elevation: 5;
+  overflow: hidden;
+`;
+
+export const MarkerLogoImage = styled.Image`
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
 `;
 
 // --- Estados de loading/erro sobre o mapa ---------------------------------

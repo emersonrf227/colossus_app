@@ -11,11 +11,7 @@
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview",
-      "android": {
-        "autoIncrement": true,
-        "gradleCommand": ":app:bundleRelease"
-      }
+      "channel": "preview"
     },
     "production": {
       "channel": "production"

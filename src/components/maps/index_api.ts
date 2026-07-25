@@ -60,8 +60,9 @@ export class CommunityFetchError extends Error {
 export async function fetchCommunityLocations(): Promise<CommunityLocation[]> {
   let response;
   try {
-    response = await helmApi.get<CommunityApiResponse>("saller/community");
-  } catch {
+    response = await helmApi.get<CommunityApiResponse>("community");
+  } catch (e) {
+    console.log(e);
     throw new CommunityFetchError();
   }
 

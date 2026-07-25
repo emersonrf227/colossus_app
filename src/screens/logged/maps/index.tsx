@@ -23,6 +23,7 @@ import {
 } from "../../../components/maps";
 import { colors } from "../dashboard/styles";
 import { useToast } from "@/hook/Toast";
+import HelmLogo from "@/assets/icon.png";
 
 const INITIAL_REGION = {
   latitude: -23.55052,
@@ -30,6 +31,11 @@ const INITIAL_REGION = {
   latitudeDelta: 0.2,
   longitudeDelta: 0.2,
 };
+
+// Verifica se o local aceita USDT
+function acceptsUSDT(paymentMethods?: string[]): boolean {
+  return paymentMethods?.includes("USDT") ?? false;
+}
 
 export default function CommunityMap() {
   const navigation = useNavigation();
@@ -168,8 +174,18 @@ export default function CommunityMap() {
                 }}
                 onPress={() => setSelectedLocation(item)}
               >
-                <S.MarkerPin pinColor={getSegmentColor(item.segment)}>
-                  <Store size={16} color="#FFFFFF" strokeWidth={2.2} />
+                <S.MarkerPin
+                  pinColor={
+                    acceptsUSDT(item.paymentMethods)
+                      ? "#2ECC71"
+                      : getSegmentColor(item.segment)
+                  }
+                >
+                  {acceptsUSDT(item.paymentMethods) ? (
+                    <S.MarkerLogoImage source={HelmLogo} />
+                  ) : (
+                    <Store size={16} color="#FFFFFF" strokeWidth={2.2} />
+                  )}
                 </S.MarkerPin>
               </Marker>
             ))}
