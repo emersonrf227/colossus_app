@@ -21,6 +21,7 @@ import {
   KeyRound,
   AlertTriangle,
   Eraser,
+  Bell,
 } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
 import * as S from "./styles";
@@ -52,6 +53,12 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
+  {
+    labelKey: "menu.items.notifications",
+    icon: Bell,
+    accentColor: "#FF6B9D",
+    route: "NotificationsSettings",
+  },
   {
     labelKey: "menu.items.info",
     icon: Info,

@@ -19,21 +19,75 @@ const NOTIFICATIONS_CACHE_KEY = (address: string) => `notifications:${address}`;
 /**
  * Hook para gerenciar notificações push e in-app.
  *
+ * - Define handler padrão para notificações
  * - Pede permissão ao mount
  * - Busca token Expo e registra na API (primeira vez apenas)
  * - Carrega notificações da API
+ * - Configura listeners para notificações recebidas e respostas
  * - Fornece função pra marcar como lida
  */
 export function useNotifications(address?: string) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [permissionStatus, setPermissionStatus] = useState<"granted" | "denied" | "pending">("pending");
+
+  // Setup handler padrão de notificações (executar uma vez)
+  useEffect(() => {
+    try {
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: true,
+        }),
+      });
+      console.log("✅ Notification handler configurado");
+    } catch (err) {
+      console.error("Erro ao configurar handler:", err);
+    }
+  }, []);
 
   // Contar não lidas
   useEffect(() => {
     const count = notifications.filter((n) => !n.read).length;
     setUnreadCount(count);
   }, [notifications]);
+
+  // Setup listeners para notificações recebidas
+  useEffect(() => {
+    if (!address) return;
+
+    console.log("📬 Configurando listeners de notificações...");
+
+    // Listener: notificação recebida enquanto app está aberto
+    const receivedSubscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log("📬 Notificação recebida:", notification.request.content.body);
+        // Recarrega as notificações da API
+        loadNotifications(address);
+      }
+    );
+
+    // Listener: usuário toca na notificação
+    const responseSubscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log("👆 Notificação tocada:", response.notification.request.content.body);
+        const uuid = response.notification.request.content.data?.uuid;
+        if (uuid) {
+          markAsRead(uuid);
+        }
+        // Recarrega as notificações
+        loadNotifications(address);
+      }
+    );
+
+    // Cleanup: remover listeners ao desmontar
+    return () => {
+      receivedSubscription.remove();
+      responseSubscription.remove();
+    };
+  }, [address, loadNotifications, markAsRead]);
 
   // 1) Registrar push token na API (primeira vez)
   const registerPushToken = useCallback(async (addr: string) => {
@@ -50,8 +104,11 @@ export function useNotifications(address?: string) {
 
       // Pede permissão
       const { status } = await Notifications.requestPermissionsAsync();
+      console.log("🔔 Status de permissão:", status);
+      setPermissionStatus(status === "granted" ? "granted" : "denied");
+
       if (status !== "granted") {
-        console.log("🔔 Permissão de notificações negada");
+        console.log("🔔 Permissão de notificações negada pelo usuário");
         return;
       }
 
@@ -152,6 +209,7 @@ export function useNotifications(address?: string) {
     unreadCount,
     loading,
     markAsRead,
+    permissionStatus,
     refresh: () => address && loadNotifications(address),
   };
 }

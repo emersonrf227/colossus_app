@@ -30,6 +30,7 @@ import WalletExport from "@/screens/logged/walletExport";
 import WalletImport from "@/screens/logged/walletImport";
 import WalletHistory from "@/screens/logged/walletHistory";
 import Walletpixreceipt from "@/screens/logged/walletPixreceipt";
+import NotificationsSettings from "@/screens/logged/notificationsSettings";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -45,6 +46,7 @@ export function AppRoutes() {
       <Screen name="proofExtract" component={ProofExtract} />
       <Screen name="Extract" component={Extract} />
       <Screen name="MenuScreen" component={MenuScreen} />
+      <Screen name="NotificationsSettings" component={NotificationsSettings} />
       <Screen name="proofConfirm" component={ProofConfirm} />
       <Screen name="TermsOfUse" component={TermsOfUse} />
       <Screen name="SelectNetworks" component={SelectNetworks} />

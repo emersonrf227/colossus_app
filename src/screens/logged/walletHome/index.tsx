@@ -141,7 +141,18 @@ export default function WalletHome() {
     unreadCount,
     loading: notificationsLoading,
     markAsRead,
+    permissionStatus,
   } = useNotifications(record?.address);
+
+  // Mostrar aviso se permissão foi negada
+  useEffect(() => {
+    if (permissionStatus === "denied") {
+      showToast({
+        message: t("notifications.permissionDenied") || "Helm precisa da sua aprovação para enviar notificações. Ative nas configurações do dispositivo.",
+        type: "warning",
+      });
+    }
+  }, [permissionStatus, showToast, t]);
   const [loadingStatus, setLoadingStatus] = useState(
     !params.mode || !params.record,
   );
