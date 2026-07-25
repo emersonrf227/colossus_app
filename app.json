@@ -22,6 +22,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "br.com.colossuscrypto.helmapp",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "1.0.0",
       "config": {
         "usesNonExemptEncryption": false
@@ -38,17 +39,17 @@
         }
       },
       "package": "br.com.colossuscrypto.helmapp",
+      "googleServicesFile": "./google-services.json",
+
       "versionCode": 1,
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ]
     },
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
     "web": {
       "favicon": "./assets/favicon.png"
     },

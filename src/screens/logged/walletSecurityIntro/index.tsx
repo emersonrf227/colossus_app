@@ -34,8 +34,7 @@ export default function WalletSecurityIntro() {
   const route = useRoute();
   // Para onde ir após o aceite: gerar seed (padrão) ou importar
   const target =
-    (route.params as { target?: string } | undefined)?.target ??
-    "WalletBackup";
+    (route.params as { target?: string } | undefined)?.target ?? "WalletBackup";
   const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [accepted, setAccepted] = useState(false);
@@ -100,9 +99,7 @@ export default function WalletSecurityIntro() {
                 activeOpacity={0.8}
               >
                 <S.Checkbox checked={accepted}>
-                  {accepted && (
-                    <Check size={16} color="#fff" strokeWidth={3} />
-                  )}
+                  {accepted && <Check size={16} color="#fff" strokeWidth={3} />}
                 </S.Checkbox>
                 <S.AcceptText>{t("walletSecurity.acceptText")}</S.AcceptText>
               </S.AcceptRow>

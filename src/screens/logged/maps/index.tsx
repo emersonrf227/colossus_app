@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { StatusBar, Linking, ActivityIndicator, Modal } from "react-native";
+import {
+  StatusBar,
+  Linking,
+  ActivityIndicator,
+  Modal,
+  PermissionsAndroid,
+  Platform,
+} from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import Geolocation from "@react-native-community/geolocation";
 import {
   ArrowLeft,
   X,
@@ -25,7 +33,7 @@ import { colors } from "../dashboard/styles";
 import { useToast } from "@/hook/Toast";
 import HelmLogo from "@/assets/icon.png";
 
-const INITIAL_REGION = {
+const DEFAULT_REGION = {
   latitude: -23.55052,
   longitude: -46.633308,
   latitudeDelta: 0.2,
@@ -37,18 +45,84 @@ function acceptsUSDT(paymentMethods?: string[]): boolean {
   return paymentMethods?.includes("USDT") ?? false;
 }
 
+// Solicita permissão de localização no Android
+async function requestLocationPermission(): Promise<boolean> {
+  if (Platform.OS !== "android") return true;
+
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: "Permissão de Localização",
+        message:
+          "Precisamos da sua localização para mostrar estabelecimentos próximos.",
+        buttonNegative: "Cancelar",
+        buttonPositive: "Permitir",
+      },
+    );
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  } catch (err) {
+    console.error("Erro ao solicitar permissão:", err);
+    return false;
+  }
+}
+
 export default function CommunityMap() {
   const navigation = useNavigation();
   const { showToast } = useToast();
   const { t } = useTranslation();
+  const mapRef = React.useRef<MapView>(null);
 
   const [locations, setLocations] = useState<CommunityLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [initialRegion, setInitialRegion] = useState(DEFAULT_REGION);
 
   const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] =
     useState<CommunityLocation | null>(null);
+
+  // Obter localização do usuário
+  const getUserLocation = useCallback(async () => {
+    const permitted = await requestLocationPermission();
+    console.log("✅ Permissão de localização:", permitted);
+    if (!permitted) {
+      console.log("❌ Localização negada, usando fallback");
+      return;
+    }
+
+    console.log("🔍 Buscando localização...");
+
+    Geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+        console.log(
+          `📍 Localização obtida! Lat: ${latitude}, Lon: ${longitude}, Precisão: ${accuracy}m`,
+        );
+
+        const newRegion = {
+          latitude,
+          longitude,
+          latitudeDelta: 0.15,
+          longitudeDelta: 0.15,
+        };
+
+        setInitialRegion(newRegion);
+
+        // Anima o mapa para a nova localização
+        if (mapRef.current) {
+          mapRef.current.animateToRegion(newRegion, 1000);
+        }
+      },
+      (error) => {
+        console.error(
+          `❌ Erro ao obter localização [${error.code}]:`,
+          error.message,
+        );
+      },
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 },
+    );
+  }, []);
 
   const loadLocations = useCallback(async () => {
     setLoading(true);
@@ -64,8 +138,9 @@ export default function CommunityMap() {
   }, []);
 
   useEffect(() => {
+    getUserLocation();
     loadLocations();
-  }, [loadLocations]);
+  }, [getUserLocation, loadLocations]);
 
   // Segmentos derivados dos próprios dados — assim, qualquer segmento
   // novo que a API vier a mandar aparece automaticamente no filtro,
@@ -161,9 +236,10 @@ export default function CommunityMap() {
           </S.CenteredOverlay>
         ) : (
           <MapView
+            ref={mapRef}
             provider={PROVIDER_GOOGLE}
             style={{ flex: 1 }}
-            initialRegion={INITIAL_REGION}
+            initialRegion={initialRegion}
           >
             {filteredLocations.map((item) => (
               <Marker

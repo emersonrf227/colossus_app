@@ -210,7 +210,10 @@ export default function NotificationsSettings() {
       console.error("❌ Erro ao verificar:", err.message);
 
       // Se Firebase não está inicializado
-      if (err.message?.includes("FirebaseApp") || err.message?.includes("Firebase")) {
+      if (
+        err.message?.includes("FirebaseApp") ||
+        err.message?.includes("Firebase")
+      ) {
         setFirebaseError(true);
         setExpoToken("❌ Firebase não inicializado");
         setPermissionStatus("denied");
@@ -348,7 +351,7 @@ export default function NotificationsSettings() {
             </Card>
 
             {/* Expo Token Card - Debug */}
-            <TokenCard>
+            {/* <TokenCard>
               <TokenLabel>🔔 EXPO PUSH TOKEN (DEBUG)</TokenLabel>
               {expoToken ? (
                 <TokenText style={{ color: firebaseError ? "#ff6b6b" : colors.textPrimary }}>
@@ -364,7 +367,7 @@ export default function NotificationsSettings() {
                   ⚠️ Firebase não está inicializado. Use EAS build para configurar.
                 </DescriptionText>
               )}
-            </TokenCard>
+            </TokenCard> */}
 
             {/* Info Card */}
             <Card>

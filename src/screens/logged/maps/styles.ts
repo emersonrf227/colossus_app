@@ -32,6 +32,8 @@ export const HeaderRow = styled.View`
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
+  border-color: ${colors.surfaceBorder};
+  background-color: ${colors.bgDark};
 `;
 
 export const BackButton = styled.TouchableOpacity`
