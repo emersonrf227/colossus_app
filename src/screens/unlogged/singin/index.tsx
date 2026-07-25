@@ -1,7 +1,14 @@
 import BRAND from "@/config/brand";
 import { setWalletSessionUnlocked } from "@/components/wallet/walletSession";
-import React, { useState, useCallback, useEffect } from "react";
-import { Linking, Modal, StatusBar } from "react-native";
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import {
+  Animated,
+  Linking,
+  Modal,
+  Pressable,
+  StatusBar,
+  View,
+} from "react-native";
 import {
   User,
   Lock,
@@ -30,22 +37,51 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "@/i18n";
 import { useTranslation } from "react-i18next";
+import Constants from "expo-constants";
 
 const WHATSAPP_NUMBER = "+551129089826";
 const WHATSAPP_MESSAGE = "Olá, preciso de ajuda!";
 const STORAGE_KEY_LANGUAGE = "appLanguage";
 
 export default function SingIn() {
+  const appVersion = Constants.expoConfig?.version ?? "—";
   const { showToast } = useToast();
   const { navigate, reset } = useNavigation();
   const { t } = useTranslation();
-  const [password, setPassword] = useState("");
-  const [identifier, setIdentifier] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [language, setLanguage] = useState(() => resolveLanguage());
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
+
+  // Easter egg: segurar a logo revela a frase, que some sozinha depois.
+  const easterEggOpacity = useRef(new Animated.Value(0)).current;
+  const easterEggTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const revealEasterEgg = useCallback(() => {
+    console.log("🕊️ easter egg");
+    if (easterEggTimer.current) clearTimeout(easterEggTimer.current);
+
+    Animated.timing(easterEggOpacity, {
+      toValue: 1,
+      duration: 900,
+      useNativeDriver: true,
+    }).start();
+
+    easterEggTimer.current = setTimeout(() => {
+      Animated.timing(easterEggOpacity, {
+        toValue: 0,
+        duration: 1200,
+        useNativeDriver: true,
+      }).start();
+    }, 3200);
+  }, [easterEggOpacity]);
+
+  useEffect(
+    () => () => {
+      if (easterEggTimer.current) clearTimeout(easterEggTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     loadSavedLanguage().then(setLanguage);
@@ -144,9 +180,28 @@ export default function SingIn() {
             keyboardShouldPersistTaps="handled"
           >
             <S.LogoWrapper>
-              <LogoSvg width={wp(34)} height={hp(26)} />
+              <Pressable
+                onLongPress={revealEasterEgg}
+                delayLongPress={100}
+                android_disableSound
+                // O SVG não recebe toque: o Pressable é quem trata o gesto.
+                style={{ width: wp(34), height: hp(26) }}
+              >
+                <View pointerEvents="none">
+                  <LogoSvg width={wp(34)} height={hp(26)} />
+                </View>
+              </Pressable>
+
               <S.WelcomeTitle> {t("login.welcome")}</S.WelcomeTitle>
               <S.WelcomeSubtitle>{t("login.subtitle")}</S.WelcomeSubtitle>
+
+              {/* Altura fixa: reserva o espaço para nada deslocar no fade-in */}
+              <S.EasterEggWrapper pointerEvents="none">
+                <Animated.View style={{ opacity: easterEggOpacity }}>
+                  <S.EasterEggText>Deus é fiel!</S.EasterEggText>
+                  <S.EasterEggText>Isaías 43:19</S.EasterEggText>
+                </Animated.View>
+              </S.EasterEggWrapper>
             </S.LogoWrapper>
             <S.LoginButton
               onPress={openApp}
@@ -169,6 +224,13 @@ export default function SingIn() {
               </S.RegisterButtonText>
             </S.RegisterButton>
           </S.ScrollContent>
+
+          <S.Footer>
+            <S.FooterText>
+              {" "}
+              {t("about.versionLabel", { version: appVersion })}
+            </S.FooterText>
+          </S.Footer>
         </S.SafeArea>
 
         <Modal

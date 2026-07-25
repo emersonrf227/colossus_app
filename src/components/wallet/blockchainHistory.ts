@@ -44,6 +44,10 @@ export interface TransactionPage {
 
 const PAGE_SIZE = 25;
 
+// Transações abaixo desse valor são consideradas poeira e não aparecem
+// no extrato (spam de airdrop, troco de gas, etc).
+const MIN_VISIBLE_AMOUNT = 0.2;
+
 /**
  * GET no Etherscan com retry para rate limit.
  * A API key é compartilhada entre todos os usuários do app (free tier =
@@ -71,9 +75,17 @@ async function etherscanGet(params: Record<string, unknown>): Promise<any> {
   return lastData;
 }
 
+function toAmount(raw: string, decimals: number): number {
+  return Number(BigInt(raw)) / Math.pow(10, decimals);
+}
+
 function formatValue(raw: string, decimals: number): string {
-  const num = Number(BigInt(raw)) / Math.pow(10, decimals);
-  return num.toFixed(2);
+  return toAmount(raw, decimals).toFixed(2);
+}
+
+/** Descarta valores irrelevantes para o extrato. */
+function isAboveDustThreshold(tx: OnChainTransaction): boolean {
+  return toAmount(tx.value, tx.decimals) >= MIN_VISIBLE_AMOUNT;
 }
 
 function getChainConfig(network: WalletNetworkKey): {
@@ -212,10 +224,13 @@ export async function fetchOnChainHistory(params: {
     throw new Error("history_fetch_failed");
   }
 
-  // Mescla e ordena por timestamp decrescente
-  const all = [...usdtTxs, ...nativeTxs].sort(
-    (a, b) => b.timestamp - a.timestamp,
-  );
+  // Mescla, remove poeira e ordena por timestamp decrescente.
+  // O filtro é aplicado depois da paginação, então uma página pode vir
+  // com menos de PAGE_SIZE itens — hasMore continua baseado no total
+  // bruto retornado pelo explorer para não interromper o scroll.
+  const all = [...usdtTxs, ...nativeTxs]
+    .filter(isAboveDustThreshold)
+    .sort((a, b) => b.timestamp - a.timestamp);
 
   return {
     transactions: all,

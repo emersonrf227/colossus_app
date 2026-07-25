@@ -7,11 +7,13 @@ import theme from "./src/theme";
 import { AuthProvider } from "@/hook/AuthContext";
 import { ToastProvider } from "@/hook/Toast";
 import { useOTAUpdates } from "@/hook/useOTAUpdates";
+import { useOneSignal } from "@/hook/useOneSignal";
 import i18n from "i18next";
 import { ethers } from "ethers";
 
 export default function App() {
   useOTAUpdates();
+  useOneSignal();
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>

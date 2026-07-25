@@ -76,6 +76,22 @@ export const LogoWrapper = styled.View`
   margin-bottom: ${hp(1)}px;
 `;
 
+// Easter egg: revelado ao segurar a logo. Altura fixa reservada, então
+// o fade-in não empurra nada abaixo dele.
+export const EasterEggWrapper = styled.View`
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const EasterEggText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 12px;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  text-align: center;
+`;
+
 export const WelcomeTitle = styled.Text`
   color: ${colors.textPrimary};
   font-size: 22px;
@@ -291,4 +307,33 @@ export const CheckCircle = styled.View<{ checked?: boolean }>`
   border-width: 1.5px;
   border-color: ${({ checked }) =>
     checked ? colors.primary : colors.surfaceBorder};
+`;
+
+export const FooterLogoWrapper = styled.View`
+  height: 32px;
+  width: 200px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+`;
+
+export const FooterLogoImage = styled.Image`
+  height: 100%;
+  width: 100%;
+  resize-mode: contain;
+`;
+
+export const Footer = styled.View`
+  padding-vertical: ${hp(2)}px;
+  padding-horizontal: ${wp(1)}px;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const FooterText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 11px;
+  text-align: center;
 `;

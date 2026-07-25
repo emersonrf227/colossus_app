@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import * as Notifications from "expo-notifications";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { OneSignal } from "react-native-onesignal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import helmApi from "@/infraestructure/http/nodeApi";
 
@@ -13,114 +13,27 @@ export interface Notification {
   createdAt: string;
 }
 
-const PUSH_TOKEN_SENT_KEY = (address: string) => `pushTokenSent:${address}`;
+const PUSH_ID_SENT_KEY = (address: string) => `oneSignalIdSent:${address}`;
 const NOTIFICATIONS_CACHE_KEY = (address: string) => `notifications:${address}`;
 
 /**
- * Hook para gerenciar notificações push e in-app.
+ * Hook para gerenciar notificações push (OneSignal) e in-app (API Helm).
  *
- * - Define handler padrão para notificações
- * - Pede permissão ao mount
- * - Busca token Expo e registra na API (primeira vez apenas)
- * - Carrega notificações da API
- * - Configura listeners para notificações recebidas e respostas
- * - Fornece função pra marcar como lida
+ * Diferença principal em relação ao expo-notifications: o OneSignal
+ * resolve o registro no FCM/APNs sozinho. O que identificamos aqui é o
+ * subscription ID do device, e além disso chamamos OneSignal.login()
+ * com o endereço da carteira — assim o backend pode disparar push por
+ * external_id (o próprio address) sem depender de guardar device IDs.
  */
 export function useNotifications(address?: string) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [permissionStatus, setPermissionStatus] = useState<"granted" | "denied" | "pending">("pending");
+  const [permissionStatus, setPermissionStatus] = useState<
+    "granted" | "denied" | "pending"
+  >("pending");
 
-  // Setup handler padrão de notificações (executar uma vez)
-  useEffect(() => {
-    Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-      }),
-    });
-  }, []);
-
-  // Contar não lidas
-  useEffect(() => {
-    const count = notifications.filter((n) => !n.read).length;
-    setUnreadCount(count);
-  }, [notifications]);
-
-  // Setup listeners para notificações recebidas
-  useEffect(() => {
-    if (!address) return;
-
-    // Listener: notificação recebida enquanto app está aberto
-    const receivedSubscription = Notifications.addNotificationReceivedListener(() => {
-      // Recarrega as notificações da API
-      loadNotifications(address);
-    });
-
-    // Listener: usuário toca na notificação
-    const responseSubscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        const uuid = response.notification.request.content.data?.uuid;
-        if (uuid) {
-          markAsRead(uuid);
-        }
-        // Recarrega as notificações
-        loadNotifications(address);
-      }
-    );
-
-    // Cleanup: remover listeners ao desmontar
-    return () => {
-      receivedSubscription.remove();
-      responseSubscription.remove();
-    };
-  }, [address, loadNotifications, markAsRead]);
-
-  // 1) Registrar push token na API (primeira vez)
-  const registerPushToken = useCallback(async (addr: string) => {
-    if (!addr) return;
-
-    try {
-      const key = PUSH_TOKEN_SENT_KEY(addr);
-      const alreadySent = await AsyncStorage.getItem(key);
-
-      if (alreadySent === "true") return;
-
-      // Remove marca anterior se existir
-      if (alreadySent) {
-        await AsyncStorage.removeItem(key);
-      }
-
-      // Pede permissão
-      const { status } = await Notifications.requestPermissionsAsync();
-      setPermissionStatus(status === "granted" ? "granted" : "denied");
-
-      if (status !== "granted") return;
-
-      // Busca token Expo
-      try {
-        const token = await Notifications.getExpoPushTokenAsync();
-        if (!token.data) return;
-
-        // Envia pra API
-        await helmApi.post("notifications/add-device", {
-          address: addr,
-          expo_code: token.data,
-        });
-
-        // Marca como enviado
-        await AsyncStorage.setItem(key, "true");
-      } catch (err: any) {
-        console.error("Erro ao registrar token:", err.message);
-      }
-    } catch (err) {
-      console.error("Erro ao registrar push token:", err);
-    }
-  }, []);
-
-  // 2) Carregar notificações
+  // 1) Carregar notificações da API (com cache de fallback)
   const loadNotifications = useCallback(async (addr: string) => {
     if (!addr) {
       setLoading(false);
@@ -135,14 +48,12 @@ export function useNotifications(address?: string) {
 
       if (response.data?.res) {
         setNotifications(response.data.res);
-        // Cache local
         await AsyncStorage.setItem(
           NOTIFICATIONS_CACHE_KEY(addr),
           JSON.stringify(response.data.res),
         );
       }
     } catch (err) {
-      // Tenta cache se falhar
       const cached = await AsyncStorage.getItem(NOTIFICATIONS_CACHE_KEY(addr));
       if (cached) {
         setNotifications(JSON.parse(cached));
@@ -153,11 +64,10 @@ export function useNotifications(address?: string) {
     }
   }, []);
 
-  // 3) Marcar como lida
+  // 2) Marcar como lida
   const markAsRead = useCallback(async (uuid: string) => {
     try {
       await helmApi.patch(`notifications/${uuid}/read`);
-      // Atualiza local
       setNotifications((prev) =>
         prev.map((n) => (n.uuid === uuid ? { ...n, read: true } : n)),
       );
@@ -166,13 +76,103 @@ export function useNotifications(address?: string) {
     }
   }, []);
 
-  // Mount: registra token e carrega notificações
+  // Refs pros listeners não precisarem re-registrar quando os callbacks mudam
+  const loadRef = useRef(loadNotifications);
+  const markRef = useRef(markAsRead);
+  loadRef.current = loadNotifications;
+  markRef.current = markAsRead;
+
+  // 3) Registrar device no OneSignal + na API
+  const registerDevice = useCallback(async (addr: string) => {
+    if (!addr) return;
+
+    try {
+      // Vincula o address como external_id no OneSignal.
+      // É idempotente e permite ao backend disparar por external_id.
+      OneSignal.login(addr);
+
+      // Pede permissão (fallbackToSettings: abre config do SO se já negou antes)
+      const granted = await OneSignal.Notifications.requestPermission(true);
+      setPermissionStatus(granted ? "granted" : "denied");
+
+      if (!granted) return;
+
+      const key = PUSH_ID_SENT_KEY(addr);
+      const alreadySent = await AsyncStorage.getItem(key);
+
+      // O subscription ID pode demorar alguns instantes pra existir logo
+      // após o primeiro grant de permissão — tentamos algumas vezes.
+      let subscriptionId: string | null = null;
+      for (let attempt = 0; attempt < 5; attempt++) {
+        subscriptionId = await OneSignal.User.pushSubscription.getIdAsync();
+        if (subscriptionId) break;
+        await new Promise((r) => setTimeout(r, 1000));
+      }
+
+      if (!subscriptionId) {
+        console.warn("OneSignal: subscription ID ainda indisponível");
+        return;
+      }
+
+      // Só reenvia pra API se o ID mudou (reinstall, novo device, etc)
+      if (alreadySent === subscriptionId) return;
+
+      await helmApi.post("notifications/add-device", {
+        address: addr,
+        // mantido por compatibilidade com o endpoint atual
+        expo_code: subscriptionId,
+      });
+
+      await AsyncStorage.setItem(key, subscriptionId);
+      console.log("✅ Device registrado no OneSignal:", subscriptionId);
+    } catch (err) {
+      console.error("Erro ao registrar device:", err);
+    }
+  }, []);
+
+  // Contador de não lidas
+  useEffect(() => {
+    setUnreadCount(notifications.filter((n) => !n.read).length);
+  }, [notifications]);
+
+  // Listeners do OneSignal
   useEffect(() => {
     if (!address) return;
 
-    registerPushToken(address);
+    const onForeground = (event: any) => {
+      // Exibe a notificação mesmo com o app aberto
+      event.getNotification()?.display?.();
+      loadRef.current(address);
+    };
+
+    const onClick = (event: any) => {
+      const uuid = event?.notification?.additionalData?.uuid;
+      if (uuid) markRef.current(uuid);
+      loadRef.current(address);
+    };
+
+    OneSignal.Notifications.addEventListener(
+      "foregroundWillDisplay",
+      onForeground,
+    );
+    OneSignal.Notifications.addEventListener("click", onClick);
+
+    return () => {
+      OneSignal.Notifications.removeEventListener(
+        "foregroundWillDisplay",
+        onForeground,
+      );
+      OneSignal.Notifications.removeEventListener("click", onClick);
+    };
+  }, [address]);
+
+  // Mount: registra device e carrega notificações
+  useEffect(() => {
+    if (!address) return;
+
+    registerDevice(address);
     loadNotifications(address);
-  }, [address, registerPushToken, loadNotifications]);
+  }, [address, registerDevice, loadNotifications]);
 
   return {
     notifications,

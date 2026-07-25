@@ -3,7 +3,7 @@ import { StatusBar, Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Bell } from "lucide-react-native";
 import { useTranslation } from "react-i18next";
-import * as Notifications from "expo-notifications";
+import { OneSignal } from "react-native-onesignal";
 import styled from "styled-components/native";
 import {
   widthPercentageToDP as wp,
@@ -189,46 +189,36 @@ export default function NotificationsSettings() {
 
   const checkNotificationSetup = async () => {
     try {
-      // Tenta obter o token (revela se Firebase está ok)
-      console.log("🔔 Verificando Firebase...");
-      const token = await Notifications.getExpoPushTokenAsync();
+      const granted = await OneSignal.Notifications.getPermissionAsync();
+      setPermissionStatus(granted ? "granted" : "denied");
 
-      if (token.data) {
-        setExpoToken(token.data);
-        console.log("✅ Firebase OK, Token:", token.data);
+      const subscriptionId = await OneSignal.User.pushSubscription.getIdAsync();
+
+      if (subscriptionId) {
+        setExpoToken(subscriptionId);
         setFirebaseError(false);
-
-        // Se conseguiu token, verifica permissões
-        const { status } = await Notifications.getPermissionsAsync();
-        setPermissionStatus(status === "granted" ? "granted" : "denied");
+        console.log("✅ OneSignal subscription ID:", subscriptionId);
       } else {
-        console.warn("⚠️ Token vazio");
-        setExpoToken("Token vazio - verifique permissões");
-        setPermissionStatus("denied");
+        setExpoToken(
+          granted
+            ? "Aguardando registro no OneSignal..."
+            : "Permissão não concedida",
+        );
       }
     } catch (err: any) {
-      console.error("❌ Erro ao verificar:", err.message);
-
-      // Se Firebase não está inicializado
-      if (
-        err.message?.includes("FirebaseApp") ||
-        err.message?.includes("Firebase")
-      ) {
-        setFirebaseError(true);
-        setExpoToken("❌ Firebase não inicializado");
-        setPermissionStatus("denied");
-      } else {
-        setExpoToken(`Erro: ${err.message}`);
-        setPermissionStatus("denied");
-      }
+      console.error("❌ Erro ao verificar notificações:", err?.message);
+      setFirebaseError(true);
+      setExpoToken(`Erro: ${err?.message}`);
+      setPermissionStatus("denied");
     }
   };
 
   const handleEnableNotifications = async () => {
     try {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status === "granted") {
+      const granted = await OneSignal.Notifications.requestPermission(true);
+      if (granted) {
         setPermissionStatus("granted");
+        await checkNotificationSetup();
         showToast({
           message:
             t("notifications.enabled") || "Notificações ativadas com sucesso!",
@@ -352,7 +342,7 @@ export default function NotificationsSettings() {
 
             {/* Expo Token Card - Debug */}
             {/* <TokenCard>
-              <TokenLabel>🔔 EXPO PUSH TOKEN (DEBUG)</TokenLabel>
+              <TokenLabel>🔔 ONESIGNAL SUBSCRIPTION ID (DEBUG)</TokenLabel>
               {expoToken ? (
                 <TokenText style={{ color: firebaseError ? "#ff6b6b" : colors.textPrimary }}>
                   {expoToken}
@@ -364,7 +354,7 @@ export default function NotificationsSettings() {
               )}
               {firebaseError && (
                 <DescriptionText style={{ marginTop: 8, color: "#ff6b6b" }}>
-                  ⚠️ Firebase não está inicializado. Use EAS build para configurar.
+                  ⚠️ OneSignal não inicializou. Confira o App ID e rode um build nativo.
                 </DescriptionText>
               )}
             </TokenCard> */}
