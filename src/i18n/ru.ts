@@ -324,6 +324,7 @@ export default {
     wordPlaceholder: "Введите слово",
     confirmButton: "Подтвердить и создать кошелёк",
     errorWordMismatch: "Слово не совпадает.",
+    generating: "Безопасное создание кошелька...",
     errorGenerate: "Не удалось создать кошелёк.",
     errorSave: "Не удалось сохранить кошелёк.",
     errorRegister: "Кошелёк создан локально, но не зарегистрирован на сервере.",

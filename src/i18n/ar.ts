@@ -335,6 +335,7 @@ export default {
     wordPlaceholder: "أدخل الكلمة",
     confirmButton: "تأكيد وإنشاء المحفظة",
     errorWordMismatch: "إحدى الكلمات غير متطابقة.",
+    generating: "جارٍ إنشاء محفظتك بأمان...",
     errorGenerate: "تعذّر إنشاء المحفظة.",
     errorSave: "تعذّر حفظ المحفظة.",
     errorRegister: "تم إنشاء المحفظة محلياً لكن تعذّر تسجيلها.",

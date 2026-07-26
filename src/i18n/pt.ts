@@ -336,6 +336,7 @@ export default {
     wordPlaceholder: "Digite a palavra",
     confirmButton: "Confirmar e criar carteira",
     errorWordMismatch: "Alguma palavra não confere. Verifique seu backup.",
+    generating: "Gerando sua carteira com segurança...",
     errorGenerate: "Não foi possível gerar a carteira. Tente novamente.",
     errorSave: "Não foi possível salvar a carteira. Tente novamente.",
     errorRegister:

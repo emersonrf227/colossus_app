@@ -103,7 +103,12 @@ export async function requestGasSponsorship(
   const timestamp = Math.floor(Date.now() / 1000);
   const nonce = `${wallet.address.toLowerCase()}:${timestamp}:gas-request:${network}`;
   const signature = await wallet.signMessage(nonce);
-
+  console.log({
+    address: wallet.address,
+    network: network.toUpperCase(),
+    timestamp,
+    signature,
+  });
   try {
     const response = await helmApi.post("gas/request", {
       address: wallet.address,
@@ -136,6 +141,7 @@ export async function requestGasSponsorship(
 
     return result;
   } catch (error: any) {
+    console.log("Error ====>", error);
     const code = error?.response?.data?.code;
     const message = error?.response?.data?.message;
 

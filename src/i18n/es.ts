@@ -327,6 +327,7 @@ export default {
     wordPlaceholder: "Ingresa la palabra",
     confirmButton: "Confirmar y crear billetera",
     errorWordMismatch: "Una palabra no coincide. Verifica tu respaldo.",
+    generating: "Generando tu billetera de forma segura...",
     errorGenerate: "No se pudo generar la billetera. Inténtalo de nuevo.",
     errorSave: "No se pudo guardar la billetera. Inténtalo de nuevo.",
     errorRegister:

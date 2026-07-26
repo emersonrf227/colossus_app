@@ -38,9 +38,7 @@ export const Header = styled.View`
   flex-direction: row;
   align-items: center;
   margin-top: ${hp(1)}px;
-  background-color: ${colors.surface};
   border-width: 1px;
-  border-color: ${colors.surfaceBorder};
 `;
 
 export const BackButton = styled.TouchableOpacity`
@@ -61,8 +59,6 @@ export const HeaderTitle = styled.Text`
   margin-left: 14px;
   width: 100%;
   height: 100%;
-  background-color: ${colors.surface};
-  border-color: ${colors.surfaceBorder};
 `;
 
 export const Content = styled.View`

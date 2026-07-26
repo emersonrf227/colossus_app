@@ -324,6 +324,7 @@ export default {
     wordPlaceholder: "Enter word",
     confirmButton: "Confirm and create wallet",
     errorWordMismatch: "A word doesn't match. Check your backup.",
+    generating: "Securely generating your wallet...",
     errorGenerate: "Could not generate wallet. Please try again.",
     errorSave: "Could not save wallet. Please try again.",
     errorRegister: "Wallet created locally, but could not register on server.",

@@ -27,7 +27,7 @@ function decrypt(cipherText: string): string | null {
 /**
  * Gera uma nova wallet (endereço + mnemônico de 12 palavras com checksum BIP-39 válido).
  */
-export function generateWallet(): GeneratedWallet {
+function buildMnemonic(): string {
   const langEn = ethers.wordlists.en;
 
   // Gera 11 palavras aleatórias (os primeiros 121 bits do mnemônico)
@@ -77,7 +77,37 @@ export function generateWallet(): GeneratedWallet {
   const lastWordIndex = parseInt(lastWordBits, 2) & 0x7ff;
   wordIndexes.push(lastWordIndex);
 
-  const mnemonic = wordIndexes.map((idx) => langEn.getWord(idx)).join(" ");
+  return wordIndexes.map((idx) => langEn.getWord(idx)).join(" ");
+}
+
+/**
+ * @deprecated Bloqueia a thread JS por ~10s no Hermes (PBKDF2 em JS puro).
+ * Use generateWalletAsync().
+ */
+export function generateWallet(): GeneratedWallet {
+  const mnemonic = buildMnemonic();
+  const wallet = ethers.Wallet.fromPhrase(mnemonic);
+  return { address: wallet.address, mnemonic };
+}
+
+/**
+ * Versão assíncrona de generateWallet.
+ *
+ * O custo real está no ethers.Wallet.fromPhrase(): 2048 iterações de
+ * HMAC-SHA512 (PBKDF2 do BIP39) em JS puro, ~10s no Hermes. Isso é
+ * síncrono e bloqueia a thread — o await abaixo não elimina a trava,
+ * mas garante que o React já tenha pintado a tela de loading antes,
+ * em vez de congelar a tela anterior.
+ *
+ * Para eliminar de fato a espera é preciso PBKDF2 nativo
+ * (react-native-quick-crypto), o que exige shims de Node no Metro.
+ */
+export async function generateWalletAsync(): Promise<GeneratedWallet> {
+  const mnemonic = buildMnemonic();
+
+  // Cede a thread para o loading renderizar antes do trabalho pesado.
+  await new Promise((resolve) => setTimeout(resolve, 50));
+
   const wallet = ethers.Wallet.fromPhrase(mnemonic);
   return { address: wallet.address, mnemonic };
 }

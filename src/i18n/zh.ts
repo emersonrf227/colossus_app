@@ -315,6 +315,7 @@ export default {
     wordPlaceholder: "输入单词",
     confirmButton: "确认并创建钱包",
     errorWordMismatch: "某个词不匹配。请检查备份。",
+    generating: "正在安全生成您的钱包...",
     errorGenerate: "无法生成钱包。",
     errorSave: "无法保存钱包。",
     errorRegister: "钱包已本地创建，但无法在服务器上注册。",

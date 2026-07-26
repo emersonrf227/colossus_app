@@ -1,5 +1,9 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
-import { ActivityIndicator, StatusBar } from "react-native";
+import {
+  ActivityIndicator,
+  InteractionManager,
+  StatusBar,
+} from "react-native";
 import { usePreventScreenCapture } from "expo-screen-capture";
 import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, Eye, AlertTriangle, Check } from "lucide-react-native";
@@ -8,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import * as S from "./styles";
 import { useToast } from "@/hook/Toast";
 import {
-  generateWallet,
+  generateWalletAsync,
   pickRandomWordIndexes,
   persistGeneratedWallet,
 } from "../../../components/wallet/walletStorage";
@@ -37,15 +41,35 @@ export default function WalletBackup() {
   const [generating, setGenerating] = useState(true);
 
   useEffect(() => {
-    try {
-      const generated = generateWallet();
-      setWalletData(generated);
-    } catch {
-      showToast({ message: t("walletBackup.errorGenerate"), type: "error" });
-      navigation.goBack();
-    } finally {
-      setGenerating(false);
-    }
+    let cancelled = false;
+
+    // generateWallet() é síncrono e pesado (entropia + derivação BIP39):
+    // roda direto aqui, ele bloqueia a thread JS antes do primeiro paint,
+    // e o spinner abaixo nunca chega a aparecer — a tela anterior fica
+    // congelada e parece travamento. runAfterInteractions adia o trabalho
+    // até a animação de navegação terminar, então o usuário vê a tela
+    // entrar já com o loading rodando.
+    const task = InteractionManager.runAfterInteractions(async () => {
+      if (cancelled) return;
+      try {
+        const started = Date.now();
+        const generated = await generateWalletAsync();
+        console.log(`Carteira gerada em ${Date.now() - started}ms`);
+        if (cancelled) return;
+        setWalletData(generated);
+      } catch {
+        if (cancelled) return;
+        showToast({ message: t("walletBackup.errorGenerate"), type: "error" });
+        navigation.goBack();
+      } finally {
+        if (!cancelled) setGenerating(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      task.cancel();
+    };
   }, []);
 
   const words = useMemo(
@@ -149,11 +173,12 @@ export default function WalletBackup() {
 
           <S.ScrollContent showsVerticalScrollIndicator={false}>
             {generating ? (
-              <ActivityIndicator
-                color={colors.primary}
-                size="large"
-                style={{ marginTop: 60 }}
-              />
+              <S.GeneratingWrapper>
+                <ActivityIndicator color={colors.primary} size="large" />
+                <S.GeneratingText>
+                  {t("walletBackup.generating")}
+                </S.GeneratingText>
+              </S.GeneratingWrapper>
             ) : step === "reveal" ? (
               <>
                 <S.WarningCard>

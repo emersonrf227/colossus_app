@@ -229,3 +229,18 @@ export const cardLogo = styled.View`
   margin-top: ${hp(0.5)}px;
   margin-bottom: ${hp(1)}px;
 `;
+
+export const GeneratingWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin-top: ${hp(8)}px;
+  gap: 16px;
+`;
+
+export const GeneratingText = styled.Text`
+  color: ${colors.textMuted};
+  font-size: 14px;
+  text-align: center;
+  padding-horizontal: ${wp(10)}px;
+  line-height: 20px;
+`;

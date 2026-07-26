@@ -32,6 +32,7 @@ export default function WalletSecurityIntro() {
   const navigation = useNavigation();
   const { navigate, goBack } = navigation;
   const route = useRoute();
+
   // Para onde ir após o aceite: gerar seed (padrão) ou importar
   const target =
     (route.params as { target?: string } | undefined)?.target ?? "WalletBackup";
@@ -49,6 +50,10 @@ export default function WalletSecurityIntro() {
       return;
     }
     if (!accepted) return;
+
+    // Sem loader aqui: setLoader(true) seguido de navigate() e
+    // setLoader(false) no mesmo tick nunca chega a renderizar. Quem
+    // mostra o loading é a WalletBackup, que é onde a seed é gerada.
     navigate(target as never);
   }, [isLast, accepted, navigate, target]);
 
@@ -99,9 +104,13 @@ export default function WalletSecurityIntro() {
                 activeOpacity={0.8}
               >
                 <S.Checkbox checked={accepted}>
-                  {accepted && <Check size={16} color="#fff" strokeWidth={3} />}
+                  {accepted && (
+                    <Check size={16} color="#fff" strokeWidth={3} />
+                  )}
                 </S.Checkbox>
-                <S.AcceptText>{t("walletSecurity.acceptText")}</S.AcceptText>
+                <S.AcceptText>
+                  {t("walletSecurity.acceptText")}
+                </S.AcceptText>
               </S.AcceptRow>
             )}
 
