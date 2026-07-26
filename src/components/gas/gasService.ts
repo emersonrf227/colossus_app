@@ -66,6 +66,15 @@ export const GAS_THRESHOLD: Record<WalletNetworkKey, string> = {
   plasma: "0.01",
 };
 
+/**
+ * Saldo mínimo de USDT na rede para o gás patrocinado ser oferecido.
+ *
+ * O approve reserva parte do saldo para o backend resgatar via
+ * transferFrom, então abaixo desse valor o fluxo terminaria em
+ * LOW_BALANCE — melhor não oferecer.
+ */
+export const MIN_USDT_FOR_GAS = 1;
+
 export async function needsGasSponsorship(
   address: string,
   network: WalletNetworkKey,

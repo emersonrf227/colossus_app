@@ -182,7 +182,7 @@ export default function SingIn() {
             <S.LogoWrapper>
               <Pressable
                 onLongPress={revealEasterEgg}
-                delayLongPress={100}
+                delayLongPress={50}
                 android_disableSound
                 // O SVG não recebe toque: o Pressable é quem trata o gesto.
                 style={{ width: wp(34), height: hp(26) }}

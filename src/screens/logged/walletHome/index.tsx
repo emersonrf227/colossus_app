@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import {
   Clipboard,
   ActivityIndicator,
@@ -66,7 +72,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import GasSponsorModal from "../walletGasmodal";
-import { needsGasSponsorship } from "@/components/gas/gasService";
+import {
+  needsGasSponsorship,
+  MIN_USDT_FOR_GAS,
+} from "@/components/gas/gasService";
 import PinConfirmModal from "../PinConfirmModal";
 import { useNotifications } from "@/hook/useNotifications";
 import { NotificationBell } from "@/components/notificationBell";
@@ -125,7 +134,11 @@ export default function WalletHome() {
   const route = useRoute();
   const { showToast } = useToast();
   const { t } = useTranslation();
-  const [showGasModal, setShowGasModal] = useState(false);
+  // Redes que precisam de gás, tratadas uma por vez pelo modal.
+  const [gasQueue, setGasQueue] = useState<WalletNetworkKey[]>([]);
+  // Redes já oferecidas nesta sessão — evita o modal reaparecer a cada
+  // refresh de saldo depois que o usuário fechou.
+  const gasHandledRef = useRef<Set<WalletNetworkKey>>(new Set());
 
   const params = (route.params ?? {}) as Partial<RouteParams>;
 
@@ -148,7 +161,9 @@ export default function WalletHome() {
   useEffect(() => {
     if (permissionStatus === "denied") {
       showToast({
-        message: t("notifications.permissionDenied") || "Helm precisa da sua aprovação para enviar notificações. Ative nas configurações do dispositivo.",
+        message:
+          t("notifications.permissionDenied") ||
+          "Helm precisa da sua aprovação para enviar notificações. Ative nas configurações do dispositivo.",
         type: "warning",
       });
     }
@@ -184,12 +199,6 @@ export default function WalletHome() {
       if (nets.length > 0) setEnabledNetworkKeys(nets);
     });
   }, []);
-
-  // Roda o check de gás quando o endereço da wallet estiver disponível
-  // (record é carregado de forma assíncrona — no mount ele pode ser null).
-  useEffect(() => {
-    if (record?.address) checkGas();
-  }, [record?.address]);
 
   const isFullAccess = mode === "full";
 
@@ -248,12 +257,51 @@ export default function WalletHome() {
     }, []),
   );
 
-  async function checkGas() {
+  // Verifica gás em todas as redes habilitadas. Como as duas podem estar
+  // sem saldo ao mesmo tempo, o resultado vira uma fila: o modal trata uma
+  // rede por vez e avança quando é fechado.
+  const checkGas = useCallback(async () => {
     if (!record?.address) return;
-    if (await needsGasSponsorship(record.address, "polygon")) {
-      setShowGasModal(true);
-    }
-  }
+    // Sem os saldos carregados não dá pra decidir — o efeito reroda quando chegam.
+    if (loadingBalances) return;
+
+    const candidates = enabledNetworkKeys.filter(
+      (key): key is WalletNetworkKey => {
+        if (key !== "polygon" && key !== "plasma") return false;
+        // Não reoferece rede que o usuário já tratou ou dispensou nesta sessão.
+        if (gasHandledRef.current.has(key)) return false;
+
+        // Gás só é útil se houver USDT pra movimentar, e o approve cobra
+        // parte do saldo — abaixo do mínimo o fluxo falharia com LOW_BALANCE.
+        const usdt = parseFloat(
+          balances.find((b) => b.network === key)?.usdtBalance ?? "0",
+        );
+        return usdt >= MIN_USDT_FOR_GAS;
+      },
+    );
+
+    const results = await Promise.all(
+      candidates.map(async (network) => ({
+        network,
+        needs: await needsGasSponsorship(record.address, network),
+      })),
+    );
+
+    setGasQueue(results.filter((r) => r.needs).map((r) => r.network));
+  }, [record?.address, enabledNetworkKeys, balances, loadingBalances]);
+
+  const dismissCurrentGasNetwork = useCallback(() => {
+    setGasQueue((prev) => {
+      if (prev[0]) gasHandledRef.current.add(prev[0]);
+      return prev.slice(1);
+    });
+  }, []);
+
+  // Roda o check de gás quando o endereço da wallet estiver disponível
+  // (record é carregado de forma assíncrona — no mount ele pode ser null).
+  useEffect(() => {
+    if (record?.address) checkGas();
+  }, [record?.address, checkGas]);
 
   const totalUsdt = useMemo(
     () =>
@@ -340,13 +388,21 @@ export default function WalletHome() {
               </>
             </S.Header>
 
-            <GasSponsorModal
-              visible={showGasModal}
-              network="polygon"
-              backendAddress="0x8F466d0B8239aB675Bc393534dB88Ce2b2497A13"
-              onClose={() => setShowGasModal(false)}
-              onSuccess={() => loadBalances()}
-            />
+            {gasQueue.length > 0 && (
+              <GasSponsorModal
+                // key força remontagem ao trocar de rede, zerando o estado
+                // interno do modal em vez de reaproveitar o da rede anterior.
+                key={gasQueue[0]}
+                visible
+                network={gasQueue[0]}
+                backendAddress="0x8F466d0B8239aB675Bc393534dB88Ce2b2497A13"
+                onClose={dismissCurrentGasNetwork}
+                onSuccess={() => {
+                  dismissCurrentGasNetwork();
+                  loadBalances();
+                }}
+              />
+            )}
 
             <CardLogoWrapper>
               <LogoSvg width={wp(34)} height={hp(19)} />
@@ -515,17 +571,12 @@ export default function WalletHome() {
                             <S.NetworkInfo>
                               <S.NetworkName>{config.label}</S.NetworkName>
                               {balance.lowGasWarning && isFullAccess && (
-                                <TouchableOpacity
-                                  onPress={() => setShowGasModal(true)}
-                                  activeOpacity={0.7}
-                                >
-                                  <S.NetworkGasWarning>
-                                    {t("wallet.lowGas", {
-                                      symbol: config.nativeCurrencySymbol,
-                                    })}
-                                    {"  ▸"}
-                                  </S.NetworkGasWarning>
-                                </TouchableOpacity>
+                                <S.NetworkGasWarning>
+                                  {t("wallet.lowGas", {
+                                    symbol: config.nativeCurrencySymbol,
+                                  })}
+                                  {"  ▸"}
+                                </S.NetworkGasWarning>
                               )}
                             </S.NetworkInfo>
                             <View style={{ alignItems: "flex-end", gap: 4 }}>
